@@ -11,7 +11,7 @@ const Header = () => {
             
             <ul>
                 <li><Link to='/menu'>Menu</Link></li>
-                <li><Link to='/about-us'>About Us</Link></li>
+                <li><Link to='/reservations'>Reservations</Link></li>
                 <li><Link to='/our-restaurant'>Our Restaurant</Link></li>
                 <li><Link to='/contact-us'>Contact Us</Link></li>
                 <li><Link to='/faqs'>FAQs</Link></li>

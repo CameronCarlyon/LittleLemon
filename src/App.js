@@ -4,7 +4,7 @@ import './App.css';
 
 import MainPage from './pages/MainPage.js';
 import MenuPage from './pages/MenuPage.js';
-import AboutUsPage from './pages/AboutUsPage.js';
+import ReservationsPage from './pages/ReservationsPage.js';
 import OurRestaurantPage from './pages/OurRestaurantPage.js';
 import ContactUsPage from './pages/ContactUsPage.js';
 import FAQsPage from './pages/FAQsPage.js';
@@ -18,7 +18,7 @@ function App() {
           <Route index element={<MainPage />} />
           <Route path='/home' element={<MainPage />} />
           <Route path='/menu' element={<MenuPage />} />
-          <Route path='/about-us' element={<AboutUsPage />} />
+          <Route path='/reservations' element={<ReservationsPage />} />
           <Route path='/our-restaurant' element={<OurRestaurantPage />} />
           <Route path='/contact-us' element={<ContactUsPage />} />
           <Route path='/faqs' element={<FAQsPage />} />

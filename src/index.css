@@ -28,15 +28,55 @@ body {
 
 a {
   text-decoration: none;
+  font-weight: 800;
   color: var(--color-green);
 }
 
 a:hover {
-  color: var(--color-yellow);
   cursor: pointer;
 }
 
+input {
+  border: 1px solid var(--color-green);
+  outline: none;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+input:focus {
+  box-shadow: 0 0 0 2px var(--color-green);
+}
+
+button {
+  font-family: 'Karla', sans-serif;
+  font-weight: 1000;
+  font-size: 1.2rem;
+  color: var(--color-white);
+  border: none;
+  background-color: var(--color-green);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+h1 {
+  font-family: 'Markazi Text', serif;
+  font-size: 2rem;
+  font-weight: 1000;
+  color: var(--color-green);
+  text-align: left;
+}
+
+h2 {
+  font-family: 'Markazi Text', serif;
+  font-size: 1.5rem;
+  font-weight: 1000;
+  color: var(--color-green);
+  border-bottom: 1px solid var(--color-green);
+}
+
 Header {
+  width: 100%;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -48,6 +88,10 @@ Header {
   justify-content: space-between;
   padding: 0rem 25%;
   font-weight: 700;
+  color: var(--color-green);
+}
+
+Header a {
   color: var(--color-green);
 }
 
@@ -63,18 +107,9 @@ article {
   flex-direction: column;
   padding: 2rem 25%;
   text-align: left;
-  gap: 2rem;
+  gap: 1rem;
   font-weight: 200;
   font-size: 1.1rem;
-  /* background-color: var(--color-green);
-  color: white; */
-}
-
-article img {
-  border-radius: 1rem;
-  /* border: var(--color-yellow) 0.2rem solid; */
-  outline: 0.1rem solid var(--color-green);
-  outline-offset: 0.3rem;
 }
 
 article h1 {
@@ -122,12 +157,13 @@ article h1 {
   line-height: 2.5rem;
 }
 
-.button {
+.btn-primary {
   display: flex;
   max-width: fit-content;
+  align-items: center;
   background-color: var(--color-yellow);
+  border: 2px solid var(--color-yellow);
   color: var(--color-green);
-  border: none;
   padding: 0.8rem 2rem;
   border-radius: 1.5rem;
   cursor: pointer;
@@ -136,10 +172,48 @@ article h1 {
   font-weight: 520;
 }
 
-.button:hover {
-  background-color: #3D4C46;
-  box-shadow: 5rem 5rem 5rem rgba(0, 0, 0, 0.2);
+.btn-secondary {
+  display: flex;
+  max-width: fit-content;
+  background-color: var(--color-green);
   color: var(--color-yellow);
+  border: 2px solid var(--color-yellow);
+  padding: 0.8rem 2rem;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-family: 'Karla', sans-serif;
+  font-weight: 520;
+}
+
+.btn-primary:hover {
+  background-color: #3D4C46;
+  color: var(--color-yellow);
+  border: 2px solid var(--color-yellow);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-yellow);
+  color: var(--color-green);
+}
+
+.btn-primary a {
+  color: var(--color-green);
+}
+
+.btn-secondary a {
+  color: var(--color-yellow);
+}
+
+.btn-primary a:hover {
+  color: var(--color-yellow);
+}
+.btn-secondary a:hover {
+  color: var(--color-green);
+}
+
+.close-btn {
+  cursor: pointer;
 }
 
 .order {
@@ -177,8 +251,11 @@ article h1 {
 .social * {
   color: var(--color-white);
   font-size: 2rem;
-  /* text-align: center;
-  padding: 1rem; */
+}
+
+.social *:hover {
+  color: var(--color-yellow);
+  cursor: pointer;
 }
 
 Footer a {
@@ -186,6 +263,7 @@ Footer a {
 }
 
 Footer {
+  width: 100%;
   background-color: var(--color-green);
   min-height: 60px;
   display: flex;
@@ -202,11 +280,6 @@ Footer ul li {
   list-style-type: none;
   display: inline;
   margin: 0 1rem;
-}
-
-.promo {
-  min-width: 100%;
-  max-height: 15rem;
 }
 
 .icon-white {
@@ -232,9 +305,10 @@ Footer ul li {
 }
 
 .QA {
-  border: 0.2rem solid var(--color-green);
-  border-radius: 1rem;
-  line-height: 3rem;
+  border: 1px solid var(--color-grey);
+  border-radius: 5px;
+  padding: 0.5rem;
+  cursor: pointer;
 }
 
 .QA h2 {
@@ -245,7 +319,30 @@ Footer ul li {
 }
 
 .main-content {
-  padding: 1rem 0rem 1rem 0rem
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 25%;
+  text-align: left;
+  font-weight: 200;
+  font-size: 1.1rem;
+  gap: 2rem;
+  min-height: 70vh;
+}
+
+.main-content h1 {
+  color: var(--color-green);
+  font-family: 'Markazi Text', serif;
+  font-size: 2rem;
+  font-weight: 1000;
+  border-bottom: 1px solid var(--color-green);
+  margin-bottom: 1rem;
+  
+}
+
+.main-content img {
+  border-radius: 1rem;
+  outline: 0.1rem solid var(--color-green);
+  outline-offset: 0.3rem;
 }
 
 .icon-info-container {
@@ -259,4 +356,82 @@ Footer ul li {
 .icon-info-container > *:first-child {
   margin: 0;
   padding: 4px 0rem;
+}
+
+.icon-info-container > *:last-child {
+  margin: 0;
+  padding: 0;
+}
+
+.promotion-banner {
+  padding: 1rem;
+  gap: 1rem;
+  width: 100%;
+  color: var(--color-white);
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./assets/bruchetta.svg');
+  background-size: cover;
+  background-position: center;
+}
+
+.promotion-banner input {
+  width: 20rem;
+}
+
+.promotion-banner h3 {
+  font-family: 'Karla', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  padding-bottom: 1rem;
+}
+
+.read-more {
+  color: var(--color-green);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.no-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  background-color: var(--color-green);
+  color: white;
+}
+
+.no-page-message {
+  max-width: 20%;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-yellow);
+}
+
+.no-page-code {
+  font-family: 'Markazi Text', serif;
+  font-size: 8rem;
+  font-weight: 800;
+  color: var(--color-white);
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30%;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 50%;
+  gap: 1rem;
 }
