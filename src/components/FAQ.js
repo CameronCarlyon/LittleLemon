@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 let FAQs = [
     {
       question: "What are the restaurant's opening hours?",
-      answer: "We are open from 11 AM to 11 PM every day."
+      answer: "We are open from Monday to Saturday, 11:00 AM to 10:00 PM, and Sunday from 12:00 PM to 9:00 PM. An extensive list of our opening hours can be found on the 'Our Restaurant' page."
     },
     {
       question: "Do you offer vegetarian or vegan options?",
@@ -11,53 +12,60 @@ let FAQs = [
     },
     {
       question: "Can I make a reservation?",
-      answer: "Yes, we recommend making a reservation, especially on weekends. You can call us at [Phone Number] or book online."
+      answer: "Yes, we recommend making a reservation, especially on weekends. You can call us at (312) 555-7890 or book online."
     },
     {
-        question: "Do you offer takeout or delivery?",
-        answer: "Yes, we offer both takeout and delivery services. You can place an order through our website or preferred delivery partners."
+    question: "Do you offer takeout or delivery?",
+    answer: "Yes, we offer both takeout and delivery services. You can place an order through our website or preferred delivery partners."
     },
     {
-        question: "Are you able to accommodate food allergies?",
-        answer: "We do our best to accommodate dietary restrictions and allergies. Please inform your server of any allergies, and we will take necessary precautions."
+    question: "Are you able to accommodate food allergies?",
+    answer: "We do our best to accommodate dietary restrictions and allergies. Please inform your server of any allergies, and we will take necessary precautions."
     },
     {
-        question: "Do you have gluten-free options?",
-        answer: "Yes, we offer several gluten-free dishes, including our Grilled Lamb Chops, Mediterranean Chicken, and a selection of fresh salads."
+    question: "Do you have gluten-free options?",
+    answer: "Yes, we offer several gluten-free dishes, including our Grilled Lamb Chops, Mediterranean Chicken, and a selection of fresh salads."
     },
     {
-        question: "Do you serve alcohol?",
-        answer: "Yes, we offer a selection of wines, beers, and Mediterranean-inspired cocktails."
+    question: "Do you serve alcohol?",
+    answer: "Yes, we offer a selection of wines, beers, and Mediterranean-inspired cocktails."
     },
     {
-        question: "Is there parking available?",
-        answer: "Yes, we have dedicated parking for our guests. Additional street parking is also available nearby."
+    question: "Is there parking available?",
+    answer: "Yes, we have dedicated parking for our guests. Additional street parking is also available nearby."
     },
     {
-        question: "Do you offer catering for events?",
-        answer: "Yes! We provide catering services for events of all sizes. Contact us for more details."
+    question: "Do you offer catering for events?",
+    answer: "Yes! We provide catering services for events of all sizes. Contact us for more details."
     },
     {
-        question: "Are you family-friendly?",
-        answer: "Absolutely! We have a kid-friendly menu and a welcoming environment for families."
+    question: "Are you family-friendly?",
+    answer: "Absolutely! We have a kid-friendly menu and a welcoming environment for families."
     },
     {
-        question: "What payment methods do you accept?",
-        answer: "We accept cash, credit/debit cards, and contactless payments."
+    question: "What payment methods do you accept?",
+    answer: "We accept cash, credit/debit cards, and contactless payments."
     },
   ];
 
 const FAQ = () => {
+    const [visibleIndex, setVisibleIndex] = React.useState(null);
+
     return (
         <div className='FAQ'>
-            <article>
               {FAQs.map((faq, index) => (
-                <div className='QA' key={index}>
-                    <h2>{faq.question}</h2>
-                    <p>{faq.answer}</p>
+                <div 
+                    className='QA' 
+                    key={index} 
+                    onClick={() => setVisibleIndex(visibleIndex === index ? null : index)}
+                    style={{
+                        backgroundColor: visibleIndex === index ? '#f0f0f0' : '#fff'
+                    }}
+                >
+                    <p style={{ fontWeight: 'bold', color: '#495E57' }}>{faq.question}</p>
+                    {visibleIndex === index && <p style={{ marginTop: '5px', color: '#333' }}>{faq.answer}</p>}
                 </div>
-            ))}  
-            </article>
+              ))}  
         </div>
     );
 };
