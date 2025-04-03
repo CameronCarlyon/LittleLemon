@@ -16,15 +16,16 @@ let noPageMessages = [
 
 function NoPage() {
   return (
-    <div className="no-page">
+    <div>
       <Header />
+      <div className='no-page'>
         <h1 className='no-page-code'>Error 404</h1>
         <h1 className='no-page-message'>{randomNoPageMessage}</h1>
         <div style={{display: 'flex', gap: '1rem'}}>
             <div className='btn-primary'><Link to='/home'>Go Home</Link></div>
             <div className='btn-secondary'><Link to='/contact-us'>Contact Us</Link></div>
         </div>
-        
+      </div>
       <Footer />
     </div>);
 }
