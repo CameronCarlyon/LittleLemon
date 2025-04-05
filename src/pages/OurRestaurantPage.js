@@ -3,13 +3,14 @@ import Header from '../components/Header.js';
 import Promotion from '../components/Promotion.js';
 import Footer from '../components/Footer.js';
 
+import { Link } from 'react-router-dom';
+
 import RestaurantImage from '../assets/restaurant.jpg';
 import MarioAndAdrianA from '../assets/Mario and Adrian A.jpg';
 import MarioAndAdrianB from '../assets/Mario and Adrian b.jpg';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faLocationDot, faClock, faBookOpen } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom';
 
 const paragraphStyles = {
     WebkitLineClamp: 3,
@@ -21,12 +22,14 @@ const paragraphStyles = {
 function OurRestaurantPage() {
     const [isOpen, setIsOpen] = React.useState(false);
     const [showReadMoreButton, setShowReadMoreButton] = React.useState(false);
+    
 return (
     <div className="App">
         <Header />
             <div className="main-content">
                 <h1>Our Restaurant</h1>
-                    <img src={RestaurantImage} alt="Our Restaurant" style={{ maxWidth: '100%', height: '15rem', objectFit: 'cover'}} />
+                <p>We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</p>
+                    <img src={RestaurantImage} alt="Our Restaurant" style={{ maxWidth: '100%', height: '15rem', objectFit: 'cover'}} className='showcase-img'/>
                     <div className='icon-info-container'>
                             <FontAwesomeIcon icon={faBars} />
                             <div>
@@ -72,7 +75,7 @@ return (
                 <h1>A Bit About Us</h1>
                 <p>Welcome to Little Lemon, where Mediterranean tradition meets modern flavors! We are a family-owned restaurant dedicated to serving authentic, flavorful dishes inspired by the sun-soaked coasts of Greece, Turkey, Morocco, and beyond. Whether you're here for a hearty meal or a light bite, we invite you to experience the warmth of our kitchen and hospitality.</p>
             </div>
-            <img src={MarioAndAdrianB} alt="Mario and Adrian" style={{ maxWidth: '100%', height: '20rem', objectFit: 'cover', objectPosition: '0% 100%'  }}/>
+            <img src={MarioAndAdrianB} alt="Mario and Adrian" style={{ maxWidth: '100%', height: '20rem', objectFit: 'cover', objectPosition: '0% 100%'  }} className='showcase-img'/>
             <div>
               <h1>Our Story</h1>
                 <p>Little Lemon was founded with a simple mission: to bring the rich and diverse flavors of the Mediterranean to our community. Our journey began with cherished family recipes passed down through generations, paired with a passion for fresh ingredients and innovative cooking. Today, we continue to honor our heritage while adding a modern twist to classic dishes, creating a unique dining experience that blends tradition and creativity.</p>  
@@ -82,7 +85,7 @@ return (
                 <p>At Little Lemon, we believe that food should be fresh, flavorful, and made with love. We prioritize locally sourced ingredients, high-quality spices, and traditional cooking techniques to ensure every bite is an experience. Our team is dedicated to creating a welcoming environment where every guest feels like family.</p>
                 <p>We are also committed to sustainability, minimizing food waste, and using eco-friendly packaging wherever possible. Our menu celebrates seasonal ingredients, ensuring that every dish is bursting with flavor and nutrition.</p>
             </div>
-            <img src={MarioAndAdrianA} alt="Mario and Adrian" style={{ maxWidth: '100%', height: '20rem', objectFit: 'cover', objectPosition: '0% 40%' }}/>
+            <img src={MarioAndAdrianA} alt="Mario and Adrian" style={{ maxWidth: '100%', height: '20rem', objectFit: 'cover', objectPosition: '0% 40%' }} className='showcase-img'/>
             <div>
                <h1>Our Menu & Specialties</h1>
                 <p>Our menu features a carefully curated selection of Mediterranean delights, from hearty slow-cooked lamb tagine to refreshing quinoa salads. Guests rave about our signature Shakshuka, fragrant Seafood Paella, and indulgent Baklava Cheesecake. Whether you’re craving a light mezze platter or a full-course meal, there’s something for everyone at Little Lemon.</p>

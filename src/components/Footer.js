@@ -7,7 +7,8 @@ import { faSquareFacebook, faSquareBluesky, faSquareInstagram } from '@fortaweso
 const Footer = () => {
     return (
         <footer>
-            <img src={lemonLogo} alt='Little Lemon Logo' style={{ maxWidth: '3rem'}} className='icon-white'/>
+            <Link to='/home'><img src={lemonLogo} alt='Little Lemon Logo' style={{ maxWidth: '3rem'}} className='icon-white'/></Link>
+            
             <ul>
             <ul>
                 <li><Link to='/menu'>Menu</Link></li>

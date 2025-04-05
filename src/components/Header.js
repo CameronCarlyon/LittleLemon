@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBasketShopping } from '@fortawesome/free-solid-svg-icons'
+
 import lemonLogo from '../assets/lemon.png';
 
 const Header = () => {
@@ -16,7 +18,7 @@ const Header = () => {
                 <li><Link to='/contact-us'>Contact Us</Link></li>
                 <li><Link to='/faqs'>FAQs</Link></li>
             </ul>
-            <FontAwesomeIcon icon={faBasketShopping} />
+            <Link to='/shopping-cart'><FontAwesomeIcon className='icon' icon={faBasketShopping} /></Link>
         </header>
     );
 };

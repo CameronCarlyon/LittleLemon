@@ -6,10 +6,10 @@ const Hero = () => {
         <div className='hero'>
             <div>
                 <h1>Little Lemon</h1>
-                <h2>Chicago</h2> 
+                <h2 style={{ color: 'white' }}>Chicago</h2> 
             </div>
             <h3>We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</h3>
-            <div className='button'><Link to='/reservations'>Reserve a Table</Link></div>
+            <Link to='/reservations'><div className='btn-primary'>Reserve a Table</div></Link>
         </div>
     );
 };
