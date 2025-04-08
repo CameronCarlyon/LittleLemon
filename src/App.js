@@ -8,7 +8,9 @@ import ReservationsPage from './pages/ReservationsPage.js';
 import OurRestaurantPage from './pages/OurRestaurantPage.js';
 import ContactUsPage from './pages/ContactUsPage.js';
 import FAQsPage from './pages/FAQsPage.js';
+import ShoppingCartPage from './pages/ShoppingCartPage.js';
 import NoPage from './pages/NoPage.js';
+import ReservationSuccessfulPage from './pages/ReservationSuccessfulPage.js';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path='/our-restaurant' element={<OurRestaurantPage />} />
           <Route path='/contact-us' element={<ContactUsPage />} />
           <Route path='/faqs' element={<FAQsPage />} />
+          <Route path='/shopping-cart' element={<ShoppingCartPage />} />
+          <Route path='/reservations/success' element={<ReservationSuccessfulPage />} />
           <Route path='*' element={<NoPage />} />
         </Routes>
       </BrowserRouter> 

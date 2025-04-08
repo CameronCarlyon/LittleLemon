@@ -13,7 +13,7 @@ const Promotion = () => {
                 onClick={() => document.querySelector('.promotion-banner').style.display = 'none'} 
             />
             <h3>Subscribe to Our Newsletter!</h3>
-            <input 
+            <input required
                 type="email" 
                 placeholder="Enter your email address" 
             />
