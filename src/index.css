@@ -34,17 +34,48 @@ a {
 
 a:hover {
   cursor: pointer;
+  color: var(--color-yellow);
 }
 
 input {
-  border: 1px solid var(--color-green);
+  color: var(--color-green);
+  font-family: 'Karla', sans-serif;
+  border: 1px solid var(--color-white);
+  background-color: var(--color-white);
+  outline: none;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+input:focus {
+  box-shadow: 0 0 0 2px var(--color-green);
+}
+
+textarea {
+  color: var(--color-green);
+  font-family: 'Karla', sans-serif;
+  font-size: 1rem;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-white);
   outline: none;
   padding: 1rem;
   border-radius: 0.5rem;
 }
 
-input:focus {
+textarea:focus {
   box-shadow: 0 0 0 2px var(--color-green);
+}
+
+select {
+  font-family: 'Karla', sans-serif;
+  font-size: 1rem;
+  border: 1px solid var(--color-white);
+  outline: none;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-white);
+  color: var(--color-green)
 }
 
 button {
@@ -72,7 +103,14 @@ h2 {
   font-size: 1.5rem;
   font-weight: 1000;
   color: var(--color-green);
-  border-bottom: 1px solid var(--color-green);
+  text-align: left;
+  /* border-bottom: 1px solid var(--color-green); */
+}
+
+h3 {
+  font-weight: 1000;
+  color: var(--color-green);
+  letter-spacing: 1px;
 }
 
 Header {
@@ -154,7 +192,9 @@ article h1 {
   font-family: 'Karla', sans-serif;
   font-size: 1.5rem;
   font-weight: 500;
-  line-height: 2.5rem;
+  line-height: 2rem;
+  color: var(--color-white);
+  letter-spacing: 0px;
 }
 
 .btn-primary {
@@ -290,11 +330,22 @@ Footer ul li {
   font-family: 'Karla', sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
+  color: var(--color-white);
 }
 
 .icon-social:hover {
   color: var(--color-yellow);
   cursor: pointer;
+}
+
+.icon {
+  cursor: pointer;
+  /* font-size: 1.5rem; */
+}
+
+.icon:hover {
+  background-color: var(--color-green);
+  color: var(--color-white);
 }
 
 .FAQ {
@@ -305,9 +356,9 @@ Footer ul li {
 }
 
 .QA {
-  border: 1px solid var(--color-grey);
-  border-radius: 5px;
-  padding: 0.5rem;
+  background-color: var(--color-white);
+  border-radius: 1rem;
+  padding: 0.8rem;
   cursor: pointer;
 }
 
@@ -325,7 +376,7 @@ Footer ul li {
   text-align: left;
   font-weight: 200;
   font-size: 1.1rem;
-  gap: 2rem;
+  gap: 1rem;
   min-height: 70vh;
 }
 
@@ -335,14 +386,13 @@ Footer ul li {
   font-size: 2rem;
   font-weight: 1000;
   border-bottom: 1px solid var(--color-green);
-  margin-bottom: 1rem;
-  
 }
 
-.main-content img {
+.showcase-img {
   border-radius: 1rem;
   outline: 0.1rem solid var(--color-green);
   outline-offset: 0.3rem;
+  width: 100%;
 }
 
 .icon-info-container {
@@ -375,6 +425,7 @@ Footer ul li {
 
 .promotion-banner input {
   width: 20rem;
+  color: var(--color-green);
 }
 
 .promotion-banner h3 {
@@ -382,6 +433,7 @@ Footer ul li {
   font-size: 1.5rem;
   font-weight: 500;
   padding-bottom: 1rem;
+  color: var(--color-white);
 }
 
 .read-more {
@@ -398,18 +450,20 @@ Footer ul li {
   gap: 5rem;
   background-color: var(--color-green);
   color: white;
+  min-height: 70vh;
 }
 
 .no-page-message {
-  max-width: 20%;
+  max-width: 30%;
   font-size: 2rem;
   font-weight: 800;
   color: var(--color-yellow);
+  text-align: center;
 }
 
 .no-page-code {
   font-family: 'Markazi Text', serif;
-  font-size: 8rem;
+  font-size: 5rem;
   font-weight: 800;
   color: var(--color-white);
 }
@@ -432,6 +486,132 @@ Footer ul li {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  width: 50%;
+  width: 57%;
   gap: 1rem;
+}
+
+.menu-categories ul {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  overflow-x: scroll;
+}
+
+.menu-categories li {
+  font-family: 'Karla', sans-serif;
+  font-weight: 1000;
+  color: var(--color-green);
+  list-style-type: none;
+  text-wrap: nowrap;
+  background-color: var(--color-white);
+  padding: 0.8rem;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.menu-categories li.active {
+  background-color: var(--color-green);
+  color: var(--color-white);
+  border-bottom: 2px solid var(--color-green);
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 0rem;
+}
+
+.menu-item:hover {
+  background-color: var(--color-white);
+  cursor: pointer;
+}
+
+.menu-item div {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+span {
+  display: flex;
+  width: 100%;
+  border: 0.5px solid var(--color-green);
+  
+}
+
+.payment-content {
+  display: flex;
+  flex-direction: row;
+  padding: 2rem 25%;
+  text-align: left;
+  font-weight: 200;
+  font-size: 1.1rem;
+  gap: 1rem;
+  min-height: 70vh;
+}
+
+.delivery-option {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-white);
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-green);
+  border-radius: 1rem;
+}
+
+.delivery-option:hover {
+  background-color: var(--color-green);
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.basket-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 2rem 25%;
+  text-align: left;
+  min-width: 5rem;
+  min-height: 3rem;
+}
+
+.order-summary {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.reservation-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  padding: 2rem 25%;
+  gap: 3rem;
+}
+
+.reservation-content img {
+  height: fit-content;
+  position: sticky;
+  top: 23%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+  font-family: 'Karla', sans-serif;
+  font-weight: 1000;
+  color: var(--color-green);
+  width: 50%;
 }

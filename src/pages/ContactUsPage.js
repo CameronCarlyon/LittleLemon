@@ -27,10 +27,10 @@ function ContactUsPage() {
                     </div>
                 </div>
                 <div className="contact-form">
-                    <input type="text" placeholder="Name" />
-                    <input type="text" placeholder="Email" />
-                    <input type="text" placeholder="Subject" />
-                    <input type="text" placeholder="Message" />
+                    <input required type="text" placeholder="Your Name" />
+                    <input required type="text" placeholder="Your Email Address" />
+                    <input required type="text" placeholder="Subject" />
+                    <input required type="textarea" placeholder="Message" />
                     <button type="submit">Submit</button>
                 </div>
             </div>
