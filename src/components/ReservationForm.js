@@ -52,30 +52,37 @@ const ReservationForm = () => {
     return (
         <form onSubmit={submitForm}>
             <h1>Secure Your Reservation</h1>
-            <label>Full Name *</label>
-            <input type="text" name="fullName" required />
-            <label>Email *</label>
-            <input type="email" name="emailAddress" required />
-            <label>Contact Number</label>
-            <input type="tel" name="contactNumber" />
-            <label>Occasion</label>
-            <select name="occasion">
+            
+            <label htmlFor="fullName">Full Name *</label>
+            <input id="fullName" type="text" name="fullName" required />
+            
+            <label htmlFor="emailAddress">Email *</label>
+            <input id="emailAddress" type="email" name="emailAddress" required />
+            
+            <label htmlFor="contactNumber">Contact Number</label>
+            <input id="contactNumber" type="tel" name="contactNumber" />
+            
+            <label htmlFor="occasion">Occasion</label>
+            <select id="occasion" name="occasion">
                 <option value="none">Select an occasion</option>
                 <option value="birthday">Birthday</option>
                 <option value="anniversary">Anniversary</option>
                 <option value="business">Business Meeting</option>
                 <option value="casualDining">Casual Dining</option>
             </select>
-            <label>Number of Guests *</label>
-            <select name="guestCount" required>
+            
+            <label htmlFor="guestCount">Number of Guests *</label>
+            <select id="guestCount" name="guestCount" required>
                 {Array.from({ length: 20 }, (_, i) => (
                     <option key={i + 1} value={i + 1}>
                         {i + 1}
                     </option>
                 ))}
             </select>
-            <label>Date *</label>
+            
+            <label htmlFor="reservationDate">Date *</label>
             <input 
+                id="reservationDate"
                 type="date" 
                 name="reservationDate" 
                 required 
@@ -83,8 +90,9 @@ const ReservationForm = () => {
                 onChange={handleDateChange}
                 min={new Date().toISOString().split('T')[0]}
             />
-            <label>Time Slot *</label>
-            <select name="reservationTime" required>
+            
+            <label htmlFor="reservationTime">Time Slot *</label>
+            <select id="reservationTime" name="reservationTime" required>
                 <option value="">Select a time</option>
                 {availableTimes.map((time, index) => (
                     <option key={index} value={time}>
@@ -92,8 +100,16 @@ const ReservationForm = () => {
                     </option>
                 ))}
             </select>
-            <label>Special Requests</label>
-            <textarea name="specialRequests" rows="4" cols="50" placeholder="Please note that whilst we will do our best to accommodate your special requests, we cannot guarantee that all will be fulfilled."></textarea>
+            
+            <label htmlFor="specialRequests">Special Requests</label>
+            <textarea 
+                id="specialRequests"
+                name="specialRequests" 
+                rows="4" 
+                cols="50" 
+                placeholder="Please note that whilst we will do our best to accommodate your special requests, we cannot guarantee that all will be fulfilled."
+            />
+            
             <input type="submit" value="Create Reservation" className='btn-primary'/>
         </form>
     );

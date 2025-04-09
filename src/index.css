@@ -599,12 +599,6 @@ span {
   gap: 3rem;
 }
 
-.reservation-content img {
-  height: fit-content;
-  position: sticky;
-  top: 23%;
-}
-
 form {
   display: flex;
   flex-direction: column;

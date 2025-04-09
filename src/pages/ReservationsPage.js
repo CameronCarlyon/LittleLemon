@@ -12,7 +12,6 @@ function AboutUsPage() {
       <Header />
       <div className="reservation-content">
         <ReservationForm />
-        {/* <img src={RestaurantFood} alt="Restaurant Food" className='showcase-img' /> */}
       </div>
       <Promotion />
       <Footer />
