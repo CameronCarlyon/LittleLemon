@@ -599,6 +599,42 @@ span {
   gap: 3rem;
 }
 
+.reservation-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem 25%;
+  text-align: center;
+  align-items: center;
+}
+
+.reservation-details p {
+  font-family: 'Karla', sans-serif;
+  font-weight: 200;
+  color: var(--color-green);
+  text-align: left;
+}
+
+.reservation-details p strong {
+  font-weight: 1000;
+  color: var(--color-green);
+  overflow-x: scroll;
+}
+
+.reservation-details div {
+  background-color: var(--color-white);
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.reservation-card {
+  display: flex;
+  flex-direction: column;
+  font-weight: 200;
+  font-size: 1.1rem;
+  min-width: 50%;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -608,4 +644,26 @@ form {
   font-weight: 1000;
   color: var(--color-green);
   width: 50%;
+}
+
+.btn-form {
+  display: flex;
+  width: 100%;
+  background-color: var(--color-white);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.btn-form-active {
+  display: flex;
+  width: 100%;
+  background-color: var(--color-green);
+  color: var(--color-white);
+  font-weight: 800;
+  border: none;
+}
+
+.btn-form-active:hover {
+  outline: 0.1rem solid var(--color-green);
+  outline-offset: 0.2rem;
 }
