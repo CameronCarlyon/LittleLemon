@@ -35,7 +35,9 @@ const ReservationForm = () => {
             const success = submitAPI(data);
             if (success) {
                 console.log('Reservation submitted successfully:', data);
-                navigate('/reservations/success');
+                navigate('/reservations/success', { 
+                    state: { reservationData: data }
+                });
             } else {
                 throw new Error('Submission failed');
             }
@@ -46,18 +48,28 @@ const ReservationForm = () => {
     };
 
     React.useEffect(() => {
-        fetchAvailableTimes();
+        const today = new Date().toISOString().split('T')[0];
+        fetchAvailableTimes(today);
     }, []);
+
+    const isFormValid = () => {
+        const fullName = document.getElementById('fullName')?.value.trim();
+        const emailAddress = document.getElementById('emailAddress')?.value.trim();
+        const guestCount = document.getElementById('guestCount')?.value;
+        const reservationTime = document.getElementById('reservationTime')?.value;
+
+        return fullName && emailAddress && guestCount && reservationTime;
+    };
 
     return (
         <form onSubmit={submitForm}>
             <h1>Secure Your Reservation</h1>
             
             <label htmlFor="fullName">Full Name *</label>
-            <input id="fullName" type="text" name="fullName" required />
+            <input id="fullName" type="text" name="fullName" required onChange={() => setAvailableTimes([...availableTimes])} />
             
             <label htmlFor="emailAddress">Email *</label>
-            <input id="emailAddress" type="email" name="emailAddress" required />
+            <input id="emailAddress" type="email" name="emailAddress" required onChange={() => setAvailableTimes([...availableTimes])} />
             
             <label htmlFor="contactNumber">Contact Number</label>
             <input id="contactNumber" type="tel" name="contactNumber" />
@@ -72,7 +84,7 @@ const ReservationForm = () => {
             </select>
             
             <label htmlFor="guestCount">Number of Guests *</label>
-            <select id="guestCount" name="guestCount" required>
+            <select id="guestCount" name="guestCount" required onChange={() => setAvailableTimes([...availableTimes])}>
                 {Array.from({ length: 20 }, (_, i) => (
                     <option key={i + 1} value={i + 1}>
                         {i + 1}
@@ -87,12 +99,15 @@ const ReservationForm = () => {
                 name="reservationDate" 
                 required 
                 value={selectedDate}
-                onChange={handleDateChange}
+                onChange={(e) => {
+                    handleDateChange(e);
+                    setAvailableTimes([...availableTimes]);
+                }}
                 min={new Date().toISOString().split('T')[0]}
             />
             
             <label htmlFor="reservationTime">Time Slot *</label>
-            <select id="reservationTime" name="reservationTime" required>
+            <select id="reservationTime" name="reservationTime" required onChange={() => setAvailableTimes([...availableTimes])}>
                 <option value="">Select a time</option>
                 {availableTimes.map((time, index) => (
                     <option key={index} value={time}>
@@ -109,8 +124,11 @@ const ReservationForm = () => {
                 cols="50" 
                 placeholder="Please note that whilst we will do our best to accommodate your special requests, we cannot guarantee that all will be fulfilled."
             />
-            
-            <input type="submit" value="Create Reservation" className='btn-primary'/>
+            <input 
+                type="submit" 
+                value="Create Reservation" 
+                className={isFormValid() ? 'btn-form btn-form-active' : 'btn-form'} 
+            />
         </form>
     );
 };
