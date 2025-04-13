@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 
+import { CartProvider } from './context/CartContext.js';
 import MainPage from './pages/MainPage.js';
 import MenuPage from './pages/MenuPage.js';
 import ReservationsPage from './pages/ReservationsPage.js';
@@ -15,7 +16,8 @@ import ReservationSuccessfulPage from './pages/ReservationSuccessfulPage.js';
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
         <Routes>
           <Route index element={<MainPage />} />
           <Route path='/home' element={<MainPage />} />
@@ -29,6 +31,7 @@ function App() {
           <Route path='*' element={<NoPage />} />
         </Routes>
       </BrowserRouter> 
+      </CartProvider>
     </div>);
 }
 
