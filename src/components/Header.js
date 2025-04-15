@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useCart } from '../context/CartContext.js';
 import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,6 +10,8 @@ import lemonLogo from '../assets/lemon.png';
 const Header = () => {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { cartItems } = useCart();
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -16,7 +19,7 @@ const Header = () => {
     return (
         <header>
             <Link to='/home'><img src={lemonLogo} alt='Little Lemon Logo' style={{ maxWidth: '3rem'}}/></Link>
-            <nav className={`main-nav ${isMenuOpen ? 'active' : ''}`}>
+            <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`}>
                 <ul>
                     <li><Link to='/menu' onClick={toggleMenu}>Menu</Link></li>
                     {isMenuOpen && <span></span>}
@@ -28,11 +31,15 @@ const Header = () => {
                     {isMenuOpen && <span></span>}
                     <li><Link to='/faqs' onClick={toggleMenu}>FAQs</Link></li>
                     {isMenuOpen && <span></span>}
-                    {isMenuOpen && <li><Link to='/shopping-basket'>Shopping Cart</Link></li>}
+                    {isMenuOpen && <li><Link to='/shopping-cart'>Shopping Cart</Link></li>}
                 </ul>
             </nav>
-            <Link to='/shopping-cart'><FontAwesomeIcon className='icon desktop-only' icon={faBasketShopping} /></Link>
-            <div 
+            <Link to='/shopping-cart'><FontAwesomeIcon className='icon desktop-only' icon={faBasketShopping} />
+            <div className='cart-count desktop-only'>
+                {cartItems.length || ''}
+            </div>
+            </Link>
+            <div
                 className="burger-menu mobile-only" 
                 onClick={toggleMenu}
                 aria-label="Toggle menu"

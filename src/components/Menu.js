@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
+import { useCart } from '../context/CartContext';
+import QuantityControl from './QuantityControl';
 
 const Menu = () => {
-    // State to track the active category
     const [activeCategory, setActiveCategory] = useState('Breakfast');
-    
-    // All menu data
+    const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart();
+
+    const handleAddToCart = (item) => {
+        addToCart({ ...item, quantity: 1 });
+    };
+
+    const getCartQuantity = (itemName) => {
+        const cartItem = cartItems.find(item => item.name === itemName);
+        return cartItem ? cartItem.quantity : 0;
+    };
+
+    // Menu data
     let breakfastMenu=[
         { name: "Shakshuka Skillet", description: "Poached eggs in a rich spiced tomato and bell pepper sauce, served with warm pita.", price: 11.99, calories: 420, vegetarian: true, vegan: false, glutenFree: false },
         { name: "Mediterranean Avocado Toast", description: "Sourdough toast topped with avocado, feta, cherry tomatoes, za'atar, and a drizzle of olive oil.", price: 9.99, calories: 380, vegetarian: true, vegan: false, glutenFree: false },
@@ -117,7 +128,23 @@ const Menu = () => {
                                     {item.vegan && <div className='dietary-label vegan'>Vegan</div>}
                                     {item.glutenFree && <div className='dietary-label gluten-free'>Gluten-free</div>}
                                 </div>
+                                
                             </div>
+                            <div className="menu-item-actions">
+                                    <QuantityControl 
+                                        quantity={getCartQuantity(item.name)}
+                                        onIncrease={() => handleAddToCart(item)}
+                                        onDecrease={() => {
+                                            const currentQty = getCartQuantity(item.name);
+                                            if (currentQty <= 1) {
+                                                removeFromCart(item.name);
+                                            } else {
+                                                updateQuantity(item.name, currentQty - 1);
+                                            }
+                                        }}
+                                        minQuantity={0}
+                                    />
+                                </div>
                         </div>
                         {index !== currentMenuItems.length - 1 && <span className='menu-divider'></span>}
                     </div>
