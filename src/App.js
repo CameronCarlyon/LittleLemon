@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 
+import ScrollToTop from "./components/ScrollToTop";
 import { CartProvider } from './context/CartContext.js';
 import MainPage from './pages/MainPage.js';
 import MenuPage from './pages/MenuPage.js';
@@ -15,24 +16,26 @@ import ReservationSuccessfulPage from './pages/ReservationSuccessfulPage.js';
 
 function App() {
   return (
-    <div className="App">
+    <BrowserRouter>
       <CartProvider>
-        <BrowserRouter>
-        <Routes>
-          <Route index element={<MainPage />} />
-          <Route path='/home' element={<MainPage />} />
-          <Route path='/menu' element={<MenuPage />} />
-          <Route path='/reservations' element={<ReservationsPage />} />
-          <Route path='/our-restaurant' element={<OurRestaurantPage />} />
-          <Route path='/contact-us' element={<ContactUsPage />} />
-          <Route path='/faqs' element={<FAQsPage />} />
-          <Route path='/shopping-cart' element={<ShoppingCartPage />} />
-          <Route path='/reservations/success' element={<ReservationSuccessfulPage />} />
-          <Route path='*' element={<NoPage />} />
-        </Routes>
-      </BrowserRouter> 
+        <ScrollToTop />
+        <div className="App">
+          <Routes>
+            <Route index element={<MainPage />} />
+            <Route path='/home' element={<MainPage />} />
+            <Route path='/menu' element={<MenuPage />} />
+            <Route path='/reservations' element={<ReservationsPage />} />
+            <Route path='/our-restaurant' element={<OurRestaurantPage />} />
+            <Route path='/contact-us' element={<ContactUsPage />} />
+            <Route path='/faqs' element={<FAQsPage />} />
+            <Route path='/shopping-cart' element={<ShoppingCartPage />} />
+            <Route path='/reservations/success' element={<ReservationSuccessfulPage />} />
+            <Route path='*' element={<NoPage />} />
+          </Routes>
+        </div>
       </CartProvider>
-    </div>);
+    </BrowserRouter>
+  );
 }
 
 export default App;
