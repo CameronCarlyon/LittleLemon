@@ -124,11 +124,10 @@ const ReservationForm = () => {
                 cols="50" 
                 placeholder="Please note that whilst we will do our best to accommodate your special requests, we cannot guarantee that all will be fulfilled."
             />
-            <input 
+            <button
                 type="submit" 
-                value="Create Reservation" 
                 className={isFormValid() ? 'btn-form btn-form-active' : 'btn-form'} 
-            />
+            ><b>Create Reservation</b></button>
         </form>
     );
 };

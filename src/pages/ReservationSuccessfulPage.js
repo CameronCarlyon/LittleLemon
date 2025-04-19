@@ -14,43 +14,43 @@ const ReservationSuccessfulPage = () => {
             <Header />
             <div className="reservation-details">
                 <h1>Booking Successful!</h1>
-                <h3>We Look Forward to Welcoming You!</h3>
+                <p><b>We Look Forward to Welcoming You!</b></p>
                 <div className="reservation-card">
                     <div>
                         <p>Name</p>
-                        <p><strong>{reservationData?.fullName}</strong></p>
+                        <p><b>{reservationData?.fullName}</b></p>
                     </div>
                     <div>
                         <p>Date</p>
-                        <p><strong>{reservationData?.reservationDate}</strong></p>
+                        <p><b>{reservationData?.reservationDate}</b></p>
                     </div>
                     <div>
                         <p>Time</p>
-                        <p><strong>{reservationData?.reservationTime}</strong></p>
+                        <p><b>{reservationData?.reservationTime}</b></p>
                     </div>
                     <div>
                         <p>Guests</p>
-                        <p><strong>{reservationData?.guestCount}</strong></p>
+                        <p><b>{reservationData?.guestCount}</b></p>
                     </div>
                     {reservationData?.occasion !== 'none' && (
                         <div>
                             <p>Occasion</p>
-                            <p><strong>{reservationData?.occasion}</strong></p>
+                            <p><b>{reservationData?.occasion}</b></p>
                         </div>
                         )}
                     {reservationData?.specialRequests && (
                         <div>
                             <p>Special Requests</p>
-                            <p><strong>{reservationData?.specialRequests}</strong></p>
+                            <p><b>{reservationData?.specialRequests}</b></p>
                         </div>
                     )}
                     <div>
                         <p>Contact</p>
-                        <p><strong>{reservationData?.emailAddress}</strong></p>
+                        <p><b>{reservationData?.emailAddress}</b></p>
                     </div>
                 </div>
                 <p className="confirmation-message">
-                    A confirmation email has been sent to <strong><i>{reservationData?.emailAddress}</i></strong>
+                    A confirmation email has been sent to <b><i>{reservationData?.emailAddress}</i></b>
                 </p>
                 <p>First time visiting our restaurant? You can find out all you need to know <Link to={'/our-restaurant'}>here.</Link></p>
             </div>
