@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMotorcycle, faStore } from '@fortawesome/free-solid-svg-icons';
+import { faMotorcycle, faStore, faXmark, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import QuantityControl from './QuantityControl';
 
 const Cart = () => {
@@ -103,11 +103,17 @@ const Cart = () => {
             tipAmount = 0;
             setCustomTipAmount('');
         } else if (id === 'customTip') {
-            // Handle custom tip amount
-            const customValue = parseFloat(value);
-            if (!isNaN(customValue) && customValue >= 0) {
-                tipAmount = customValue;
-                setCustomTipAmount(value);
+            // Allow empty input
+            if (value === '') {
+                setCustomTipAmount('');
+                tipAmount = 0;
+            } else {
+                // Handle custom tip amount
+                const customValue = parseFloat(value);
+                if (!isNaN(customValue) && customValue >= 0) {
+                    tipAmount = customValue;
+                    setCustomTipAmount(value);
+                }
             }
         }
     
@@ -156,196 +162,235 @@ const Cart = () => {
         setSubmitted(true);
       };
     
-      return (
-        <div className='app'>
-          <div className='main-content'>
-            <form className='basket-container' onSubmit={handleSubmit}>
-              <div className='form-container'>
-                <label>Your Details</label>
-                <input 
-                  id='fullName' 
-                  type='text' 
-                  placeholder='Full Name' 
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  required 
+    return (
+      <div className='app'>
+        <div className='main-content'>
+        <form className='basket-container' onSubmit={handleSubmit}>
+          <div className='form-container'>
+            <label>Your Details</label>
+            <input 
+            id='fullName' 
+            type='text' 
+            placeholder='Full Name' 
+            value={formData.fullName}
+            onChange={handleInputChange}
+            required 
+            />
+            <input id='emailAddress' type='text' placeholder='Email Address' required />
+            <label>Billing</label>
+            <input id='cardNumber' type='text' placeholder='Card Number' required />
+            <input id='expiryDate' type='text' placeholder='MM/YY' required />
+            <input id='cvv' type='text' placeholder='CVV' required />
+            <label>Delivery</label>
+            <div className="delivery-options-container">
+            <div>
+              <label 
+                className={`delivery-option ${formData.deliveryMethod === 'storePickup' ? 'selected' : ''}`}
+              >
+                <input
+                type="radio"
+                name="deliveryMethod"
+                value="storePickup"
+                checked={formData.deliveryMethod === 'storePickup'}
+                onChange={() => handleDeliveryChange('storePickup')}
+                className="delivery-radio-input"
+                required
                 />
-                <input id='emailAddress' type='text' placeholder='Email Address' required />
-                <label>Billing</label>
-                <input id='cardNumber' type='text' placeholder='Card Number' required />
-                <input id='expiryDate' type='text' placeholder='MM/YY' required />
-                <input id='cvv' type='text' placeholder='CVV' required />
-                <label>Delivery</label>
-                <div className="delivery-options-container">
-                  <div>
-                    <label 
-                      className={`delivery-option ${formData.deliveryMethod === 'storePickup' ? 'selected' : ''}`}
-                    >
-                      <input
-                        type="radio"
-                        name="deliveryMethod"
-                        value="storePickup"
-                        checked={formData.deliveryMethod === 'storePickup'}
-                        onChange={() => handleDeliveryChange('storePickup')}
-                        className="delivery-radio-input"
-                        required
-                      />
-                      <div className="delivery-option-content">
-                        <FontAwesomeIcon icon={faStore} className="delivery-icon" />
-                        <p className="delivery-label">Store Pickup</p>
-                        <p className="delivery-price">$0.00</p>
-                      </div>
-                    </label>
-                  </div>
-                  <div>
-                    <label 
-                      className={`delivery-option ${formData.deliveryMethod === 'homeDelivery' ? 'selected' : ''}`}
-                    >
-                      <input
-                        type="radio"
-                        name="deliveryMethod"
-                        value="homeDelivery"
-                        checked={formData.deliveryMethod === 'homeDelivery'}
-                        onChange={() => handleDeliveryChange('homeDelivery')}
-                        className="delivery-radio-input"
-                        required
-                      />
-                      <div className="delivery-option-content">
-                        <FontAwesomeIcon icon={faMotorcycle} className="delivery-icon" />
-                        <p className="delivery-label">Home Delivery</p>
-                        <p className="delivery-price">$4.99</p>
-                      </div>
-                    </label>
-                  </div>
+                <div className="delivery-option-content">
+                <FontAwesomeIcon icon={faStore} className="delivery-icon" />
+                <p className="delivery-label"><b>Store Pickup</b></p>
+                <p className="delivery-price"><b>$0.00</b></p>
                 </div>
+              </label>
+            </div>
+            <div>
+              <label 
+                className={`delivery-option ${formData.deliveryMethod === 'homeDelivery' ? 'selected' : ''}`}
+              >
+                <input
+                type="radio"
+                name="deliveryMethod"
+                value="homeDelivery"
+                checked={formData.deliveryMethod === 'homeDelivery'}
+                onChange={() => handleDeliveryChange('homeDelivery')}
+                className="delivery-radio-input"
+                required
+                />
+                <div className="delivery-option-content">
+                <FontAwesomeIcon icon={faMotorcycle} className="delivery-icon" />
+                <p className="delivery-label"><b>Home Delivery</b></p>
+                <p className="delivery-price"><b>$4.99</b></p>
+                </div>
+              </label>
+            </div>
+            </div>
+            {errors.deliveryMethod && (
+            <p className="error-message">{errors.deliveryMethod}</p>
+            )}
             
-                {errors.deliveryMethod && (
-                  <p className="error-message">{errors.deliveryMethod}</p>
-                )}
-                
-                {formData.deliveryMethod === 'homeDelivery' && (
-                  <>
-                    <label>Delivery Address</label>
-                    <input id='address' type='text' placeholder='Address' required />
-                    <p className='prefilled'>{formData.city}</p>
-                    <p className='prefilled'>{formData.state}</p>
-                    <input id='zip' type='text' placeholder='Zip Code' required />
-                  </>
-                )}
-              </div>
-              <div className='form-container'>
-                <label>Order Summary</label>
-                <div className='order-summary-container'>
-                  <ul>
-                  {cartItems.map((item, index) => (
-                    <li key={index} className="cart-item">
-                      <div className="cart-item-details">
-                        <div>{item.name}</div>
-                        <div>${item.price.toFixed(2)}</div>
-                      </div>
-                      <QuantityControl 
-                        quantity={item.quantity}
-                        onIncrease={() => updateQuantity(item.name, item.quantity + 1)}
-                        onDecrease={() => {
-                          if (item.quantity <= 1) {
-                            removeFromCart(item.name);
-                          } else {
-                            updateQuantity(item.name, item.quantity - 1);
-                          }
+            {formData.deliveryMethod === 'homeDelivery' && (
+            <>
+              <label>Delivery Address</label>
+              <input id='address' type='text' placeholder='Address' required />
+              <p className='prefilled'>{formData.city}</p>
+              <p className='prefilled'>{formData.state}</p>
+              <input id='zip' type='text' placeholder='Zip Code' required />
+            </>
+            )}
+          </div>
+          <div className='form-container'>
+            <label>Order Summary</label>
+            <div className='order-summary-container'>
+            <ul>
+            {cartItems.map((item, index) => (
+              <li key={index} className="cart-item">
+                <div className="cart-item-details">
+                <div className='cart-item-details-left'>
+                    <p><b>{item.name}</b></p> 
+                    <p>Quantity: {item.quantity}</p>
+                </div>
+                <div className='cart-item-details-right'>
+                    <p><b>${item.price.toFixed(2)}</b></p>
+                    <div className='cart-quantity-control'>
+                    <FontAwesomeIcon 
+                    icon={faMinus}
+                    className='icon decrease'
+                    onClick={(e) => {
+                    e.stopPropagation();
+                    if (item.quantity > 1) {
+                      updateQuantity(item.name, item.quantity - 1);
+                    } else {
+                      removeFromCart(item.name);
+                    }
+                    }}
+                    />
+                    <FontAwesomeIcon 
+                        icon={faPlus}
+                        className='icon increase'
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        updateQuantity(item.name, item.quantity + 1);
                         }}
-                        minQuantity={1}
-                      />
-                    </li>
-                  ))}
-                </ul>
-                <span></span>
-                <div className='order-summary-additions'>
-                <p>Subtotal: ${pricing.subtotal.toFixed(2)}</p>
-                {pricing.tip > 0 && (
-                    <p>Tip: ${pricing.tip.toFixed(2)}</p>
-                  )}
-                <p>Service Fee: ${pricing.serviceFee.toFixed(2)}</p>
-                {pricing.deliveryFee > 0 && (
-                    <p>Delivery Fee: ${pricing.deliveryFee.toFixed(2)}</p>
-                  )}
-                <p>Sales Tax: ${pricing.salesTax.toFixed(2)}</p>
-                <p>Chicago Restaurant Tax: ${pricing.restaurantTax.toFixed(2)}</p>
+                    />
+                    <FontAwesomeIcon 
+                        icon={faXmark} 
+                        className='icon remove'
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        removeFromCart(item.name);
+                        }}
+                        aria-label={`Remove ${item.name} from cart`}
+                    />
                 </div>
-                <span></span>
-                  <p><b>Total: ${pricing.total.toFixed(2)}</b></p>
                 </div>
-                <label>Add a Tip</label>
-                <div className='tip-container'>
-                  <div>
-                    <div className='tip-option'>
-                      <input 
-                          type='radio' 
-                          id='tip1' 
-                          name='tip' 
-                          onChange={handleTipChange}
-                          checked={formData.tip === pricing.subtotal * 0.15}
-                      />
-                      <label htmlFor='tip1'>15%</label>
-                      <label htmlFor='tip1'>${(pricing.subtotal * 0.15).toFixed(2)}</label>
-                    </div>
-                    <div className='tip-option'>
-                      <input 
-                          type='radio' 
-                          id='tip2' 
-                          name='tip' 
-                          onChange={handleTipChange}
-                          checked={formData.tip === pricing.subtotal * 0.20}
-                      />
-                      <label htmlFor='tip2'>20%</label>
-                      <label htmlFor='tip2'>${(pricing.subtotal * 0.20).toFixed(2)}</label>
-                    </div>
-                    <div className='tip-option'>
-                      <input 
-                          type='radio' 
-                          id='tip3' 
-                          name='tip' 
-                          onChange={handleTipChange}
-                          checked={formData.tip === pricing.subtotal * 0.25}
-                      />
-                      <label htmlFor='tip3'>25%</label>
-                      <label htmlFor='tip3'>${(pricing.subtotal * 0.25).toFixed(2)}</label>
-                    </div>
-                  </div>
-                    <div className='custom-tip-input'>
-                        <label htmlFor='customTip'>Custom Tip: $</label>
+                </div>
+              </li>
+            ))}
+            </ul>
+            <span></span>
+            <div>
+            <p>Subtotal: ${pricing.subtotal.toFixed(2)}</p>
+            {pricing.tip > 0 && (
+              <p>Tip: ${pricing.tip.toFixed(2)}</p>
+            )}
+            <p>Service Fee: ${pricing.serviceFee.toFixed(2)}</p>
+            {pricing.deliveryFee > 0 && (
+              <p>Delivery Fee: ${pricing.deliveryFee.toFixed(2)}</p>
+            )}
+            <p>Sales Tax: ${pricing.salesTax.toFixed(2)}</p>
+            <p>Chicago Restaurant Tax: ${pricing.restaurantTax.toFixed(2)}</p>
+            </div>
+            <span></span>
+            <p><b>Total: ${pricing.total.toFixed(2)}</b></p>
+            </div>
+            <label>Add a Tip?</label>
+            <div className='tip-container'>
+                <div>
+                    <div 
+                        className={`tip-option ${formData.tip === pricing.subtotal * 0.15 ? 'active' : ''}`}
+                        onClick={() => handleTipChange({ target: { id: 'tip1' } })}
+                    >
                         <input 
-                            type='number' 
-                            id='customTip' 
-                            placeholder='0.00'
-                            onChange={handleTipChange}
-                            value={customTipAmount}
-                            min="0"
-                            step="0.01"
-                            aria-label="Custom tip amount"
+                            type='radio' 
+                            id='tip1' 
+                            name='tip' 
+                            checked={formData.tip === pricing.subtotal * 0.15}
+                            readOnly
                         />
+                        <label><b>15%</b></label>
+                        <label>${(pricing.subtotal * 0.15).toFixed(2)}</label>
                     </div>
 
-                  <div className='tip-option'>
-                      <input 
-                          type='radio' 
-                          id='tip4' 
-                          name='tip' 
-                          onChange={() => handleTipChange({ target: { value: 0 }})}
-                          checked={formData.tip === 0}
-                      />
-                      <label htmlFor='tip4'>No Tip</label>
-                  </div>
+                    <div 
+                        className={`tip-option ${formData.tip === pricing.subtotal * 0.20 ? 'active' : ''}`}
+                        onClick={() => handleTipChange({ target: { id: 'tip2' } })}
+                    >
+                        <input 
+                            type='radio' 
+                            id='tip2' 
+                            name='tip' 
+                            checked={formData.tip === pricing.subtotal * 0.20}
+                            readOnly
+                        />
+                        <label><b>20%</b></label>
+                        <label>${(pricing.subtotal * 0.20).toFixed(2)}</label>
+                    </div>
+
+                    <div 
+                        className={`tip-option ${formData.tip === pricing.subtotal * 0.25 ? 'active' : ''}`}
+                        onClick={() => handleTipChange({ target: { id: 'tip3' } })}
+                    >
+                        <input 
+                            type='radio' 
+                            id='tip3' 
+                            name='tip' 
+                            checked={formData.tip === pricing.subtotal * 0.25}
+                            readOnly
+                        />
+                        <label><b>25%</b></label>
+                        <label>${(pricing.subtotal * 0.25).toFixed(2)}</label>
+                    </div>
                 </div>
-                <div className='checkbox-container'>
-                  <label htmlFor='terms'>I agree to the <Link to=''>Terms and Conditions</Link></label>
-                  <input type='checkbox' id='terms' required />
+                <div className='custom-tip-input'>
+                    <input
+                        type='number' 
+                        id='customTip' 
+                        placeholder='Custom Tip: $0.00'
+                        onChange={handleTipChange}
+                        value={customTipAmount}
+                        min="0"
+                        step="0.01"
+                        aria-label="Custom tip amount"
+                    />
                 </div>
-                <button type='submit' className='btn-form' onClick={() => alert('Order placed!')}>Place Order</button>
-              </div> 
-            </form>
-          </div>
+
+                <div 
+                    className={`tip-option ${formData.tip === 0 ? 'active' : ''}`}
+                    onClick={() => handleTipChange({ target: { id: 'tip4' } })}
+                >
+                    <input 
+                        type='radio' 
+                        id='tip4' 
+                        name='tip' 
+                        checked={formData.tip === 0}
+                        readOnly
+                    />
+                    <label><b>No Tip</b></label>
+                </div>
+            </div>
+            <div className='checkbox-container'>
+            <label htmlFor='terms'>I agree to the <Link to=''>Terms and Conditions</Link></label>
+            <input type='checkbox' id='terms' required />
+            </div>
+            <div className='horizontal-container'>
+                <button type='submit' className='btn-form' onClick={() => alert('Order placed!')}><b>Place Order</b></button>
+                <Link to="/menu"><div className='btn'><b>Add More Items</b></div></Link>
+            </div>
+          </div> 
+        </form>
         </div>
-      );
+      </div>
+    );
 };
 
 export default Cart;
