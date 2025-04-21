@@ -36,13 +36,13 @@ return (
                               <div style={isOpen ? null : paragraphStyles}>
                                 <p>
                                     Nestled in the heart of Chicago, Little Lemon is conveniently located at 1358 Chestnut Street, making it easily accessible for both locals and visitors. Our restaurant features a charming blend of modern and rustic Mediterranean design, creating a warm and inviting atmosphere for all our guests.
-                                </p>
+                                </p><br></br>
                                 <p>
                                     We offer both indoor and outdoor seating, with a beautifully designed patio area perfect for al fresco dining. Inside, our spacious dining area features elegant decor, soft lighting, and a welcoming ambiance that makes every meal special.
-                                </p>
+                                </p><br></br>
                                 <p>
                                     For those who prefer a more intimate dining experience, we have private dining spaces available for special occasions and events. Additionally, our open kitchen allows guests to watch our skilled chefs at work, adding a touch of authenticity to your meal.
-                                </p>
+                                </p><br></br>
                                 <p>
                                     Parking is available on-site, with additional street parking nearby. We are also wheelchair accessible, ensuring a comfortable experience for all guests.
                                 </p>
@@ -59,13 +59,13 @@ return (
                     </div>
                     <div className='icon-info-container'>
                     <FontAwesomeIcon icon={faClock} />
-                    <p><b>Monday:</b> 10:30 AM - 11:00 PM</p>
-                    <p><b>Tuesday:</b> 10:30 AM - 11:00 PM</p>
-                    <p><b>Wednesday:</b> 10:30 AM - 11:00 PM</p>
-                    <p><b>Thursday:</b> 10:30 AM - 11:00 PM</p>
-                    <p><b>Friday:</b> 10:30 AM - 11:00 PM</p>
-                    <p><b>Saturday:</b> 12:00 PM - 9:00 PM</p>
-                    <p><b>Sunday:</b> Closed</p>
+                    <p className='opening-time'><b>Monday:</b> 10:30 AM - 11:00 PM</p>
+                    <p className='opening-time'><b>Tuesday:</b> 10:30 AM - 11:00 PM</p>
+                    <p className='opening-time'><b>Wednesday:</b> 10:30 AM - 11:00 PM</p>
+                    <p className='opening-time'><b>Thursday:</b> 10:30 AM - 11:00 PM</p>
+                    <p className='opening-time'><b>Friday:</b> 10:30 AM - 11:00 PM</p>
+                    <p className='opening-time'><b>Saturday:</b> 12:00 PM - 9:00 PM</p>
+                    <p className='opening-time'><b>Sunday:</b> Closed</p>
                     </div>
                     <div className='icon-info-container'>
                             <FontAwesomeIcon icon={faBookOpen} />
