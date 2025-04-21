@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext.js';
 import { Link } from 'react-router-dom';
 
@@ -13,7 +13,26 @@ const Header = () => {
     const { cartItems } = useCart();
 
     const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
+        // Only toggle menu if window width is mobile breakpoint
+        if (window.innerWidth <= 1266) {
+            setIsMenuOpen(!isMenuOpen);
+        }
+    };
+
+    // Close menu if window is resized to desktop
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 1266) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const getTotalCartCount = () => {
+        return cartItems.reduce((total, item) => total + item.quantity, 0);
     };
 
     return (
@@ -36,7 +55,7 @@ const Header = () => {
             </nav>
             <Link to='/shopping-cart'><FontAwesomeIcon className='icon desktop-only' icon={faBasketShopping} />
             <div className='cart-count desktop-only'>
-                {cartItems.length || ''}
+                {getTotalCartCount() || ''}
             </div>
             </Link>
             <div
