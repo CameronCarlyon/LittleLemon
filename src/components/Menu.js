@@ -118,33 +118,34 @@ const Menu = () => {
                 {currentMenuItems.map((item, index) => (
                     <div key={index}>
                         <div className='menu-item'>
-                            <h2>{item.name}</h2>
+                            <label>{item.name}</label>
                             <p>{item.description}</p>
                             <div className='menu-item-footer'>
-                                <p><b>${item.price}</b></p>
-                                <p>{item.calories} kcal</p>
+                                <p><i>{item.calories} kcal</i></p>
                                 <div className='dietary-labels'>
-                                    {item.vegetarian && <div className='dietary-label vegetarian'>Vegetarian</div>}
+                                    {item.vegetarian && <div className='dietary-label vegetarian'><i>Vegetarian</i></div>}
                                     {item.vegan && <div className='dietary-label vegan'>Vegan</div>}
-                                    {item.glutenFree && <div className='dietary-label gluten-free'>Gluten-free</div>}
+                                    {item.glutenFree && <div className='dietary-label gluten-free'><i>Gluten-free</i></div>}
                                 </div>
-                                
                             </div>
                             <div className="menu-item-actions">
-                                    <QuantityControl 
-                                        quantity={getCartQuantity(item.name)}
-                                        onIncrease={() => handleAddToCart(item)}
-                                        onDecrease={() => {
-                                            const currentQty = getCartQuantity(item.name);
-                                            if (currentQty <= 1) {
-                                                removeFromCart(item.name);
-                                            } else {
-                                                updateQuantity(item.name, currentQty - 1);
-                                            }
-                                        }}
-                                        minQuantity={0}
-                                    />
+                                <div className='price-label'>
+                                    <b>${item.price}</b>
                                 </div>
+                                <QuantityControl 
+                                    quantity={getCartQuantity(item.name)}
+                                    onIncrease={() => handleAddToCart(item)}
+                                    onDecrease={() => {
+                                        const currentQty = getCartQuantity(item.name);
+                                        if (currentQty <= 1) {
+                                            removeFromCart(item.name);
+                                        } else {
+                                            updateQuantity(item.name, currentQty - 1);
+                                        }
+                                    }}
+                                    minQuantity={0}
+                                />
+                            </div>
                         </div>
                         {index !== currentMenuItems.length - 1 && <span className='menu-divider'></span>}
                     </div>
