@@ -54,17 +54,17 @@ h3 { letter-spacing: 1px; }
 input, textarea, select {
   color: var(--color-green);
   font-family: 'Karla', sans-serif;
-  border: 1px solid var(--color-white);
+  border: 2px solid transparent;
   background-color: var(--color-white);
   outline: none;
   padding: 1rem;
   border-radius: 0.5rem;
   font-size: 1rem;
-  resize: vertical; 
+  resize: vertical;
 }
 
 input:focus, textarea:focus {
-  box-shadow: 0 0 0 2px var(--color-green);
+  border: 2px solid var(--color-green);
 }
 
 b {
@@ -183,6 +183,7 @@ article h1 {
 
 .btn-primary, .btn-secondary {
   display: flex;
+  justify-content: center;
   align-items: center;
   padding: 0.8rem 2rem;
   border-radius: 1.5rem;
@@ -232,6 +233,9 @@ article h1 {
 }
 
 .close-btn {
+  position: static;
+  top: 0;
+  right: 0;
   cursor: pointer;
 }
 
@@ -406,18 +410,20 @@ Footer ul li {
 }
 
 .promotion-banner {
-  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 3rem;
   gap: 1rem;
-  width: 100%;
   color: var(--color-white);
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./assets/bruchetta.svg');
   background-size: cover;
   background-position: center;
+  position: relative;
 }
 
-.promotion-banner input {
-  width: 20rem;
-  color: var(--color-green);
+.promotion-banner form {
+  text-align: center;
 }
 
 .promotion-banner h3 {
@@ -426,6 +432,34 @@ Footer ul li {
   font-weight: 500;
   padding-bottom: 1rem;
   color: var(--color-white);
+}
+
+.promotion-banner .close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+  color: var(--color-white);
+}
+
+.promotion-banner .close-btn:hover {
+  color: var(--color-yellow);
+}
+
+.newsletter-input div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.newsletter-input button {
+  border-radius: 0.5rem;
+  max-width: 4rem;
+}
+
+.newsletter-input input {
+  width: 50%;
 }
 
 .read-more {
@@ -1046,6 +1080,35 @@ form {
 
 .cart-item-details:hover .remove:hover {
     color: darkred;
+}
+
+/* Form validation styles */
+
+.btn-successful {
+  border: 2px solid green;
+  color: green;
+}
+
+.btn-successful:hover {
+  border: 2px solid green;
+}
+
+.btn-error {
+  border: 2px solid darkred;
+  color: darkred;
+}
+
+.btn-error:hover {
+  border: 2px solid darkred;
+}
+
+.form-error {
+    border: 2px solid darkred !important;
+    color: darkred;
+}
+
+.form-successful {
+  border: 2px solid green
 }
 
 @media (max-width: 1266px) {
