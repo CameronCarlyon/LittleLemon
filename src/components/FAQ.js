@@ -3,7 +3,7 @@ import React from 'react';
 let FAQs = [
     {
       question: "What are the restaurant's opening hours?",
-      answer: "We are open from Monday to Saturday, 11:00 AM to 10:00 PM, and Sunday from 12:00 PM to 9:00 PM. An extensive list of our opening hours can be found on the 'Our Restaurant' page."
+      answer: "We are open from Monday to Friday, 10:30 AM to 11:00 PM, and Saturday from 12:00 PM to 9:00 PM. We are closed on Sundays. An extensive list of our opening hours can be found on the 'Our Restaurant' page."
     },
     {
       question: "Do you offer vegetarian or vegan options?",
