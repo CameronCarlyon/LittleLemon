@@ -3,9 +3,70 @@ import { fetchAPI, submitAPI } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 const ReservationForm = () => {
+    const [formData, setFormData] = useState({
+        fullName: '',
+        emailAddress: '',
+        contactNumber: '',
+        occasion: '',
+        guestCount: '',
+        reservationDate: '',
+        reservationTime: '',
+        specialRequests: ''
+    });
     const [availableTimes, setAvailableTimes] = useState([]);
-    const [selectedDate, setSelectedDate] = useState('');
+    const [submitAttempted, setSubmitAttempted] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const navigate = useNavigate();
+
+    const validateEmail = (email) => {
+        return email && email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+    };
+
+    const validateForm = () => {
+        return (
+            formData.fullName.trim() !== '' &&
+            validateEmail(formData.emailAddress) &&
+            formData.guestCount !== '' &&
+            formData.reservationDate !== '' &&
+            formData.reservationTime !== ''
+        );
+    };
+
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
+        }));
+        setSubmitAttempted(false);
+
+        if (id === 'reservationDate') {
+            fetchAvailableTimes(value);
+        }
+    };
+
+    const submitForm = (e) => {
+        e.preventDefault();
+        setSubmitAttempted(true);
+
+        if (!validateForm()) {
+            return;
+        }
+
+        try {
+            const success = submitAPI(formData);
+            if (success) {
+                setIsSubmitted(true);
+                console.log('Reservation submitted:', formData);
+                navigate('/reservations/success', { 
+                    state: { reservationData: formData }
+                });
+            }
+        } catch (error) {
+            console.error('Submission failed:', error);
+            alert('Failed to create reservation. Please try again.');
+        }
+    };
 
     const fetchAvailableTimes = (date) => {
         try {
@@ -19,63 +80,51 @@ const ReservationForm = () => {
         }
     };
 
-    // Handle date change
-    const handleDateChange = (e) => {
-        const newDate = e.target.value;
-        setSelectedDate(newDate);
-        fetchAvailableTimes(newDate);
-    };
-
-    const submitForm = (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-
-        try {
-            const success = submitAPI(data);
-            if (success) {
-                console.log('Reservation submitted successfully:', data);
-                navigate('/reservations/success', { 
-                    state: { reservationData: data }
-                });
-            } else {
-                throw new Error('Submission failed');
-            }
-        } catch (error) {
-            console.error('There was a problem with the submission:', error);
-            alert('Failed to create reservation. Please try again.');
-        }
-    };
-
     React.useEffect(() => {
         const today = new Date().toISOString().split('T')[0];
         fetchAvailableTimes(today);
     }, []);
 
-    const isFormValid = () => {
-        const fullName = document.getElementById('fullName')?.value.trim();
-        const emailAddress = document.getElementById('emailAddress')?.value.trim();
-        const guestCount = document.getElementById('guestCount')?.value;
-        const reservationTime = document.getElementById('reservationTime')?.value;
-
-        return fullName && emailAddress && guestCount && reservationTime;
-    };
+    const showError = submitAttempted && !validateForm();
 
     return (
-        <form onSubmit={submitForm}>
+        <form onSubmit={submitForm} noValidate>
             <h1>Secure Your Reservation</h1>
             
             <label htmlFor="fullName">Full Name *</label>
-            <input id="fullName" type="text" name="fullName" required onChange={() => setAvailableTimes([...availableTimes])} />
+            <input 
+                id="fullName" 
+                type="text" 
+                className={showError && !formData.fullName.trim() ? 'form-error' : ''}
+                value={formData.fullName}
+                onChange={handleInputChange}
+                required 
+            />
             
             <label htmlFor="emailAddress">Email *</label>
-            <input id="emailAddress" type="email" name="emailAddress" required onChange={() => setAvailableTimes([...availableTimes])} />
+            <input 
+                id="emailAddress" 
+                type="email" 
+                className={showError && !validateEmail(formData.emailAddress) ? 'form-error' : ''}
+                value={formData.emailAddress}
+                onChange={handleInputChange}
+                required 
+            />
             
             <label htmlFor="contactNumber">Contact Number</label>
-            <input id="contactNumber" type="tel" name="contactNumber" />
+            <input 
+                id="contactNumber" 
+                type="tel" 
+                value={formData.contactNumber}
+                onChange={handleInputChange}
+            />
             
             <label htmlFor="occasion">Occasion</label>
-            <select id="occasion" name="occasion">
+            <select 
+                id="occasion" 
+                value={formData.occasion}
+                onChange={handleInputChange}
+            >
                 <option value="none">Select an occasion</option>
                 <option value="birthday">Birthday</option>
                 <option value="anniversary">Anniversary</option>
@@ -84,11 +133,16 @@ const ReservationForm = () => {
             </select>
             
             <label htmlFor="guestCount">Number of Guests *</label>
-            <select id="guestCount" name="guestCount" required onChange={() => setAvailableTimes([...availableTimes])}>
+            <select 
+                id="guestCount" 
+                className={showError && !formData.guestCount ? 'form-error' : ''}
+                value={formData.guestCount}
+                onChange={handleInputChange}
+                required
+            >
+                <option value="">Select number of guests</option>
                 {Array.from({ length: 20 }, (_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                        {i + 1}
-                    </option>
+                    <option key={i + 1} value={i + 1}>{i + 1}</option>
                 ))}
             </select>
             
@@ -96,18 +150,20 @@ const ReservationForm = () => {
             <input 
                 id="reservationDate"
                 type="date" 
-                name="reservationDate" 
+                value={formData.reservationDate}
+                onChange={handleInputChange}
                 required 
-                value={selectedDate}
-                onChange={(e) => {
-                    handleDateChange(e);
-                    setAvailableTimes([...availableTimes]);
-                }}
                 min={new Date().toISOString().split('T')[0]}
             />
             
             <label htmlFor="reservationTime">Time Slot *</label>
-            <select id="reservationTime" name="reservationTime" required onChange={() => setAvailableTimes([...availableTimes])}>
+            <select 
+                id="reservationTime" 
+                className={showError && !formData.reservationTime ? 'form-error' : ''}
+                value={formData.reservationTime}
+                onChange={handleInputChange}
+                required
+            >
                 <option value="">Select a time</option>
                 {availableTimes.map((time, index) => (
                     <option key={index} value={time}>
@@ -119,15 +175,18 @@ const ReservationForm = () => {
             <label htmlFor="specialRequests">Special Requests</label>
             <textarea 
                 id="specialRequests"
-                name="specialRequests" 
+                value={formData.specialRequests}
+                onChange={handleInputChange}
                 rows="4" 
                 cols="50" 
                 placeholder="Please note that whilst we will do our best to accommodate your special requests, we cannot guarantee that all will be fulfilled."
             />
             <button
                 type="submit" 
-                className={isFormValid() ? 'btn-form btn-form-active' : 'btn-form'} 
-            ><b>Create Reservation</b></button>
+                className={`btn-unavail ${validateForm() ? 'btn-form-active' : ''}`}
+            >
+                <b>Create Reservation</b>
+            </button>
         </form>
     );
 };

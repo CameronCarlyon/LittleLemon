@@ -11,6 +11,20 @@ function ContactUsPage() {
         message: ''
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [submitAttempted, setSubmitAttempted] = useState(false);
+
+    const validateEmail = (email) => {
+        return email && email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+    };
+
+    const validateForm = () => {
+        return (
+            formData.fullName.trim() !== '' &&
+            validateEmail(formData.emailAddress) &&
+            formData.subject.trim() !== '' &&
+            formData.message.trim() !== ''
+        );
+    };
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
@@ -18,28 +32,32 @@ function ContactUsPage() {
             ...prev,
             [id]: value
         }));
-    };
-
-    const isFormValid = () => {
-        return Object.values(formData).every(value => value.trim() !== '');
+        setSubmitAttempted(false);
     };
 
     const submitForm = (e) => {
         e.preventDefault();
-        if (isFormValid()) {
-            console.log('Contact form submitted with data:', formData);
-            setIsSubmitted(true);
-            // Clear form
-            setFormData({
-                fullName: '',
-                emailAddress: '',
-                subject: '',
-                message: ''
-            });
-            // Reset submission state after delay
-            setTimeout(() => setIsSubmitted(false), 2000);
+        
+        if (!validateForm()) {
+            setSubmitAttempted(true);
+            return;
         }
+        
+        setIsSubmitted(true);
+        console.log('Contact form submitted with data:', formData);
+        
+        // Clear form
+        setFormData({
+            fullName: '',
+            emailAddress: '',
+            subject: '',
+            message: ''
+        });
+        
+        setTimeout(() => setIsSubmitted(false), 2000);
     };
+
+    const showError = submitAttempted && !validateForm();
 
     return (
         <div className="App">
@@ -67,11 +85,12 @@ function ContactUsPage() {
                             <p> Alternatively, please fill out the following contact form and we'll aim to get back in touch with you shortly!</p>
                         </div>
                     </div>
-                    <form className="contact-form" onSubmit={submitForm}>
+                    <form className="contact-form" onSubmit={submitForm} noValidate>
                         <input
                             required
                             id='fullName'
                             type="text"
+                            className={showError && !formData.fullName.trim() ? 'form-error' : ''}
                             placeholder="Your Name"
                             value={formData.fullName}
                             onChange={handleInputChange}
@@ -80,6 +99,7 @@ function ContactUsPage() {
                             required
                             id='emailAddress'
                             type="email"
+                            className={showError && !validateEmail(formData.emailAddress) ? 'form-error' : ''}
                             placeholder="Your Email Address"
                             value={formData.emailAddress}
                             onChange={handleInputChange}
@@ -88,6 +108,7 @@ function ContactUsPage() {
                             required
                             id='subject'
                             type="text"
+                            className={showError && !formData.subject.trim() ? 'form-error' : ''}
                             placeholder="Subject"
                             value={formData.subject}
                             onChange={handleInputChange}
@@ -95,13 +116,14 @@ function ContactUsPage() {
                         <textarea
                             required
                             id='message'
+                            className={showError && !formData.message.trim() ? 'form-error' : ''}
                             placeholder="Message"
                             value={formData.message}
                             onChange={handleInputChange}
                         />
                         <button 
                             type='submit' 
-                            className={`btn-form ${isFormValid() ? 'btn-form-active' : ''}`}
+                            className={`btn-form ${isSubmitted ? 'btn-form-active' : ''}`}
                         >
                             <b>{isSubmitted ? 'Sent!' : 'Submit'}</b>
                         </button>
