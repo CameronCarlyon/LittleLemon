@@ -11,7 +11,7 @@ function MainPage() {
         <Header />
         <Hero />
         <div className='main-content'>
-            <p>ORDER FOR DELIVERY!</p>
+            <p><b>ORDER FOR DELIVERY!</b></p>
             <Menu/>
         </div>
         <Promotion />
