@@ -123,7 +123,7 @@ function ContactUsPage() {
                         />
                         <button 
                             type='submit' 
-                            className={`btn-form ${isSubmitted ? 'btn-form-active' : ''}`}
+                            className={`btn-unavail ${validateForm() ? 'btn-form-active' : ''}`}
                         >
                             <b>{isSubmitted ? 'Sent!' : 'Submit'}</b>
                         </button>

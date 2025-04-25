@@ -91,23 +91,25 @@ const ReservationForm = () => {
         <form onSubmit={submitForm} noValidate>
             <h1>Secure Your Reservation</h1>
             
-            <label htmlFor="fullName">Full Name *</label>
+            <label htmlFor="fullName" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Full Name *</label>
             <input 
                 id="fullName" 
                 type="text" 
                 className={showError && !formData.fullName.trim() ? 'form-error' : ''}
                 value={formData.fullName}
                 onChange={handleInputChange}
-                required 
+                placeholder={showError ? "Please enter your name" : ""}
+                required
             />
             
-            <label htmlFor="emailAddress">Email *</label>
+            <label htmlFor="emailAddress" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Email *</label>
             <input 
                 id="emailAddress" 
                 type="email" 
                 className={showError && !validateEmail(formData.emailAddress) ? 'form-error' : ''}
                 value={formData.emailAddress}
                 onChange={handleInputChange}
+                placeholder={showError ? "Please enter a valid email address" : ""}
                 required 
             />
             
@@ -132,7 +134,7 @@ const ReservationForm = () => {
                 <option value="casualDining">Casual Dining</option>
             </select>
             
-            <label htmlFor="guestCount">Number of Guests *</label>
+            <label htmlFor="guestCount" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Number of Guests *</label>
             <select 
                 id="guestCount" 
                 className={showError && !formData.guestCount ? 'form-error' : ''}
@@ -146,17 +148,18 @@ const ReservationForm = () => {
                 ))}
             </select>
             
-            <label htmlFor="reservationDate">Date *</label>
+            <label htmlFor="reservationDate" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Date *</label>
             <input 
                 id="reservationDate"
                 type="date" 
                 value={formData.reservationDate}
                 onChange={handleInputChange}
+                className={showError && !formData.reservationDate ? 'form-error' : ''}
                 required 
                 min={new Date().toISOString().split('T')[0]}
             />
             
-            <label htmlFor="reservationTime">Time Slot *</label>
+            <label htmlFor="reservationTime" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Time Slot *</label>
             <select 
                 id="reservationTime" 
                 className={showError && !formData.reservationTime ? 'form-error' : ''}
