@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,9 +24,10 @@ const Cart = () => {
     
       const [errors, setErrors] = useState({});
       const [isSubmitted, setIsSubmitted] = useState(false);
-      const [submitAttempted, setSubmitAttempted] = useState(false); // Add this line
+      const [submitAttempted, setSubmitAttempted] = useState(false);
+      const [isProcessing, setIsProcessing] = useState(false);
     
-      const { cartItems, removeFromCart, updateQuantity } = useCart();
+      const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
       
       const [pricing, setPricing] = useState({
         subtotal: 0,
@@ -40,7 +41,7 @@ const Cart = () => {
 
       const [customTipAmount, setCustomTipAmount] = useState('');
 
-      // Add this state to track selected tip percentage
+      // State to track selected tip percentage
       const [selectedTipPercentage, setSelectedTipPercentage] = useState(0);
 
       // Update the calculateTipAmount function
@@ -151,7 +152,9 @@ const Cart = () => {
         );
       };
     
-      const handleSubmit = (e) => {
+      const navigate = useNavigate();
+
+      const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitAttempted(true);
 
@@ -159,9 +162,25 @@ const Cart = () => {
             return;
         }
 
-        console.log('Order submitted:', formData);
-        setIsSubmitted(true);
-        // Clear form or redirect to confirmation
+        setIsProcessing(true);
+        
+        // Store cart items before clearing
+        const orderItems = [...cartItems];
+        
+        // Add 5 second delay
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        
+        // Navigate first with cart items
+        navigate('/cart/success', { 
+            state: { 
+                orderData: formData,
+                pricing: pricing,
+                orderItems: orderItems // Add ordered items to state
+            }
+        });
+        
+        // Clear cart after navigation
+        clearCart();
       };
 
       const showError = submitAttempted && !validateForm();
@@ -456,8 +475,9 @@ const Cart = () => {
                 <button 
                     type='submit' 
                     className={`btn-unavail ${validateForm() ? 'btn-form-active' : ''}`}
+                    disabled={isProcessing}
                 >
-                    <b>Place Order</b>
+                    <b>{isProcessing ? 'Processing...' : 'Place Order'}</b>
                 </button>
                 <Link to="/menu"><div className='btn'><b>Add More Items</b></div></Link>
             </div>

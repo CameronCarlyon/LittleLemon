@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext.js';
-import { Link } from 'react-router-dom';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBasketShopping, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
 
@@ -40,24 +39,25 @@ const Header = () => {
             <Link to='/home'><img src={lemonLogo} alt='Little Lemon Logo' style={{ maxWidth: '3rem'}}/></Link>
             <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`}>
                 <ul>
-                    <li><Link to='/menu' onClick={toggleMenu}>Menu</Link></li>
+                    <li><NavLink to='/menu' onClick={toggleMenu} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Menu</NavLink></li>
                     {isMenuOpen && <span></span>}
-                    <li><Link to='/reservations' onClick={toggleMenu}>Reservations</Link></li>
+                    <li><NavLink to='/reservations' onClick={toggleMenu} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Reservations</NavLink></li>
                     {isMenuOpen && <span></span>}
-                    <li><Link to='/our-restaurant' onClick={toggleMenu}>Our Restaurant</Link></li>
+                    <li><NavLink to='/our-restaurant' onClick={toggleMenu} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Our Restaurant</NavLink></li>
                     {isMenuOpen && <span></span>}
-                    <li><Link to='/contact-us' onClick={toggleMenu}>Contact Us</Link></li>
+                    <li><NavLink to='/contact-us' onClick={toggleMenu} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Contact Us</NavLink></li>
                     {isMenuOpen && <span></span>}
-                    <li><Link to='/faqs' onClick={toggleMenu}>FAQs</Link></li>
+                    <li><NavLink to='/faqs' onClick={toggleMenu} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>FAQs</NavLink></li>
                     {isMenuOpen && <span></span>}
-                    {isMenuOpen && <li><Link to='/shopping-cart'>Shopping Cart</Link></li>}
+                    {isMenuOpen && <li><NavLink to='/cart' className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Shopping Cart</NavLink></li>}
                 </ul>
             </nav>
-            <Link to='/shopping-cart'><FontAwesomeIcon className='icon desktop-only' icon={faBasketShopping} />
-            <div className='cart-count desktop-only'>
-                {getTotalCartCount() || ''}
-            </div>
-            </Link>
+            <NavLink to='/cart' className="desktop-only">
+                <FontAwesomeIcon className='icon' icon={faBasketShopping} />
+                <div className='cart-count'>
+                    {getTotalCartCount() || ''}
+                </div>
+            </NavLink>
             <div
                 className="burger-menu mobile-only" 
                 onClick={toggleMenu}

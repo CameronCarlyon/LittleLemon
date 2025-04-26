@@ -29,14 +29,29 @@ body {
 }
 
 a {
+  cursor: pointer;
   text-decoration: none;
   font-weight: 800;
   color: var(--color-green);
 }
 
 a:hover {
-  cursor: pointer;
   color: var(--color-yellow);
+}
+
+.nav-link:hover {
+  color: var(--color-dark-greengreen);
+  text-decoration: underline;
+  text-decoration-color: var(--color-yellow);
+  text-underline-offset: 0.2rem;
+  text-decoration-thickness: 0.3rem;
+}
+
+.nav-link.active {
+  text-decoration: underline;
+  text-decoration-color: var(--color-yellow);
+  text-underline-offset: 0.2rem;
+  text-decoration-thickness: 0.5rem;
 }
 
 /* Typography */
@@ -373,6 +388,10 @@ Footer ul li {
   font-weight: 1000;
 }
 
+.main-content p {
+  color: var(--color-green);
+}
+
 .showcase-img {
   border-radius: 1rem;
   outline: 0.1rem solid var(--color-green);
@@ -658,7 +677,7 @@ span {
 .delivery-option.selected div {
   background-color: var(--color-green);
   color: var(--color-white);
-  border: 1px solid var(--color-green);
+  border: 2px solid var(--color-green);
 }
 
 .delivery-options-container {
@@ -729,14 +748,10 @@ span {
 
 .checkbox-container input {
   height: 100%;
-  border: 1px solid var(--color-green);
+  border: 2px solid var(--color-green);
   background-color: transparent;
   color: var(--color-green);
 }
-
-/* .checkbox-container input:checked {
-  background-color: var(--color-green);
-} */
 
 .reservation-content {
   display: flex;
@@ -744,6 +759,17 @@ span {
   flex-direction: row;
   padding: 2rem 25%;
   gap: 3rem;
+}
+
+.order-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem 25%;
+  text-align: left;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--color-white);
 }
 
 .reservation-details {
@@ -771,7 +797,6 @@ span {
 .reservation-details div {
   background-color: var(--color-white);
   border-radius: 1rem;
-  padding: 0.5rem;
 }
 
 .reservation-card {
@@ -780,7 +805,11 @@ span {
   font-weight: 200;
   font-size: 1.1rem;
   min-width: 50%;
+  padding: 1rem;
+  gap: 1rem;
 }
+
+
 
 form {
   display: flex;
@@ -939,6 +968,8 @@ form {
 
 .quantity-control[data-active="true"] {
     background-color: var(--color-green);
+    border: 7px solid var(--color-green);
+    transition: all 0.3s ease-in-out;
 }
 
 .quantity-control:hover {
@@ -974,7 +1005,7 @@ form {
     color: var(--color-green);
     cursor: pointer;
     padding: 0.5rem;
-    border-radius: 0.4rem;
+    border-radius: 0.2rem;
     max-width: 3rem;
     display: flex;
     align-items: center;
@@ -1041,6 +1072,7 @@ form {
   flex-direction: column;
   justify-content: space-between;
   text-align: left;
+  padding: 0rem;
 }
 
 .cart-item-details-right {
@@ -1049,28 +1081,13 @@ form {
   text-align: right;
   justify-content: space-between;
   min-height: 100%;
+  padding: 0rem;
 }
 
 .cart-quantity-control {
   display: flex;
   flex-direction: row;
   gap: 1rem;
-}
-
-.cart-item-details .remove {
-    color: transparent;
-}
-
-.cart-item-details:hover .remove {
-    color: var(--color-green);
-}
-
-.cart-item-details:hover .remove:hover {
-    color: red;
-}
-
-.cart-item-details:hover .decrease, .increase:hover {
-  color: lightseagreen;
 }
 
 .decrease, .increase, .remove {
@@ -1080,7 +1097,6 @@ form {
 /* Cart item control icons */
 .decrease, .increase, .remove {
     color: transparent;
-    transition: color 0.2s ease;
 }
 
 /* Show icons on cart item hover */
@@ -1090,17 +1106,13 @@ form {
     color: var(--color-green);
 }
 
-/* Individual hover states for each icon */
+.cart-item-details:hover .increase:hover, 
 .cart-item-details:hover .decrease:hover {
-    color: var(--color-salmon);
-}
-
-.cart-item-details:hover .increase:hover {
     color: var(--color-yellow);
 }
 
 .cart-item-details:hover .remove:hover {
-    color: darkred;
+    color: red;
 }
 
 /* Form validation styles */
@@ -1128,12 +1140,31 @@ form {
     color: darkred;
 }
 
+.form-error-text {
+  color: darkred;
+}
+
 .form-successful {
   border: 2px solid green
 }
 
+.order-items ul {
+    list-style: none;
+    padding: 0;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-xs) 0;
+}
+
 @media (max-width: 1266px) {
-  Header, .hero, .main-content, .reservation-content { padding: 5% 5%; }
+  .hero, .main-content, .reservation-content { padding: 2rem 5%; }
+
+  Header {
+    padding: 0rem 5%;
+  }
   
   .desktop-only { display: none; }
   .mobile-only { display: block; }
@@ -1192,6 +1223,12 @@ form {
   }
   .decrease, .increase, .remove {
     color: var(--color-green);
+  }
+  .promotion-banner {
+    padding: 2rem 2rem;
+  }
+  .newsletter-input input {
+    width: 100%;
   }
   Footer ul li {
     display: list-item;
