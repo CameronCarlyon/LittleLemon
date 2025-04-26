@@ -13,10 +13,11 @@ import FAQsPage from './pages/FAQsPage.js';
 import ShoppingCartPage from './pages/ShoppingCartPage.js';
 import NoPage from './pages/NoPage.js';
 import ReservationSuccessfulPage from './pages/ReservationSuccessfulPage.js';
+import CartSuccesfulPage from './pages/CartSuccessfulPage.js';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/littlelemon'>
       <CartProvider>
         <ScrollToTop />
         <div className="App">
@@ -28,8 +29,9 @@ function App() {
             <Route path='/our-restaurant' element={<OurRestaurantPage />} />
             <Route path='/contact-us' element={<ContactUsPage />} />
             <Route path='/faqs' element={<FAQsPage />} />
-            <Route path='/shopping-cart' element={<ShoppingCartPage />} />
+            <Route path='/cart' element={<ShoppingCartPage />} />
             <Route path='/reservations/success' element={<ReservationSuccessfulPage />} />
+            <Route path='/cart/success' element={<CartSuccesfulPage />} />
             <Route path='*' element={<NoPage />} />
           </Routes>
         </div>
