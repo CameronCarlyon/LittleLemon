@@ -11,10 +11,12 @@ return (
     <div>
         <Header />
             <div className="main-content">
+                <article>
                     <h1>Frequently Asked Questions</h1>
                     <p>Looking for answers? You may find them in the FAQs below.</p>
                     <FAQ />
                     <p>Still have questions? Feel free to <Link to={'/contact-us'}>reach out to us directly.</Link></p>
+                    </article>
             </div>
             <Promotion />
         <Footer />
