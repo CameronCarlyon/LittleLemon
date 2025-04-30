@@ -98,7 +98,6 @@ const ReservationForm = () => {
                 className={showError && !formData.fullName.trim() ? 'form-error' : ''}
                 value={formData.fullName}
                 onChange={handleInputChange}
-                placeholder={showError ? "Please enter your name" : ""}
                 required
             />
             
@@ -109,7 +108,6 @@ const ReservationForm = () => {
                 className={showError && !validateEmail(formData.emailAddress) ? 'form-error' : ''}
                 value={formData.emailAddress}
                 onChange={handleInputChange}
-                placeholder={showError ? "Please enter a valid email address" : ""}
                 required 
             />
             
@@ -127,7 +125,7 @@ const ReservationForm = () => {
                 value={formData.occasion}
                 onChange={handleInputChange}
             >
-                <option value="none">Select an occasion</option>
+                <option value="none"></option>
                 <option value="birthday">Birthday</option>
                 <option value="anniversary">Anniversary</option>
                 <option value="business">Business Meeting</option>
@@ -142,7 +140,7 @@ const ReservationForm = () => {
                 onChange={handleInputChange}
                 required
             >
-                <option value="">Select number of guests</option>
+                <option value=""></option>
                 {Array.from({ length: 20 }, (_, i) => (
                     <option key={i + 1} value={i + 1}>{i + 1}</option>
                 ))}
@@ -152,6 +150,7 @@ const ReservationForm = () => {
             <input 
                 id="reservationDate"
                 type="date" 
+                placeholder=''
                 value={formData.reservationDate}
                 onChange={handleInputChange}
                 className={showError && !formData.reservationDate ? 'form-error' : ''}
@@ -167,7 +166,7 @@ const ReservationForm = () => {
                 onChange={handleInputChange}
                 required
             >
-                <option value="">Select a time</option>
+                <option value=""></option>
                 {availableTimes.map((time, index) => (
                     <option key={index} value={time}>
                         {time}
