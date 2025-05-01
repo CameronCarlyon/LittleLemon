@@ -77,7 +77,7 @@ const Menu = () => {
         { name: 'Mediterranean Sangria', description: "Red wine infused with citrus and Mediterranean spices.", price: 8.99, calories: 180, vegetarian: true, vegan: true, glutenFree: true },
         { name: 'Rosewater Lemonade', description: "Refreshing homemade lemonade with a floral twist.", price: 4.99, calories: 140, vegetarian: true, vegan: true, glutenFree: true },
         { name: 'Still or Sparkling Water', description: "Refreshing bottled water.", price: 2.99, calories: 0, vegetarian: true, vegan: true, glutenFree: true },
-        { name: 'Soft Drinks', description: "A selection of sodas including cola, orange soda, and lemon-lime soda.", price: 3.99, calories: 150, vegetarian: true, vegan: true, glutenFree: true },
+        { name: 'Soft Drink', description: "A selection of sodas including cola, orange soda, and lemon-lime soda.", price: 3.99, calories: 150, vegetarian: true, vegan: true, glutenFree: true },
     ];
 
     // Map of category names to their corresponding menu arrays
@@ -123,9 +123,9 @@ const Menu = () => {
                             <div className='menu-item-footer'>
                                 <p><i>{item.calories} kcal</i></p>
                                 <div className='dietary-labels'>
-                                    {item.vegetarian && <div className='dietary-label vegetarian'><i>Vegetarian</i></div>}
-                                    {item.vegan && <div className='dietary-label vegan'>Vegan</div>}
-                                    {item.glutenFree && <div className='dietary-label gluten-free'><i>Gluten-free</i></div>}
+                                    {item.vegetarian && <div className='dietary-label vegetarian'><p><i>Vegetarian</i></p></div>}
+                                    {item.vegan && <div className='dietary-label vegan'><p><i>Vegan</i></p></div>}
+                                    {item.glutenFree && <div className='dietary-label gluten-free'><i><p>Gluten-free</p></i></div>}
                                 </div>
                             </div>
                             <div className="menu-item-actions">
