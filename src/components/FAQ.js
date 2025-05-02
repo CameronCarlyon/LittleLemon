@@ -53,12 +53,12 @@ const FAQ = () => {
     return (
         <div className='FAQ'>
               {FAQs.map((faq, index) => (
-                <div 
+                <div
                     className='QA' 
                     key={index} 
                     onClick={() => setVisibleIndex(visibleIndex === index ? null : index)}>
-                    <p style={{ fontWeight: 'bold', color: '#495E57' }}>{faq.question}</p>
-                    {visibleIndex === index && <p style={{ marginTop: '5px', color: '#333' }}>{faq.answer}</p>}
+                    <p style={{ fontWeight: 'bold' }}>{faq.question}</p>
+                    {visibleIndex === index && <p style={{ marginTop: '5px' }}>{faq.answer}</p>}
                 </div>
               ))}  
         </div>
