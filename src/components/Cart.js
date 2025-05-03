@@ -108,25 +108,23 @@ const Cart = () => {
     
       const handleTipChange = (e) => {
         const { value, id } = e.target;
-        const subtotal = pricing.subtotal;
-        let tipAmount = 0;
-    
-        // Handle percentage-based tips
-        if (id === 'tip1') {
-            setSelectedTipPercentage(0.15);
-            setCustomTipAmount('');
-        } else if (id === 'tip2') {
-            setSelectedTipPercentage(0.20);
-            setCustomTipAmount('');
-        } else if (id === 'tip3') {
-            setSelectedTipPercentage(0.25);
-            setCustomTipAmount('');
-        } else if (id === 'tip4') {
-            setSelectedTipPercentage(0);
-            setCustomTipAmount('');
-        } else if (id === 'customTip') {
-            setSelectedTipPercentage(0);
+        
+        if (id === 'customTip') {
+            // When entering a custom tip, clear percentage selection
+            setSelectedTipPercentage(null); // Changed from 0 to null
             setCustomTipAmount(value === '' ? '' : value);
+        } else {
+            // When selecting a percentage, clear custom tip
+            if (id === 'tip1') {
+                setSelectedTipPercentage(0.15);
+            } else if (id === 'tip2') {
+                setSelectedTipPercentage(0.20);
+            } else if (id === 'tip3') {
+                setSelectedTipPercentage(0.25);
+            } else if (id === 'tip4') {
+                setSelectedTipPercentage(0);
+            }
+            setCustomTipAmount('');
         }
     };
     
@@ -188,6 +186,7 @@ const Cart = () => {
     return (
       <div className='app'>
         <div className='main-content'>
+        <h1 className='cart-header'>Cart</h1>
         <form className='basket-container' onSubmit={handleSubmit} noValidate>
           <div className='form-container'>
             <label>Your Details</label>
@@ -274,8 +273,8 @@ const Cart = () => {
             />
             <div className={`delivery-option-content ${showError && !formData.deliveryMethod ? 'btn-error' : ''}`}>
                 <FontAwesomeIcon icon={faMotorcycle} className="delivery-icon" />
-                <p className="delivery-label"><b>Home Delivery</b></p>
-                <p className="delivery-price"><b>$4.99</b></p>
+                <p><b>Home Delivery</b></p>
+                <p><b>$4.99</b></p>
             </div>
         </label>
     </div>
@@ -431,13 +430,14 @@ const Cart = () => {
                         onChange={handleTipChange}
                         value={customTipAmount}
                         min="0"
-                        step="0.01"
+                        step="0.1"
                         aria-label="Custom tip amount"
+                        className={customTipAmount ? 'active' : ''}
                       />
                     </div>
 
                     <div 
-                      className={`tip-option ${selectedTipPercentage === 0 ? 'active' : ''}`}
+                      className={`tip-option ${selectedTipPercentage === 0 && !customTipAmount ? 'active' : ''}`}
                       onClick={() => handleTipChange({ target: { id: 'tip4' } })}
                     >
                       <input 
