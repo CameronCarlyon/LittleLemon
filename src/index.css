@@ -133,6 +133,7 @@ input, textarea, select {
   min-height: 3.3rem;
   text-align: left;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 input:focus, textarea:focus {
@@ -724,6 +725,7 @@ span {
   font-size: 1rem;
   background-color: var(--color-white);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
 }
 
 .delivery-option-content:hover {
@@ -1460,15 +1462,5 @@ input::-webkit-date-and-time-value {
   text-align: left;
 }
 
-/* Font Loading */
-@font-face {
-  font-family: 'Karla';
-  font-display: swap;
-  src: local('Karla'), url('/fonts/Karla-Regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Markazi Text';
-  font-display: swap;
-  src: local('Markazi Text'), url('/fonts/MarkaziText-Regular.woff2') format('woff2');
-}
+/* Font Loading - Using Google Fonts as fallback */
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;700&family=Markazi+Text:wght@400;500;600&display=swap');
