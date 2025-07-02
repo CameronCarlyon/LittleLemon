@@ -724,8 +724,8 @@ span {
   width: 100%;
   font-size: 1rem;
   background-color: var(--color-white);
+  mask-image: -webkit-radial-gradient(white, black);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
-  mask-image: radial-gradient(white, black);
 }
 
 .delivery-option-content:hover {
@@ -777,6 +777,7 @@ span {
   flex-direction: column;
   gap: 1rem;
   width: 50%;
+  mask-image: -webkit-radial-gradient(white, black);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
@@ -794,6 +795,7 @@ span {
   background-color: var(--color-white);
   padding: 1rem;
   border-radius: 0.5rem;
+  mask-image: -webkit-radial-gradient(white, black);;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
@@ -1036,6 +1038,7 @@ form {
   text-align: center;
   border: 2px solid transparent;
   -webkit-appearance: none;
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 
@@ -1404,6 +1407,7 @@ input[type="time"] {
 .form-container,
 .order-summary-container,
 .delivery-option-content {
+  mask-image: -webkit-radial-gradient(white, black);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
