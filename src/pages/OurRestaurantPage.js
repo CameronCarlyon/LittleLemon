@@ -21,7 +21,6 @@ const paragraphStyles = {
 
 function OurRestaurantPage() {
     const [isOpen, setIsOpen] = React.useState(false);
-    const [showReadMoreButton, setShowReadMoreButton] = React.useState(false);
     
 return (
     <div className="App">
