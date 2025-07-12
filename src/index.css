@@ -83,23 +83,12 @@ a {
   max-width: fit-content;
 }
 
-a:hover {
-  color: var(--color-yellow);
-}
-
-.nav-link:hover {
-  color: var(--color-dark-greengreen);
-  text-decoration: underline;
-  text-decoration-color: var(--color-yellow);
-  text-underline-offset: 0.2rem;
-  text-decoration-thickness: 0.3rem;
-}
-
-.nav-link.active {
-  text-decoration: underline;
-  text-decoration-color: var(--color-yellow);
-  text-underline-offset: 0.2rem;
-  text-decoration-thickness: 0.5rem;
+nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1rem;
 }
 
 /* Typography */
@@ -682,12 +671,10 @@ Footer ul li {
   gap: 1rem;
 }
 
-span {
+/* span {
   display: flex;
   width: 100%;
-  border: 0.5px solid var(--color-green);
-  
-}
+} */
 
 .order-summary-container span {
   margin: 1rem 0rem;
@@ -1298,7 +1285,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     max-width: 80%;
   }
 
-  .desktop-only { display: none; }
+  .desktop-only {
+    width: 100%;
+    display: none;
+  }
   .mobile-only { display: block; }
   
   /* Mobile Navigation */
