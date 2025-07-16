@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import QuantityControl from './QuantityControl';
+import Divider from './Divider';
 
 const Menu = () => {
     const [activeCategory, setActiveCategory] = useState('Breakfast');
