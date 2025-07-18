@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 
 const HyperlinkLabel = ({ href, text, children, ...props }) => {
@@ -51,9 +52,8 @@ const HyperlinkLabel = ({ href, text, children, ...props }) => {
     }, []);
 
     return (
-        <a 
+        <Link to={`${href}`} 
             ref={linkRef} 
-            href={href} 
             style={{ 
                 position: 'relative',
                 display: 'inline-block',
@@ -76,7 +76,7 @@ const HyperlinkLabel = ({ href, text, children, ...props }) => {
                     borderRadius: '2.5px'
                 }}
             />
-        </a>
+        </Link>
     );
 };
 
