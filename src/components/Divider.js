@@ -22,13 +22,9 @@ const Divider = () => {
     }, []);
 
     return (
-        <hr 
+        <span 
             ref={dividerRef}
-            style={{ 
-                border: 'none', 
-                borderTop: '1px solid #ccc', 
-                margin: '16px 0' 
-            }} 
+            className="divider"
         />
     );
 };
