@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useCart } from '../context/CartContext.js';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import HyperlinkLabel from './HyperlinkLabel.js';
 import Divider from './Divider.js';
 import { gsap } from 'gsap';
-import Lottie from 'lottie-react'; // Better for conditional animations
+import Lottie from 'lottie-react';
 
 import lemonLogo from '../assets/lemon.png';
-// Import your Lottie animation JSON
 import cartIcon from '../assets/system-regular-65-shopping-basket-hover-wiggle.json';
+import hamburgerIcon from '../assets/icons/Menu - Open and close.json';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +16,7 @@ const Header = () => {
     const mobileNavRef = useRef(null);
     const animationRef = useRef(null);
     const cartLottieRef = useRef(); // Ref for cart animation
+    const hamburgerLottieRef = useRef(); // Add ref for hamburger animation
 
     // Navigation items array
     const navigationItems = [
@@ -31,7 +30,22 @@ const Header = () => {
     // Toggle menu - removed isAnimating check to allow interruption
     const toggleMenu = () => {
         if (window.innerWidth <= 1266) {
-            setIsMenuOpen(prev => !prev);
+            setIsMenuOpen(prev => {
+                const newState = !prev;
+                
+                // Trigger hamburger animation based on menu state
+                if (hamburgerLottieRef.current) {
+                    if (newState) {
+                        // Play open animation (hamburger to X) - SWAP TO SECOND HALF
+                        hamburgerLottieRef.current.playSegments([30, 60], true);
+                    } else {
+                        // Play close animation (X to hamburger) - SWAP TO FIRST HALF
+                        hamburgerLottieRef.current.playSegments([0, 30], true);
+                    }
+                }
+                
+                return newState;
+            });
         }
     };
 
@@ -185,7 +199,6 @@ const Header = () => {
                 style={{ display: 'none' }}
             >
                 <ul>
-                    {/* Main navigation items */}
                     {navigationItems.map((item, index) => (
                         <React.Fragment key={item.href}>
                             <li>
@@ -238,16 +251,19 @@ const Header = () => {
                 </NavLink>
             </div>
 
-            {/* Mobile Burger Menu */}
+            {/* Mobile Burger Menu - Replace FontAwesome with Lottie */}
             <div
                 className="burger-menu mobile-only" 
                 onClick={toggleMenu}
                 aria-label="Toggle menu"
                 aria-expanded={isMenuOpen}
             >
-                <FontAwesomeIcon 
-                    className='icon' 
-                    icon={isMenuOpen ? faTimes : faBars} 
+                <Lottie
+                    lottieRef={hamburgerLottieRef}
+                    animationData={hamburgerIcon}
+                    autoplay={false}
+                    loop={false}
+                    style={{ width: '2rem', height: '2rem' }}
                 />
             </div>
             </div>
