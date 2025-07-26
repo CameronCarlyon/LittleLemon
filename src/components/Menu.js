@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import { useCart } from '../context/CartContext';
 import QuantityControl from './QuantityControl';
 import Divider from './Divider';
@@ -6,6 +7,8 @@ import Divider from './Divider';
 const Menu = () => {
     const [activeCategory, setActiveCategory] = useState('Breakfast');
     const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart();
+    const menuItemsRef = useRef(null);
+    const animationRef = useRef(null);
 
     const handleAddToCart = (item) => {
         addToCart({ ...item, quantity: 1 });
@@ -100,6 +103,55 @@ const Menu = () => {
     // Get current menu items based on active category
     const currentMenuItems = menuMap[activeCategory];
 
+    // Animate menu items when category changes
+    useEffect(() => {
+        const container = menuItemsRef.current;
+        if (!container) return;
+
+        // Kill any existing animation
+        if (animationRef.current) {
+            animationRef.current.kill();
+        }
+
+        // Get all menu item elements (both .menu-item and .divider)
+        const menuItems = container.querySelectorAll('.menu-item, .divider');
+        
+        if (menuItems.length === 0) return;
+
+        // Create GSAP context for cleanup
+        const ctx = gsap.context(() => {
+            // Initial state
+            gsap.set(menuItems, {
+                opacity: 0,
+                y: -20,
+            });
+
+            // Create timeline for staggered animation
+            const tl = gsap.timeline();
+            animationRef.current = tl;
+
+            // Animate menu items in with stagger
+            tl.to(menuItems, {
+                opacity: 1,
+                y: 0,
+                duration: 0.25,
+                ease: 'power2.out',
+                stagger: {
+                    amount: 0.5,
+                    from: 'start'
+                }
+            });
+        }, container);
+
+        // Cleanup function
+        return () => {
+            ctx.revert();
+            if (animationRef.current) {
+                animationRef.current.kill();
+            }
+        };
+    }, [activeCategory]); // Retrigger when activeCategory changes
+
     return (
         <div className='menu'>
             <div className='menu-categories'>
@@ -115,9 +167,9 @@ const Menu = () => {
                     ))}
                 </ul>
             </div>
-            <div className='menu-items'>
+            <div className='menu-items' ref={menuItemsRef}>
                 {currentMenuItems.map((item, index) => (
-                    <div key={index}>
+                    <div key={`${activeCategory}-${index}`}> {/* Key includes category for proper re-rendering */}
                         <div className='menu-item'>
                             <label>{item.name}</label>
                             <p>{item.description}</p>
@@ -148,7 +200,7 @@ const Menu = () => {
                                 />
                             </div>
                         </div>
-                        {index !== currentMenuItems.length - 1 && <span className='menu-divider'></span>}
+                        <Divider />
                     </div>
                 ))}
             </div>
