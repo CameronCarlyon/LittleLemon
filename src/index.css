@@ -251,19 +251,6 @@ article h1 {
   letter-spacing: 0px;
 }
 
-.btn-primary, .btn-secondary {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.8rem 2rem;
-  border-radius: 1.5rem;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-family: 'Karla', sans-serif;
-  font-weight: 520;
-  width: fit-content;
-}
-
 .btn-primary {
   background-color: var(--color-yellow);
   border: 2px solid var(--color-yellow);
@@ -658,17 +645,10 @@ Footer ul li {
   gap: 1rem;
 }
 
-.menu-divider {
-  margin-top: 1rem
-}
-
 .divider {
-    display: block;
-    width: 100%;
-    height: 1px;
-    background-color: var(--color-green);
-    margin: 16px 0;
-    border: none;
+    height: 3px;
+    background-color: #dcdcdc;
+    border-radius: 1.5px;
 }
 
 .menu-item label {
@@ -936,6 +916,7 @@ form {
   font-size: 1.1rem;
   width: 100%;
   text-wrap: nowrap;
+  border-radius: 1.5rem;
 }
 
 .btn:hover {
@@ -1145,6 +1126,15 @@ form {
     justify-content: space-between;
     align-items: center;
     text-align: center;
+}
+
+.cart-count {
+  position: absolute;
+}
+
+.nav-icons {
+  display: flex;
+  align-items: center;
 }
 
 .cart-item-details {

@@ -37,7 +37,7 @@ const Hero = () => {
             </div>
             <h3 ref={descriptionRef}>We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</h3>
             <Link to='/reservations'>
-                <div ref={buttonRef} className='btn-primary'>Reserve a Table</div>
+                <div ref={buttonRef} className='btn btn-primary'>Reserve a Table</div>
             </Link>
         </div>
     );
