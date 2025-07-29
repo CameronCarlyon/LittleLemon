@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 
-const Divider = () => {
+const Divider = ({ width }) => {
     const dividerRef = useRef(null);
 
     useEffect(() => {
@@ -25,6 +25,7 @@ const Divider = () => {
         <span 
             ref={dividerRef}
             className="divider"
+            style={{ width: `${width}rem` }}
         />
     );
 };
