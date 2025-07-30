@@ -1,55 +1,71 @@
 import React, { useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
 
 const HyperlinkLabel = ({ href, text, children, ...props }) => {
     const linkRef = useRef(null);
     const underlineRef = useRef(null);
+    const location = useLocation();
+    
+    // Check if current page matches the href
+    const isCurrentPage = location.pathname === href;
 
     useEffect(() => {
         const link = linkRef.current;
         const underline = underlineRef.current;
         
-        // Set initial state - underline hidden
-        gsap.set(underline, { 
-            scaleX: 0,
-            transformOrigin: 'left'
-        });
-
-        // Mouse enter event - animate underline from left to right
-        const handleMouseEnter = () => {
-            gsap.set(underline, { transformOrigin: 'left' }); // Ensure left origin for entry
-            gsap.to(underline, {
+        if (isCurrentPage) {
+            // Set initial state for current page - underline visible with 50% more height
+            gsap.set(underline, { 
                 scaleX: 1,
-                duration: 0.3,
-                ease: 'power2.out'
+                height: '10px',
+                transformOrigin: 'left'
             });
-        };
-
-        // Mouse leave event - hide underline from left to right
-        const handleMouseLeave = () => {
-            gsap.set(underline, { transformOrigin: 'right' }); // Change to right origin
-            gsap.to(underline, {
+        } else {
+            // Set initial state for other pages - underline hidden
+            gsap.set(underline, { 
                 scaleX: 0,
-                duration: 0.3,
-                ease: 'power2.out',
-                onComplete: () => {
-                    // Reset origin back to left after animation completes
-                    gsap.set(underline, { transformOrigin: 'left' });
-                }
+                height: '5px', // Default height
+                transformOrigin: 'left'
             });
-        };
+        }
 
-        // Add event listeners
-        link.addEventListener('mouseenter', handleMouseEnter);
-        link.addEventListener('mouseleave', handleMouseLeave);
+        // Only add hover effects if not on current page
+        if (!isCurrentPage) {
+            // Mouse enter event - animate underline from left to right
+            const handleMouseEnter = () => {
+                gsap.set(underline, { transformOrigin: 'left' });
+                gsap.to(underline, {
+                    scaleX: 1,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            };
 
-        // Cleanup
-        return () => {
-            link.removeEventListener('mouseenter', handleMouseEnter);
-            link.removeEventListener('mouseleave', handleMouseLeave);
-        };
-    }, []);
+            // Mouse leave event - hide underline from left to right
+            const handleMouseLeave = () => {
+                gsap.set(underline, { transformOrigin: 'right' });
+                gsap.to(underline, {
+                    scaleX: 0,
+                    duration: 0.3,
+                    ease: 'power2.out',
+                    onComplete: () => {
+                        gsap.set(underline, { transformOrigin: 'left' });
+                    }
+                });
+            };
+
+            // Add event listeners
+            link.addEventListener('mouseenter', handleMouseEnter);
+            link.addEventListener('mouseleave', handleMouseLeave);
+
+            // Cleanup
+            return () => {
+                link.removeEventListener('mouseenter', handleMouseEnter);
+                link.removeEventListener('mouseleave', handleMouseLeave);
+            };
+        }
+    }, [isCurrentPage]);
 
     return (
         <Link to={`${href}`} 
@@ -70,10 +86,10 @@ const HyperlinkLabel = ({ href, text, children, ...props }) => {
                     bottom: '-5px',
                     left: 0,
                     width: '100%',
-                    height: '5px',
+                    height: isCurrentPage ? '7.5px' : '5px', // 50% more height for current page
                     backgroundColor: 'var(--color-yellow)',
                     display: 'block',
-                    borderRadius: '2.5px'
+                    borderRadius: isCurrentPage ? '3.75px' : '2.5px' // Proportional border radius
                 }}
             />
         </Link>
