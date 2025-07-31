@@ -1,23 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { useCart } from '../context/CartContext.js';
-import HyperlinkLabel from './HyperlinkLabel.js';
-import Divider from './Divider.js';
 import { gsap } from 'gsap';
 import Lottie from 'lottie-react';
 
+import { useCart } from '../context/CartContext.js';
+import HyperlinkLabel from './HyperlinkLabel.js';
+import Divider from './Divider.js';
+
 import lemonLogo from '../assets/lemon.png';
-import cartIcon from '../assets/system-regular-65-shopping-basket-hover-wiggle.json';
-import hamburgerIcon from '../assets/icons/Menu - Open and close.json';
+import cartIcon from '../assets/icons/basket-icon.json';
+import hamburgerIcon from '../assets/icons/menu-icon.json';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { cartItems } = useCart();
     const mobileNavRef = useRef(null);
     const animationRef = useRef(null);
-    const cartLottieRef = useRef(); // Ref for cart animation
-    const hamburgerLottieRef = useRef(); // Add ref for hamburger animation
-
+    const cartLottieRef = useRef(null);
+    const hamburgerLottieRef = useRef();
+    const prevCartLengthRef = useRef(0);
+    
     // Navigation items array
     const navigationItems = [
         { href: '/menu', text: 'Menu' },
@@ -27,7 +29,7 @@ const Header = () => {
         { href: '/faqs', text: 'FAQs' }
     ];
 
-    // Toggle menu - removed isAnimating check to allow interruption
+    // Toggle menu
     const toggleMenu = () => {
         if (window.innerWidth <= 1266) {
             setIsMenuOpen(prev => {
@@ -156,18 +158,36 @@ const Header = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, [isMenuOpen]);
 
-    // Trigger cart animation when items are added
+    // Initialize Lottie animation to static state (first frame)
     useEffect(() => {
-        if (cartLottieRef.current && cartItems.length > 0) {
-            // Play the "add" animation segment
-            cartLottieRef.current.playSegments([30, 60], true);
+        if (cartLottieRef.current) {
+            // Go to the first frame and stop
+            cartLottieRef.current.goToAndStop(0, true);
         }
+    }, []);
+
+    // Trigger cart animation when items are added to cart
+    useEffect(() => {
+        // Only run animation if we have a ref and the cart count has increased
+        if (cartLottieRef.current && cartItems.length > prevCartLengthRef.current) {
+            // Play "hover-basket-3" animation (70-130 frames)
+            cartLottieRef.current.playSegments([70, 130], true);
+        }
+        
+        // Update the previous cart length for next comparison
+        prevCartLengthRef.current = cartItems.length;
     }, [cartItems.length]);
 
+    // Handle cart hover animation
     const handleCartHover = () => {
         if (cartLottieRef.current) {
-            // Play the "wiggle" animation segment
-            cartLottieRef.current.playSegments([0, 30], true);
+            // Check if animation is already playing
+            if (!cartLottieRef.current.isPaused) {
+                return; // Don't interrupt an ongoing animation
+            }
+            
+            // Play "hover-basket-4" animation (140-200 frames)
+            cartLottieRef.current.playSegments([140, 200], true);
         }
     };
 
@@ -201,71 +221,48 @@ const Header = () => {
                 <ul>
                     {navigationItems.map((item, index) => (
                         <React.Fragment key={item.href}>
-                            <li>
                                 <HyperlinkLabel
                                     href={item.href}
                                     text={item.text}
                                     onClick={toggleMenu}
                                 />
-                            </li>
-                            {index < navigationItems.length - 1 && (
-                                <li>
-                                    <Divider />
-                                </li>
-                            )}
+                                <Divider width={1} />
                         </React.Fragment>
                     ))}
-                    
-                    {/* Add final divider before Shopping Cart */}
-                    <li>
-                        <Divider />
-                    </li>
-                    
-                    {/* Shopping Cart link - last item */}
-                    <li>
                         <HyperlinkLabel
                             href='/cart'
                             text='Shopping Cart'
                             onClick={toggleMenu}
                         />
-                    </li>
                 </ul>
             </nav>
-            <div className='horizontal-container'>
+            <div className='horizontal-container nav-icons'>
             {/* Desktop Cart Icon */}
-            <div 
-                className="desktop-only cart-container"
-                onMouseEnter={handleCartHover}
-            >
                 <NavLink to='/cart'>
                     <Lottie
                         lottieRef={cartLottieRef}
                         animationData={cartIcon}
                         autoplay={false}
                         loop={false}
-                        style={{ width: '2rem', height: '2rem' }}
+                        style={{ width: '2.5rem' }}
+                        onMouseEnter={handleCartHover}
                     />
                     <div className='cart-count'>
                         {getTotalCartCount() || ''}
                     </div>
                 </NavLink>
-            </div>
-
-            {/* Mobile Burger Menu - Replace FontAwesome with Lottie */}
-            <div
-                className="burger-menu mobile-only" 
-                onClick={toggleMenu}
-                aria-label="Toggle menu"
-                aria-expanded={isMenuOpen}
-            >
+            {/* Mobile Burger Menu */}
                 <Lottie
                     lottieRef={hamburgerLottieRef}
                     animationData={hamburgerIcon}
                     autoplay={false}
                     loop={false}
-                    style={{ width: '2rem', height: '2rem' }}
+                    className="burger-menu mobile-only" 
+                    onClick={toggleMenu}
+                    aria-label="Toggle menu"
+                    aria-expanded={isMenuOpen}
+                    style={{ width: '3.4rem' }}
                 />
-            </div>
             </div>
         </header>
     );
