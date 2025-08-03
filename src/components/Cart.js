@@ -4,7 +4,6 @@ import { useCart } from '../context/CartContext';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMotorcycle, faStore, faXmark, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
-import QuantityControl from './QuantityControl';
 
 const Cart = () => {
     const [formData, setFormData] = useState({
