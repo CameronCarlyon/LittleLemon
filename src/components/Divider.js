@@ -16,7 +16,7 @@ const Divider = ({ width }) => {
         // Animate entrance from left to right
         gsap.to(divider, {
             scaleX: 1,
-            duration: 0.1,
+            duration: 1,
             ease: 'power2.out'
         });
     }, []);
@@ -25,7 +25,7 @@ const Divider = ({ width }) => {
         <span 
             ref={dividerRef}
             className="divider"
-            style={{ width: `${width}rem` }}
+            style={{ width: `${width}%` }}
         />
     );
 };
