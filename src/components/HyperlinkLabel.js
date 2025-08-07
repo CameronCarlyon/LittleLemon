@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
 
-const HyperlinkLabel = ({ href, text, children, ...props }) => {
+const HyperlinkLabel = ({ href, text, children, footer = false, ...props }) => {
     const linkRef = useRef(null);
     const underlineRef = useRef(null);
     const location = useLocation();
@@ -14,27 +14,28 @@ const HyperlinkLabel = ({ href, text, children, ...props }) => {
         const link = linkRef.current;
         const underline = underlineRef.current;
         
-        if (isCurrentPage) {
+        if (isCurrentPage && !footer) {
             // Set initial state for current page - underline visible with 50% more height
+            // Only if not a footer link
             gsap.set(underline, { 
                 scaleX: 1,
-                height: '10px',
-                transformOrigin: 'left'
+                scaleY: 1.5, // 50% taller
+                transformOrigin: 'left top' // Anchor to top-left
             });
         } else {
             // Set initial state for other pages - underline hidden
             gsap.set(underline, { 
                 scaleX: 0,
-                height: '5px', // Default height
-                transformOrigin: 'left'
+                scaleY: 1, // Normal height
+                transformOrigin: 'left top' // Anchor to top-left
             });
         }
 
-        // Only add hover effects if not on current page
-        if (!isCurrentPage) {
+        // Only add hover effects if not on current page or if it's a footer link
+        if (!isCurrentPage || footer) {
             // Mouse enter event - animate underline from left to right
             const handleMouseEnter = () => {
-                gsap.set(underline, { transformOrigin: 'left' });
+                gsap.set(underline, { transformOrigin: 'left top' });
                 gsap.to(underline, {
                     scaleX: 1,
                     duration: 0.3,
@@ -44,13 +45,13 @@ const HyperlinkLabel = ({ href, text, children, ...props }) => {
 
             // Mouse leave event - hide underline from left to right
             const handleMouseLeave = () => {
-                gsap.set(underline, { transformOrigin: 'right' });
+                gsap.set(underline, { transformOrigin: 'right top' });
                 gsap.to(underline, {
                     scaleX: 0,
                     duration: 0.3,
                     ease: 'power2.out',
                     onComplete: () => {
-                        gsap.set(underline, { transformOrigin: 'left' });
+                        gsap.set(underline, { transformOrigin: 'left top' });
                     }
                 });
             };
@@ -65,7 +66,7 @@ const HyperlinkLabel = ({ href, text, children, ...props }) => {
                 link.removeEventListener('mouseleave', handleMouseLeave);
             };
         }
-    }, [isCurrentPage]);
+    }, [isCurrentPage, footer]);
 
     return (
         <Link to={`${href}`} 
@@ -83,13 +84,16 @@ const HyperlinkLabel = ({ href, text, children, ...props }) => {
                 ref={underlineRef}
                 style={{
                     position: 'absolute',
-                    bottom: '-5px',
+                    top: '100%',
+                    marginTop: '5px',
                     left: 0,
                     width: '100%',
-                    height: isCurrentPage ? '7.5px' : '5px', // 50% more height for current page
+                    height: '5px',
                     backgroundColor: 'var(--color-yellow)',
                     display: 'block',
-                    borderRadius: isCurrentPage ? '3.75px' : '2.5px' // Proportional border radius
+                    borderRadius: '2.5px',
+                    transform: 'scaleX(0)', // Hide by default in CSS
+                    transformOrigin: 'left top' // Set transform origin in CSS
                 }}
             />
         </Link>
