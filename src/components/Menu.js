@@ -120,7 +120,7 @@ const Menu = () => {
 
         // Create GSAP context for cleanup
         const ctx = gsap.context(() => {
-            // Initial state
+            // Set initial state - invisible and positioned above
             gsap.set(menuItems, {
                 opacity: 0,
                 y: -20,
@@ -130,14 +130,15 @@ const Menu = () => {
             const tl = gsap.timeline();
             animationRef.current = tl;
 
-            // Animate menu items in with stagger
+            // Animate items in with stagger
             tl.to(menuItems, {
                 opacity: 1,
                 y: 0,
-                duration: 0.25,
+                scale: 1,
+                duration: 0.4,
                 ease: 'power2.out',
                 stagger: {
-                    amount: 0.5,
+                    amount: 0.5, // Total time for all items to finish staggering
                     from: 'start'
                 }
             });
@@ -169,7 +170,7 @@ const Menu = () => {
             </div>
             <div className='menu-items' ref={menuItemsRef}>
                 {currentMenuItems.map((item, index) => (
-                    <div key={`${activeCategory}-${index}`}> {/* Key includes category for proper re-rendering */}
+                    <React.Fragment key={`${activeCategory}-${index}`}>
                         <div className='menu-item'>
                             <label>{item.name}</label>
                             <p>{item.description}</p>
@@ -200,8 +201,9 @@ const Menu = () => {
                                 />
                             </div>
                         </div>
-                        <Divider />
-                    </div>
+                        {/* Only show divider if not the last item */}
+                        {index < currentMenuItems.length - 1 && <Divider width={100} />}
+                    </React.Fragment>
                 ))}
             </div>
         </div>
