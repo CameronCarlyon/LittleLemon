@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header.js';
 import Footer from '../components/Footer.js';
 import Promotion from '../components/Promotion.js';
+import HyperlinkLabel from '../components/HyperlinkLabel.js';
 
 function ContactUsPage() {
     const [formData, setFormData] = useState({
@@ -69,7 +70,9 @@ function ContactUsPage() {
                         <div>
                             <p><b>Address</b></p>
                             <p>1358 Chestnut St. <br />Chicago<br />IL 60680<br />
-                            <p><a href='maps.google.com'>Get Directions</a></p>
+                            <a href='https://maps.google.com'>
+                                <HyperlinkLabel text='Get Directions'/>
+                            </a>
                             </p>
                         </div>
                         <div>
