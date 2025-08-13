@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 
+import HeroButton from './HeroButton';
+
 // Register the plugin
 gsap.registerPlugin(SplitText);
 
@@ -13,7 +15,7 @@ const Hero = () => {
     const buttonRef = useRef(null);
 
     useEffect(() => {
-        const elements = [titleRef.current, subtitleRef.current, descriptionRef.current, buttonRef.current];
+        const elements = [titleRef.current, subtitleRef.current, descriptionRef.current,];
         
         gsap.set(elements, {
             y: -30,
@@ -23,10 +25,24 @@ const Hero = () => {
         gsap.to(elements, {
             y: 0,
             opacity: 1,
-            duration: 0.5,
+            duration: 0.2,
             ease: "power2.out",
-            stagger: 0.2,
+            stagger: 0.1,
+            delay: 0.2
         })
+
+        const buttonElement = buttonRef.current
+
+        gsap.set(buttonElement, {
+            scale: 0,
+        });
+
+        gsap.to(buttonElement, {
+            scale: 1,
+            duration: 0.2,
+            ease: "power2.out",
+            delay: 0.5
+        });
     }, []);
 
     return (
@@ -37,7 +53,9 @@ const Hero = () => {
             </div>
             <h3 ref={descriptionRef}>We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</h3>
             <Link to='/reservations'>
-                <div ref={buttonRef} className='btn btn-primary'>Reserve a Table</div>
+                <HeroButton ref={buttonRef}>
+                    Reserve a Table
+                </HeroButton>
             </Link>
         </div>
     );
