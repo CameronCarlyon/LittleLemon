@@ -1,271 +1,247 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { gsap } from 'gsap';
-import Lottie from 'lottie-react';
 
 import { useCart } from '../context/CartContext.js';
 import HyperlinkLabel from './HyperlinkLabel.js';
 import Divider from './Divider.js';
+import LittleLemonLogo from './LittleLemonLogo.js';
+import CartIcon from './CartIcon.js';
+import HamburgerMenuIcon from './HamburgerMenuIcon.js';
 
-import lemonLogo from '../assets/lemon.png';
-import cartIcon from '../assets/icons/basket-icon.json';
-import hamburgerIcon from '../assets/icons/menu-icon.json';
+// Constants and configuration
+const CONFIG = {
+  DESKTOP_BREAKPOINT: 1266,
+  NAVIGATION_ITEMS: [
+    { href: '/menu', text: 'Menu' },
+    { href: '/reservations', text: 'Reservations' },
+    { href: '/our-restaurant', text: 'Our Restaurant' },
+    { href: '/contact-us', text: 'Contact Us' },
+    { href: '/faqs', text: 'FAQs' }
+  ]
+};
 
+// Custom hook for animation refs
+const useAnimationRefs = () => {
+  return {
+    mobileNav: useRef(null),
+    animation: useRef(null),
+    cartIcon: useRef(null),
+    hamburgerMenu: useRef(null)
+  };
+};
+
+// NavigationItems component
+const NavigationItems = ({ items, onClick = () => {} }) => (
+  <>
+    {items.map((item) => (
+      <HyperlinkLabel
+        key={item.href}
+        href={item.href}
+        text={item.text}
+        onClick={onClick}
+      />
+    ))}
+  </>
+);
+
+// Main Header Component
 const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { cartItems } = useCart();
-    const mobileNavRef = useRef(null);
-    const animationRef = useRef(null);
-    const cartLottieRef = useRef(null);
-    const hamburgerLottieRef = useRef();
-    const prevCartLengthRef = useRef(0);
-    
-    // Navigation items array
-    const navigationItems = [
-        { href: '/menu', text: 'Menu' },
-        { href: '/reservations', text: 'Reservations' },
-        { href: '/our-restaurant', text: 'Our Restaurant' },
-        { href: '/contact-us', text: 'Contact Us' },
-        { href: '/faqs', text: 'FAQs' }
-    ];
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cartItems } = useCart();
+  const refs = useAnimationRefs();
+  
+  // Memoized cart count calculation
+  const cartCount = useMemo(() => 
+    cartItems.reduce((total, item) => total + item.quantity, 0), 
+    [cartItems]
+  );
 
-    // Toggle menu
-    const toggleMenu = () => {
-        if (window.innerWidth <= 1266) {
-            setIsMenuOpen(prev => {
-                const newState = !prev;
-                
-                // Trigger hamburger animation based on menu state
-                if (hamburgerLottieRef.current) {
-                    if (newState) {
-                        // Play open animation (hamburger to X) - SWAP TO SECOND HALF
-                        hamburgerLottieRef.current.playSegments([30, 60], true);
-                    } else {
-                        // Play close animation (X to hamburger) - SWAP TO FIRST HALF
-                        hamburgerLottieRef.current.playSegments([0, 30], true);
-                    }
-                }
-                
-                return newState;
-            });
-        }
-    };
+  // Toggle menu with animation
+  const toggleMenu = useCallback(() => {
+    if (window.innerWidth <= CONFIG.DESKTOP_BREAKPOINT) {
+      setIsMenuOpen(prev => !prev);
+    }
+  }, []);
 
-    // Animation hook with interrupt support
-    useEffect(() => {
-        const nav = mobileNavRef.current;
-        
-        // Always kill any running animation first
-        if (animationRef.current) {
-            animationRef.current.kill();
-        }
-        
-        const ctx = gsap.context(() => {
-            if (isMenuOpen) {
-                // Opening animation sequence
-                
-                // Create new timeline
-                const tl = gsap.timeline();
-                animationRef.current = tl;
-                
-                // First set initial state - completely hidden
-                gsap.set(nav, {
-                    display: 'block',
-                    overflow: 'hidden',
-                    height: 0,
-                    opacity: 0,
-                    transformOrigin: 'top'
-                });
-                
-                // Animate background container first
-                tl.to(nav, {
-                    height: 'auto',
-                    opacity: 1,
-                    duration: 0.4,
-                    ease: 'power2.inOut',
-                    clearProps: 'height'
-                });
-                
-                // Get all menu items including dividers
-                const items = nav.querySelectorAll('li');
-                
-                // Setup items for animation
-                gsap.set(items, { 
-                    opacity: 0,
-                    y: -15,
-                });
-                
-                // Animate items
-                tl.to(items, {
-                    opacity: 1,
-                    y: 0,
-                    stagger: 0.05,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                }, '-=0.2');
-                
-            } else if (nav && getComputedStyle(nav).display !== 'none') {
-                // Closing animation sequence
-                
-                // Create new timeline
-                const tl = gsap.timeline({
-                    onComplete: () => {
-                        gsap.set(nav, { display: 'none' });
-                    }
-                });
-                animationRef.current = tl;
-                
-                // Get all menu items
-                const items = nav.querySelectorAll('li');
-                
-                // First animate items out
-                tl.to(items, {
-                    opacity: 0,
-                    y: 15,
-                    stagger: 0.03,
-                    duration: 0.25,
-                    ease: 'power2.in',
-                });
-                
-                // Then collapse the container
-                tl.to(nav, {
-                    height: 0,
-                    opacity: 0,
-                    duration: 0.3,
-                    ease: 'power2.inOut',
-                }, '-=0.15');
-            }
+  // Mobile menu animation
+  useEffect(() => {
+    const nav = refs.mobileNav.current;
+    if (!nav) return;
+
+    // Kill any running animation
+    if (refs.animation.current) {
+      refs.animation.current.kill();
+    }
+
+    const ctx = gsap.context(() => {
+      if (isMenuOpen) {
+        // Opening animation
+        const tl = gsap.timeline();
+        refs.animation.current = tl;
+
+        gsap.set(nav, {
+          display: 'block',
+          overflow: 'hidden',
+          height: 0,
+          opacity: 0,
+          transformOrigin: 'top'
         });
+
+        const items = nav.querySelectorAll('li');
+        gsap.set(items, { opacity: 0, y: -15 });
+
+        tl.to(nav, {
+          height: 'auto',
+          opacity: 1,
+          duration: 0.4,
+          ease: 'power2.inOut',
+          clearProps: 'height'
+        })
+        .to(items, {
+          opacity: 1,
+          y: 0,
+          stagger: 0.05,
+          duration: 0.3,
+          ease: 'power2.out',
+        }, '-=0.2');
+
+      } else if (getComputedStyle(nav).display !== 'none') {
+        // Closing animation
+        const tl = gsap.timeline({
+          onComplete: () => gsap.set(nav, { display: 'none' })
+        });
+        refs.animation.current = tl;
+
+        const items = nav.querySelectorAll('li');
         
-        // Cleanup
-        return () => {
-            ctx.revert();
-            if (animationRef.current) {
-                animationRef.current.kill();
-            }
-        };
-    }, [isMenuOpen]);
+        tl.to(items, {
+          opacity: 0,
+          y: 15,
+          stagger: 0.03,
+          duration: 0.25,
+          ease: 'power2.in',
+        })
+        .to(nav, {
+          height: 0,
+          opacity: 0,
+          duration: 0.3,
+          ease: 'power2.inOut',
+        }, '-=0.15');
+      }
+    });
 
-    // Close menu on window resize
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth > 1266 && isMenuOpen) {
-                setIsMenuOpen(false);
-            }
-        };
+    return () => {
+      ctx.revert();
+      if (refs.animation.current) {
+        refs.animation.current.kill();
+      }
+    };
+  }, [isMenuOpen]);
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [isMenuOpen]);
-
-    // Initialize Lottie animation to static state (first frame)
-    useEffect(() => {
-        if (cartLottieRef.current) {
-            // Go to the first frame and stop
-            cartLottieRef.current.goToAndStop(0, true);
-        }
-    }, []);
-
-    // Trigger cart animation when items are added to cart
-    useEffect(() => {
-        // Only run animation if we have a ref and the cart count has increased
-        if (cartLottieRef.current && cartItems.length > prevCartLengthRef.current) {
-            // Play "hover-basket-3" animation (70-130 frames)
-            cartLottieRef.current.playSegments([70, 130], true);
-        }
-        
-        // Update the previous cart length for next comparison
-        prevCartLengthRef.current = cartItems.length;
-    }, [cartItems.length]);
-
-    // Handle cart hover animation
-    const handleCartHover = () => {
-        if (cartLottieRef.current) {
-            // Check if animation is already playing
-            if (!cartLottieRef.current.isPaused) {
-                return; // Don't interrupt an ongoing animation
-            }
-            
-            // Play "hover-basket-4" animation (140-200 frames)
-            cartLottieRef.current.playSegments([140, 200], true);
-        }
+  // Close menu on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > CONFIG.DESKTOP_BREAKPOINT && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
     };
 
-    const getTotalCartCount = () => {
-        return cartItems.reduce((total, item) => total + item.quantity, 0);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMenuOpen]);
+
+  // GSAP hover animations for cart and hamburger icons
+  useEffect(() => {
+    const cartIcon = refs.cartIcon.current;
+    const hamburgerMenu = refs.hamburgerMenu.current;
+
+    const setupHoverAnimation = (element) => {
+      if (!element) return;
+
+      const handleMouseEnter = () => {
+        gsap.to(element, {
+          scale: 1.1,
+          duration: 0.3,
+          ease: 'power2.out'
+        });
+      };
+
+      const handleMouseLeave = () => {
+        gsap.to(element, {
+          scale: 1,
+          duration: 0.3,
+          ease: 'power2.out'
+        });
+      };
+
+      element.addEventListener('mouseenter', handleMouseEnter);
+      element.addEventListener('mouseleave', handleMouseLeave);
+
+      return () => {
+        element.removeEventListener('mouseenter', handleMouseEnter);
+        element.removeEventListener('mouseleave', handleMouseLeave);
+      };
     };
 
-    return (
-        <header>
-            <Link to='/home'>
-                <img src={lemonLogo} alt='Little Lemon Logo' style={{ maxWidth: '3rem'}}/>
-            </Link>
-            
-            {/* Desktop Navigation */}
-            <nav className="desktop-only">
-                {navigationItems.map((item) => (
-                    <HyperlinkLabel
-                        key={item.href}
-                        href={item.href}
-                        text={item.text}
-                    />
-                ))}
-            </nav>
+    const cleanupCart = setupHoverAnimation(cartIcon);
+    const cleanupHamburger = setupHoverAnimation(hamburgerMenu);
 
-            {/* Mobile Navigation */}
-            <nav
-                ref={mobileNavRef}
-                className={`main-nav mobile-only ${isMenuOpen ? 'open' : ''}`}
-                style={{ display: 'none' }}
-            >
-                <ul>
-                    {navigationItems.map((item, index) => (
-                        <React.Fragment key={item.href}>
-                                <HyperlinkLabel
-                                    href={item.href}
-                                    text={item.text}
-                                    onClick={toggleMenu}
-                                />
-                                <Divider width={1} />
-                        </React.Fragment>
-                    ))}
-                        <HyperlinkLabel
-                            href='/cart'
-                            text='Shopping Cart'
-                            onClick={toggleMenu}
-                        />
-                </ul>
-            </nav>
-            <div className='horizontal-container nav-icons'>
-            {/* Desktop Cart Icon */}
-                <NavLink to='/cart'>
-                    <Lottie
-                        lottieRef={cartLottieRef}
-                        animationData={cartIcon}
-                        autoplay={false}
-                        loop={false}
-                        style={{ width: '2.5rem' }}
-                        onMouseEnter={handleCartHover}
-                    />
-                    <div className='cart-count'>
-                        {getTotalCartCount() || ''}
-                    </div>
-                </NavLink>
-            {/* Mobile Burger Menu */}
-                <Lottie
-                    lottieRef={hamburgerLottieRef}
-                    animationData={hamburgerIcon}
-                    autoplay={false}
-                    loop={false}
-                    className="burger-menu mobile-only" 
-                    onClick={toggleMenu}
-                    aria-label="Toggle menu"
-                    aria-expanded={isMenuOpen}
-                    style={{ width: '3.4rem' }}
-                />
-            </div>
-        </header>
-    );
+    return () => {
+      if (cleanupCart) cleanupCart();
+      if (cleanupHamburger) cleanupHamburger();
+    };
+  }, []);
+
+  return (
+    <header>
+      <LittleLemonLogo />
+      
+      {/* Desktop Navigation */}
+      <nav className="desktop-only">
+        <NavigationItems items={CONFIG.NAVIGATION_ITEMS} />
+      </nav>
+
+      {/* Mobile Navigation */}
+      <nav
+        ref={refs.mobileNav}
+        className={`main-nav mobile-only ${isMenuOpen ? 'open' : ''}`}
+        style={{ display: 'none' }}
+      >
+        <ul>
+          {CONFIG.NAVIGATION_ITEMS.map((item) => (
+            <React.Fragment key={item.href}>
+              <HyperlinkLabel
+                href={item.href}
+                text={item.text}
+                onClick={toggleMenu}
+              />
+              <Divider width={1} />
+            </React.Fragment>
+          ))}
+          <HyperlinkLabel
+            href='/cart'
+            text='Shopping Cart'
+            onClick={toggleMenu}
+          />
+        </ul>
+      </nav>
+
+      <div className='horizontal-container nav-icons'>
+        {/* Cart Icon Component */}
+        <div ref={refs.cartIcon}>
+          <CartIcon count={cartCount} />
+        </div>
+
+        {/* Mobile Burger Menu Component */}
+        <div ref={refs.hamburgerMenu}>
+          <HamburgerMenuIcon 
+            isOpen={isMenuOpen}
+            onToggle={toggleMenu}
+          />
+        </div>
+      </div>
+    </header>
+  );
 };
 
 export default Header;
