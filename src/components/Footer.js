@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import lemonLogo from '../assets/lemon.png';
+import LittleLemonLogo from '../components/LittleLemonLogo';
 import HyperlinkLabel from './HyperlinkLabel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquareFacebook, faSquareBluesky, faSquareInstagram } from '@fortawesome/free-brands-svg-icons'
@@ -26,22 +26,48 @@ const Footer = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Social media links data
+    const socialLinks = [
+        { icon: faSquareFacebook, href: 'https://facebook.com/littlelemon', label: 'Facebook' },
+        { icon: faSquareBluesky, href: 'https://bluesky.app/littlelemon', label: 'Bluesky' },
+        { icon: faSquareInstagram, href: 'https://instagram.com/littlelemon', label: 'Instagram' }
+    ];
+
     return (
         <footer>
             <Link to='/home'>
-                <img src={lemonLogo} alt='Little Lemon Logo' style={{ maxWidth: '3rem' }} className='icon-white' />
+                <LittleLemonLogo secondary={true} />
             </Link>
             <ul>
                 {navigationItems.map((item) => (
-                    <li key={item.href}>
-                        <HyperlinkLabel href={item.href} text={item.text} />
+                    <li key={item.href} className='footer-links'>
+                        <HyperlinkLabel href={item.href} text={item.text} footer={true} />
                     </li>
                 ))}
             </ul>
             <div className='social'>
-                <FontAwesomeIcon icon={faSquareFacebook} className='icon-social' />
-                <FontAwesomeIcon icon={faSquareBluesky} className='icon-social' />
-                <FontAwesomeIcon icon={faSquareInstagram} className='icon-social' />
+                {socialLinks.map((social) => (
+                    <a 
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="social-link-hover"
+                        style={{
+                            display: 'inline-block',
+                            padding: '12px',
+                            margin: '-12px',
+                            borderRadius: '6px',
+                            cursor: 'pointer'
+                        }}
+                        aria-label={`Visit our ${social.label} page`}
+                    >
+                        <FontAwesomeIcon 
+                            icon={social.icon} 
+                            className='icon-social'
+                        />
+                    </a>
+                ))}
             </div>
             <h3 className='copyright'>
                 Crafted by <HyperlinkLabel href="https://cameroncarlyon.com" text="Cameron Carlyon" />
@@ -51,6 +77,5 @@ const Footer = () => {
         </footer>
     );
 };
-
 
 export default Footer;
