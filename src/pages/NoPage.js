@@ -10,6 +10,10 @@ import HeroButton from '../components/HeroButton.js';
 // Register the plugin
 gsap.registerPlugin(TextPlugin);
 
+/**
+ * Array of witty lemon-themed 404 messages
+ * Following DRY principles with centralized message management
+ */
 const NO_PAGE_MESSAGES = [
     "This page vanished quicker than lemonade on a hot day!",
     "When life gives you lemons, but not the page you were looking for...",
@@ -20,6 +24,10 @@ const NO_PAGE_MESSAGES = [
     "This page went sour. Try something sweeter!"
 ];
 
+/**
+ * NoPage component renders a 404 error page with typewriter animation
+ * Uses GSAP for smooth animations and accessibility features
+ */
 function NoPage() {
     const errorCodeRef = useRef(null);
     const cursorRef = useRef(null);
@@ -40,74 +48,73 @@ function NoPage() {
 
         if (!errorElement || !cursorElement || !messageElement || !buttonsElement) return;
 
-        // Set initial states - HIDE CURSOR IMMEDIATELY
-        gsap.set(cursorElement, { 
-            opacity: 0, // Hide cursor initially
-            color: "#f4ce14",
-            fontWeight: 700,
-            fontSize: '10rem',
-            fontStyle: 'normal'
-        });
-        
-        gsap.set(errorElement, { text: "" }); // Start with empty text
-        gsap.set([messageElement, buttonsElement], {
-            opacity: 0,
-            y: 30
-        });
+        // Create GSAP context for proper cleanup
+        const ctx = gsap.context(() => {
+            // Set initial states - cursor as a styled div block
+            gsap.set(cursorElement, { 
+                opacity: 0,
+                backgroundColor: "#f4ce14",
+                width: "10px",
+                borderRadius: "2px",
+                height: "4rem",
+                display: "inline-block",
+                animation: "none" // Prevent any CSS animations
+            });
+            
+            gsap.set(errorElement, { text: "" });
+            gsap.set([messageElement, buttonsElement], {
+                opacity: 0,
+                y: 30
+            });
 
-        // Create the animation timeline
-        const tl = gsap.timeline();
+            // Create the main animation timeline
+            const tl = gsap.timeline();
 
-        // Create blinking cursor animation (runs independently)
-        const cursorTl = gsap.timeline({ repeat: -1, yoyo: true });
-        cursorTl.to(cursorElement, {
-            opacity: 0,
-            duration: 0.4,
-            ease: "power1.inOut"
-        });
+            // Create independent blinking cursor timeline
+            const cursorTl = gsap.timeline({ 
+                repeat: -1, 
+                yoyo: true,
+                defaults: { ease: "power1.inOut" }
+            });
+            
+            cursorTl.to(cursorElement, {
+                opacity: 0,
+                duration: 0.4
+            });
 
-        // Start cursor blinking immediately
-        gsap.set(cursorElement, { opacity: 1 }); // Show cursor for blinking
+            // Show cursor and start blinking immediately
+            gsap.set(cursorElement, { opacity: 1 });
 
-        // Typewriter effect for "Error 404"
-        tl.to(errorElement, {
-            text: "Error 404",
-            duration: 1.2,
-            ease: "none",
-            delay: 0.5 // Small delay before starting
-        })
-        // Pause and then hide cursor
-        .to(cursorElement, {
-            opacity: 0,
-            duration: 0.2,
-            delay: 0.8 // Pause after typing
-        })
-        // Animate in the message
-        .to(messageElement, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out"
-        }, "-=0.3")
-        // Animate in the buttons
-        .to(buttonsElement, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out"
-        }, "-=0.3");
+            // Main animation sequence
+            tl.to(errorElement, {
+                text: "Error 404",
+                duration: 1.2,
+                ease: "none",
+                delay: 0.5
+            })
+            .to(cursorElement, {
+                opacity: 0,
+                duration: 0.2,
+                delay: 0.8,
+                onStart: () => cursorTl.kill() // Stop blinking when hiding
+            })
+            .to(messageElement, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: "power2.out"
+            }, "-=0.3")
+            .to(buttonsElement, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: "power2.out"
+            }, "-=0.3");
 
-        // Stop cursor blinking when main animation completes
-        tl.eventCallback("onComplete", () => {
-            cursorTl.kill();
-            gsap.set(cursorElement, { opacity: 0 });
-        });
+        }, [errorCodeRef, cursorRef, messageRef, buttonsRef]);
 
         // Cleanup function
-        return () => {
-            tl.kill();
-            cursorTl.kill();
-        };
+        return () => ctx.revert();
     }, []);
 
     return (
@@ -115,30 +122,29 @@ function NoPage() {
             <Header />
             <div className='flex-column no-page'>
                 <div className='no-page-message-container'>
-                <div style={{ display: 'inline-flex', alignItems: 'baseline' }}>
-                    <h1 
-                        ref={errorCodeRef} 
-                        className='no-page-code'
-                        aria-label="Error 404"
-                    >
-                        <span className="sr-only">Error 404</span>
+                    <div style={{ display: 'inline-flex', alignItems: 'baseline' }}>
+                        <h1 
+                            ref={errorCodeRef} 
+                            className='no-page-code'
+                            aria-label="Error 404"
+                        >
+                            <span className="sr-only">Error 404</span>
+                        </h1>
+                        <div 
+                            ref={cursorRef} 
+                            className='typewriter-cursor'
+                            style={{ 
+                                marginLeft: '8px',
+                                opacity: 0
+                            }}
+                            aria-hidden="true"
+                        />
+                    </div>
+                    <h1 ref={messageRef} className='no-page-message'>
+                        {randomNoPageMessage}
                     </h1>
-                    <span 
-                        ref={cursorRef} 
-                        className='no-page-code'
-                        style={{ 
-                            fontSize: 'inherit',
-                            lineHeight: 'inherit',
-                            marginLeft: '2px',
-                            opacity: 0
-                        }}
-                    >
-                        _
-                    </span>
                 </div>
-                <h1 ref={messageRef} className='no-page-message'>{randomNoPageMessage}</h1>
-                </div>
-                <div ref={buttonsRef} style={{display: 'flex', gap: '1rem'}}>
+                <div ref={buttonsRef} style={{ display: 'flex', gap: '1rem' }}>
                     <Link to='/home'>
                         <HeroButton variant='primary'>Go Home</HeroButton>
                     </Link>
