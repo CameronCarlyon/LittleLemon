@@ -39,24 +39,9 @@ const MenuFilters = ({
         onSortChange(e.target.value);
     }, [onSortChange]);
 
-    // Clear all filters
-    const handleClearAll = useCallback(() => {
-        onFiltersChange({
-            vegetarian: false,
-            vegan: false,
-            glutenFree: false
-        });
-        onSortChange('default');
-    }, [onFiltersChange, onSortChange]);
-
-    // Memoized check for active filters
-    const hasActiveFilters = useMemo(() => 
-        Object.values(activeFilters).some(Boolean) || sortBy !== 'default'
-    , [activeFilters, sortBy]);
-
     /**
      * Opens the filters with GSAP animation
-     * First grows container height, then reveals elements
+     * Measures target height first, then animates smoothly to that height
      */
     const openFilters = useCallback(() => {
         if (isOpen.current) return;
@@ -86,6 +71,13 @@ const MenuFilters = ({
                 scale: 0.95
             });
 
+            // Temporarily set height to auto to measure target height
+            gsap.set(container, { height: 'auto' });
+            const targetHeight = container.offsetHeight;
+            
+            // Reset to 0 height for animation
+            gsap.set(container, { height: 0 });
+
             // Create timeline for opening animation
             const tl = gsap.timeline({
                 onComplete: () => {
@@ -95,22 +87,22 @@ const MenuFilters = ({
                 }
             });
 
-            // First: grow container height and fade in
+            // First: grow container height and fade in to measured height
             tl.to(container, {
-                height: 'auto',
+                height: targetHeight,
                 opacity: 1,
-                duration: 0.4,
-                ease: 'power2.inOut'
+                duration: 0.3,
+                ease: 'power2.out'
             })
             // Then: staggered reveal of filter elements
             .to(filterElements, {
                 opacity: 1,
                 y: 0,
                 scale: 1,
-                duration: 0.3,
-                stagger: 0.05,
+                duration: 0.1,
+                stagger: 0.02,
                 ease: 'back.out(1.2)'
-            }, '-=0.1');
+            }, '-=0.15');
 
             timelineRef.current = tl;
         }, container);
@@ -227,16 +219,6 @@ const MenuFilters = ({
                     </div>
                 </div>
                 </div>
-                <div className='clear-filters-container'>
-                    {hasActiveFilters && (
-                        <button 
-                            className="menu-category"
-                            onClick={handleClearAll}
-                        >
-                            Clear Filters
-                        </button>
-                    )}
-            </div>
         </div>
         
     );

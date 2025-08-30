@@ -70,7 +70,8 @@ const HyperlinkLabel = ({ href, text, children, footer = false, ...props }) => {
 
     return (
         <Link to={`${href}`} 
-            ref={linkRef} 
+            ref={linkRef}
+            className='hyperlink-label' 
             style={{ 
                 position: 'relative',
                 display: 'inline-block',
@@ -85,7 +86,6 @@ const HyperlinkLabel = ({ href, text, children, footer = false, ...props }) => {
                 style={{
                     position: 'absolute',
                     top: '100%',
-                    marginTop: '5px',
                     left: 0,
                     width: '100%',
                     height: '5px',
