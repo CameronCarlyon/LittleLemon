@@ -18,6 +18,8 @@ function App() {
   return (
     <BrowserRouter basename='/littlelemon'>
       <CartProvider>
+        {/* Skip link for accessibility - controlled by React */}
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <ScrollToTop />
         <div className="App">
           <Routes>

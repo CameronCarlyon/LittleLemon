@@ -8,7 +8,7 @@ function MainPage() {
   return (
     <div className="App">
       <Header />
-      <div className="main-content">
+      <div className="main-content" id="main-content">
         <h1>Menu</h1>
             <p>Explore our delicious Mediterranean menu, featuring a variety of dishes made with fresh ingredients and traditional recipes.</p>
         <Menu/>

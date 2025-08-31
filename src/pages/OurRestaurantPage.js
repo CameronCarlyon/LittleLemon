@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -8,9 +7,9 @@ import Divider from '../components/Divider.js';
 import Promotion from '../components/Promotion.js';
 import Footer from '../components/Footer.js';
 
-import RestaurantImage from '../assets/restaurant.jpg';
-import MarioAndAdrianA from '../assets/Mario and Adrian A.jpg';
-import MarioAndAdrianB from '../assets/Mario and Adrian b.jpg';
+import RestaurantImage from '../assets/images/RestaurantOverview.webp';
+import MarioAndAdrianA from '../assets/images/MarioAndAdrianChatting.webp';
+import MarioAndAdrianB from '../assets/images/MarioAndAdrianLaughing.webp';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faLocationDot, faClock, faBookOpen } from '@fortawesome/free-solid-svg-icons'
@@ -20,6 +19,7 @@ function OurRestaurantPage() {
     gsap.registerPlugin(ScrollTrigger);
 
     const [isOpen, setIsOpen] = React.useState(false);
+    const [visibleSections, setVisibleSections] = React.useState(new Set());
     const contentRef = useRef(null);
     const timelineRef = useRef(null);
 
@@ -158,12 +158,36 @@ function OurRestaurantPage() {
                 {
                     opacity: 1,
                     y: 0,
-                    duration: 0.8,
+                    duration: 0.3,
                     ease: 'power2.out',
                     scrollTrigger: {
                         trigger: section,
                         start: 'top 80%',
                         toggleActions: 'play none none reverse',
+                        onEnter: () => {
+                            // Mark section as visible for divider animation
+                            setVisibleSections(prev => new Set([...prev, idx]));
+                        },
+                        onLeave: () => {
+                            // Remove section from visible set when scrolling past
+                            setVisibleSections(prev => {
+                                const newSet = new Set(prev);
+                                newSet.delete(idx);
+                                return newSet;
+                            });
+                        },
+                        onEnterBack: () => {
+                            // Re-add section when scrolling back up
+                            setVisibleSections(prev => new Set([...prev, idx]));
+                        },
+                        onLeaveBack: () => {
+                            // Remove section when scrolling back up past it
+                            setVisibleSections(prev => {
+                                const newSet = new Set(prev);
+                                newSet.delete(idx);
+                                return newSet;
+                            });
+                        }
                     },
                 }
             );
@@ -172,12 +196,12 @@ function OurRestaurantPage() {
         return () => {
             ScrollTrigger.getAll().forEach(trigger => trigger.kill());
         };
-    }, []);
+    }, [setVisibleSections]);
 
     return (
         <div className="App">
             <Header />
-            <div className="main-content">
+            <div className="main-content" id="main-content">
                 <article>
                     <div
                         className='flex-column'
@@ -187,7 +211,13 @@ function OurRestaurantPage() {
                             <h1>Our Restaurant</h1>
                             <p>We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</p>
                         </div>
-                        <img src={RestaurantImage} alt="Our Restaurant" style={{ maxWidth: '100%', height: '15rem', objectFit: 'cover'}} className='showcase-img'/>
+                        <figure className="showcase-img">
+                            <img 
+                                src={RestaurantImage} 
+                                alt="Outdoor dining area of our restaurant featuring modern decor." 
+                                loading="lazy"
+                            />
+                        </figure>
                         <div className='icon-info-container'>
                             <FontAwesomeIcon icon={faBars} />
                             <div>
@@ -227,7 +257,7 @@ function OurRestaurantPage() {
                             </div>
                             <p>
                                 1358 Chestnut St. <br />Chicago<br />IL 60680<br />
-                                <HyperlinkLabel text='Get Directions' />
+                                <HyperlinkLabel text='Get Directions' href=''/>
                             </p>
                         </div>
                         <div className='icon-info-container'>
@@ -242,7 +272,7 @@ function OurRestaurantPage() {
                         </div>
                         <div className='flex-row'>
                             <FontAwesomeIcon icon={faBookOpen} />
-                            <Link to='/menu' className='link'><HyperlinkLabel text='View our full menu.' /></Link>
+                            <HyperlinkLabel text='View our full menu.' href='/menu'/>
                         </div>
                     </div>
                     <div
@@ -251,18 +281,24 @@ function OurRestaurantPage() {
                     >
                         <div>
                             <h1>A Bit About Us</h1>
-                            <Divider />
+                            <Divider color={'var(--color-green)'} triggerAnimation={visibleSections.has(1)} />
                         </div>
                         <p>Welcome to Little Lemon, where Mediterranean tradition meets modern flavors! We are a family-owned restaurant dedicated to serving authentic, flavorful dishes inspired by the sun-soaked coasts of Greece, Turkey, Morocco, and beyond. Whether you're here for a hearty meal or a light bite, we invite you to experience the warmth of our kitchen and hospitality.</p>
-                        <img src={MarioAndAdrianB} alt="Mario and Adrian" style={{ maxWidth: '100%', height: '20rem', objectFit: 'cover', objectPosition: '0% 70%'  }} className='showcase-img'/>
                     </div>
+                    <figure className="showcase-img">
+                        <img 
+                            src={MarioAndAdrianB} 
+                            alt="Mario and Adrian cooking together." 
+                            loading="lazy"
+                        />
+                    </figure>
                     <div
                         className='flex-column'
                         ref={el => (sectionRefs.current[2] = el)}
                     >
                         <div>
                             <h1>Our Story</h1>
-                            <Divider />
+                            <Divider color={'var(--color-green)'} triggerAnimation={visibleSections.has(2)} />
                         </div>
                         <p>Little Lemon was founded with a simple mission: to bring the rich and diverse flavors of the Mediterranean to our community. Our journey began with cherished family recipes passed down through generations, paired with a passion for fresh ingredients and innovative cooking. Today, we continue to honor our heritage while adding a modern twist to classic dishes, creating a unique dining experience that blends tradition and creativity.</p>
                     </div>
@@ -272,19 +308,25 @@ function OurRestaurantPage() {
                     >
                         <div>
                             <h1>Our Philosophy & Values</h1>
-                            <Divider />
+                            <Divider color={'var(--color-green)'} triggerAnimation={visibleSections.has(3)} />
                         </div>
                         <p>At Little Lemon, we believe that food should be fresh, flavorful, and made with love. We prioritize locally sourced ingredients, high-quality spices, and traditional cooking techniques to ensure every bite is an experience. Our team is dedicated to creating a welcoming environment where every guest feels like family.</p>
                         <p>We are also committed to sustainability, minimizing food waste, and using eco-friendly packaging wherever possible. Our menu celebrates seasonal ingredients, ensuring that every dish is bursting with flavor and nutrition.</p>
-                        <img src={MarioAndAdrianA} alt="Mario and Adrian" style={{ maxWidth: '100%', height: '20rem', objectFit: 'cover', objectPosition: '0% 20%' }} className='showcase-img'/>
                     </div>
+                    <figure className="showcase-img">
+                        <img 
+                                src={MarioAndAdrianA} 
+                                alt="Mario and Adrian cooking together." 
+                                loading="lazy"
+                        />
+                    </figure>
                     <div
                         className='flex-column'
                         ref={el => (sectionRefs.current[4] = el)}
                     >
                         <div>
                             <h1>Our Menu & Specialties</h1>
-                            <Divider />
+                            <Divider color={'var(--color-green)'} triggerAnimation={visibleSections.has(4)} />
                         </div>
                         <p>Our menu features a carefully curated selection of Mediterranean delights, from hearty slow-cooked lamb tagine to refreshing quinoa salads. Guests rave about our signature Shakshuka, fragrant Seafood Paella, and indulgent Baklava Cheesecake. Whether you're craving a light mezze platter or a full-course meal, there's something for everyone at Little Lemon.</p>
                         <p>We also offer daily specials that showcase the best seasonal ingredients, crafted by our talented chefs to bring new and exciting flavors to your table.</p>
@@ -295,7 +337,7 @@ function OurRestaurantPage() {
                     >
                         <div>
                             <h1>The Dining Experience</h1>
-                            <Divider />
+                            <Divider color={'var(--color-green)'} triggerAnimation={visibleSections.has(5)} />
                         </div>
                         <p>Step into Little Lemon and immerse yourself in a cozy, inviting atmosphere that blends Mediterranean charm with a modern touch. Our warm wooden interiors, soft lighting, and vibrant greenery create the perfect setting for a relaxed meal with family and friends. Whether you're dining inside or enjoying the fresh air on our outdoor patio, every visit is designed to be a memorable experience.</p>
                         <p>For a more interactive experience, our open kitchen allows guests to watch our chefs at work, preparing meals with passion and precision. Our friendly staff is always on hand to recommend dishes and ensure you have an exceptional dining experience.</p>

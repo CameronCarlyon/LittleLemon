@@ -10,7 +10,7 @@ function MainPage() {
     <div className="MainPage">
         <Header />
         <Hero />
-        <div className='main-content'>
+        <div className='main-content' id='main-content'>
             <h3>ORDER FOR DELIVERY!</h3>
             <Menu/>
         </div>

@@ -1,3 +1,21 @@
+/* Local Font Declarations */
+@font-face {
+  font-family: 'Karla';
+  src: url('./assets/fonts/Karla-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Markazi Text';
+  src: url('./assets/fonts/MarkaziText-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* CSS Custom Properties */
 :root {
   /* Colors */
   --color-green: #495E57;
@@ -8,17 +26,27 @@
   --color-orange: #F49B32;
   --color-white: #EDEFEE;
   --color-grey: #c0c0c0;
+  --color-error: #dc3545;
   
   /* Typography */
   --font-system: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 
       Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   --font-heading: 'Markazi Text', Georgia, serif;
   --font-body: 'Karla', var(--font-system);
+  --font-size-xs: 0.75rem;
   --font-size-sm: 0.8rem;
   --font-size-base: 1rem;
   --font-size-lg: 1.2rem;
   --font-size-xl: 1.5rem;
   --font-size-2xl: 2rem;
+  --font-size-3xl: 2.5rem;
+  --font-size-4xl: 4rem;
+  --font-weight-light: 200;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-black: 800;
+  --font-weight-heavy: 1000;
   
   /* Spacing */
   --spacing-xs: 0.5rem;
@@ -26,16 +54,28 @@
   --spacing-md: 2rem;
   --spacing-lg: 3rem;
   --spacing-xl: 4rem;
+  --spacing-2xl: 5rem;
   
   /* Layout */
   --border-radius-sm: 0.5rem;
   --border-radius-md: 1rem;
   --border-radius-lg: 1.5rem;
+  --border-width: 2px;
   --container-padding: 25%;
   --mobile-padding: 5%;
+  --header-height: 6rem;
+  --z-index-header: 1000;
+  --z-index-modal: 1001;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   
   /* Transitions */
+  --transition-fast: 0.15s ease-out;
   --transition-base: 0.2s ease-in-out;
+  --transition-slow: 0.3s ease-in-out;
 }
 
 /* Base Reset */
@@ -66,21 +106,26 @@ body {
 h1, h2 {
   font-family: var(--font-heading);
   color: var(--color-green);
-  font-weight: 800;
+  font-weight: var(--font-weight-heavy);
 }
 
 h3 {
   font-family: var(--font-body);
-  font-weight: 800;
+  font-weight: var(--font-weight-black);
   color: var(--color-green);
   letter-spacing: 1px;
 }
 
+h1 { font-size: var(--font-size-2xl); }
+h2 { font-size: var(--font-size-xl); }
+h3 { letter-spacing: 1px; }
+
 a {
   color: var(--color-green);
   text-decoration: none;
-  font-weight: 800;
+  font-weight: var(--font-weight-black);
   max-width: fit-content;
+  transition: var(--transition-base);
 }
 
 nav {
@@ -88,43 +133,32 @@ nav {
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  gap: 1rem;
+  gap: var(--spacing-sm);
   width: 100%;
-  text-wrap: nowrap;
+  white-space: nowrap;
 }
-
-/* Typography */
-h1, h2 {
-  font-family: 'Markazi Text', serif;
-  color: var(--color-green);
-  font-weight: 1000;
-}
-
-h3 {
-  font-family: 'Karla', sans-serif;
-  font-weight: 1000;
-  color: var(--color-green);
-}
-
-h1 { font-size: 2rem; }
-h2 { font-size: 1.5rem; }
-h3 { letter-spacing: 1px; }
 
 input, textarea, select {
   color: var(--color-green);
-  font-family: 'Karla', sans-serif;
-  border: 2px solid transparent;
+  font-family: var(--font-body);
+  border: var(--border-width) solid transparent;
   background-color: var(--color-white);
   outline: none;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
   resize: vertical;
   width: 100%;
   min-height: 3.3rem;
   text-align: left;
+  /* Cross-browser reset */
   -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
+  /* Better box-sizing */
+  box-sizing: border-box;
+  /* Prevent zoom on iOS */
+  font-size: max(16px, var(--font-size-base));
 }
 
 input:focus, textarea:focus {
@@ -140,38 +174,164 @@ b {
 }
 
 button {
-  font-family: 'Karla', sans-serif;
-  font-weight: 1000;
-  font-size: 1.1rem;
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
   color: var(--color-white);
   border: none;
-  background-color: var(--color-green);
-  padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   z-index: 2;
   line-height: normal;
-  padding: var(--spacing-sm) var(--spacing-md);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  transition: var(--transition-base);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-yellow);
+  outline-offset: 2px;
+}
+
+label {
+  text-wrap: nowrap;
 }
 
 Header {
   width: 100%;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: var(--z-index-header);
   background-color: var(--color-white);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0rem 25%;
-  font-weight: 700;
+  padding: 0 var(--container-padding);
+  font-weight: var(--font-weight-bold);
   color: var(--color-green);
-  gap: 3rem;
+  gap: var(--spacing-lg);
+  height: var(--header-height);
+  flex-wrap: nowrap;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
 }
 
 .little-lemon-logo {
   height: 6rem;
+  width: auto;
+  display: block;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: auto;
+}
+
+/* Safari-only fixes using the most reliable method */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  _::-webkit-full-page-media, _:future, :root Header a {
+    padding: 0 !important;
+    margin: 0 !important;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+  
+  _::-webkit-full-page-media, _:future, :root Header .little-lemon-logo {
+    height: 4.8rem !important;
+    width: 4.8rem !important;
+    max-width: 4.8rem !important;
+    min-width: 4.8rem !important;
+    object-fit: contain;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 10 !important;
+  }
+  
+  _::-webkit-full-page-media, _:future, :root Header .little-lemon-logo svg {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Footer logo fixes for Safari */
+  _::-webkit-full-page-media, _:future, :root footer .little-lemon-logo {
+    height: 4.8rem !important;
+    width: 4.8rem !important;
+    max-width: 4.8rem !important;
+    min-width: 4.8rem !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 10 !important;
+  }
+  
+  _::-webkit-full-page-media, _:future, :root footer .little-lemon-logo svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  _::-webkit-full-page-media, _:future, :root .filter-btn > div {
+    width: 1.6rem !important;
+    max-width: 1.6rem !important;
+  }
+}
+
+/* Firefox-specific logo visibility fixes */
+@-moz-document url-prefix() {
+  Header .little-lemon-logo,
+  footer .little-lemon-logo {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 10 !important;
+    height: 4.8rem !important;
+    width: 4.8rem !important;
+    min-height: 4.8rem !important;
+    min-width: 4.8rem !important;
+  }
+  
+  Header .little-lemon-logo svg,
+  footer .little-lemon-logo svg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    min-width: 100% !important;
+  }
+}
+
+/* Universal fallback for logo visibility across all browsers */
+.little-lemon-logo {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 5;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.little-lemon-logo svg {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .burger-menu {
@@ -191,8 +351,9 @@ Header li {
 article {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 5rem;
   color: var(--color-green);
+  margin-bottom: 5rem;
 }
 
 .add-to-cart-btn {
@@ -208,15 +369,8 @@ article {
   transition: all 0.3s ease;
 }
 
-.quantity-control:hover {
-  border: 2px solid var(--color-green);
-  transition: all 0.3s ease;
-}
-
 .hero-container {
-  background: linear-gradient(rgba(73, 94, 87, 0.95), rgba(73, 94, 87, 0.99)), url('./assets/greek-salad.jpg');
-  background-size: cover;
-  background-position: center;
+  position: relative;
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -225,6 +379,26 @@ article {
   color: white;
   padding: 5rem 25%;
   gap: 2rem;
+  min-height: 60vh;
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Ensure content appears above video */
+.hero-container > div,
+.hero-container > h3,
+.hero-container > a {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-container h1 {
@@ -290,11 +464,17 @@ article {
   color: var(--color-green);
 }
 
-.close-btn {
-  position: static;
-  top: 0;
-  right: 0;
-  cursor: pointer;
+.price-label {
+  background-color: var(--color-white);
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 2px solid transparent;
+  font-weight: 1000;
+  display: flex;
+  max-width: 6rem;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .order {
@@ -426,6 +606,28 @@ Footer {
   color: var(--color-white);
 }
 
+/* Skip Link Accessibility Styles */
+.skip-link {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  background: var(--color-green);
+  color: var(--color-white);
+  padding: 8px;
+  z-index: 10000;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: var(--font-weight-bold);
+  font-size: 0.9rem;
+  display: none;
+}
+
+.skip-link:focus {
+  display: block;
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
 .main-content {
   display: flex;
   flex-direction: column;
@@ -444,7 +646,7 @@ Footer {
   font-weight: 1000;
 }
 
-.showcase-img {
+.showcase-img img {
   border-radius: 1rem;
   outline: 0.1rem solid var(--color-green);
   outline-offset: 0.3rem;
@@ -492,7 +694,7 @@ Footer {
   padding: 2rem 3rem;
   gap: 1rem;
   color: var(--color-white);
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./assets/bruchetta.svg');
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./assets/images/bruchetta.svg');
   background-size: cover;
   background-position: center;
   position: relative;
@@ -516,26 +718,63 @@ Footer {
   right: 1rem;
   cursor: pointer;
   color: var(--color-white);
+  background-color: var(--color-white);
+}
+
+.promotion-banner button .svg-inline--fa {
+  height: auto !important;
+  width: auto !important;
 }
 
 .promotion-banner .close-btn:hover {
   color: var(--color-yellow);
 }
 
-.newsletter-input div {
+.email-input-container {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 1rem;
+  width: 100%;
+  max-width: 30rem;
+  max-height: 4rem;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 2px solid var(--color-white);
+  border-radius: 2rem;
+  background-color: var(--color-white);
+  gap: 3px;
+  transition: all 0.3s ease;
 }
 
-.newsletter-input button {
-  border-radius: 0.5rem;
-  max-width: 4rem;
+#newsletter-heading {
+    width: 80%;
+}
+
+.newsletter-input {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .newsletter-input input {
-  width: 50%;
+  border-radius: 2rem 1rem 1rem 2rem;
+}
+
+
+.newsletter-input input:focus {
+  border: 2px solid var(--color-green);
+    transition: all 0.3s ease;
+} 
+
+.newsletter-input button {
+  border-radius: 1rem 2rem 2rem 1rem;
+  max-width: 4rem;
+  padding-left: 0.5rem;
+}
+
+/* Override FontAwesome default icon styling in newsletter submit button */
+.newsletter-input button .svg-inline--fa {
+  height: auto !important;
+  width: auto !important;
 }
 
 .read-more {
@@ -557,7 +796,7 @@ Footer {
   gap: 5rem;
   background-color: var(--color-green);
   color: white;
-  min-height: 90vh;
+  min-height: 85vh;
   padding: 2rem 25%;
 }
 
@@ -565,12 +804,14 @@ Footer {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  color: var(--color-green);
 }
 
 .flex-row {
   display: flex;
   flex-direction: row;
   gap: 1rem;
+  align-items: center;
 }
 
 .no-page-message {
@@ -614,25 +855,35 @@ Footer {
   gap: 1rem;
 }
 
-.menu-categories ul {
+.menu-categories-container {
   display: flex;
+  justify-content: space-between;
+  background-color: #FFF;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 1rem;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.menu-categories {
+  display: flex;
+  width: 100%;
   flex-direction: row;
   gap: 1rem;
   overflow-x: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
-}
-
-.menu-categories ul li {
   transition: all 0.3s ease;
+  border-radius: 1rem;
 }
 
-.menu-categories ul::-webkit-scrollbar {
-  display: none; /* For Chrome, Safari, and Opera */
-}
-
-.menu-categories li {
+.menu-category {
+  display: flex;
+  align-items: center;
+  text-align: center;
   font-family: 'Karla', sans-serif;
   font-weight: 1000;
   color: var(--color-green);
@@ -640,13 +891,27 @@ Footer {
   list-style-type: none;
   text-wrap: nowrap;
   background-color: var(--color-white);
-  padding: 0.8rem;
   border-radius: 1rem;
   cursor: pointer;
+  height: 3.5rem;
+  transition: all 0.3s ease;
+  justify-content: center;
 }
 
-.menu-categories li:hover {
+.menu-category:hover {
   border: 2px solid var(--color-green);
+}
+
+/* Add active state for menu-category buttons */
+.menu-category.active {
+  background-color: var(--color-green);
+  color: var(--color-white);
+  border: 2px solid var(--color-green);
+  font-weight: var(--font-weight-bold);
+}
+
+.menu-categories ul::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
 }
 
 .menu-categories li.active {
@@ -671,14 +936,17 @@ Footer {
 .menu-items {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .divider {
-    display: flex;
+    display: block;
+    width: 100%;
     height: 3px;
-    background-color: var(--color-white);
     border-radius: 1.5px;
+    min-height: 3px;
+    flex-shrink: 0;
+    -webkit-flex-shrink: 0;
 }
 
 .menu-item label {
@@ -689,18 +957,172 @@ Footer {
 .menu-item-footer {
   text-wrap: nowrap;
   overflow-x: scroll;
+  text-align: center;
+  align-items: center;
 }
 
-.menu-item div {
+/* Menu Filters Styles */
+.filters-container {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--color-green);
+}
+
+.filters-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  color: var(--color-green);
+}
+
+.filter-controls {
   display: flex;
   flex-direction: row;
   gap: 1rem;
+  align-items: start;
 }
 
-/* span {
+.clear-filters-container {
   display: flex;
-  width: 100%;
-} */
+  justify-content: end;
+}
+
+.filter-categories {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  overflow: scroll;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+  -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+  border-radius: 1rem;
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: var(--color-green);
+  font-size: 0.85rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.filter-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.filter-button.active {
+  background: var(--filter-color, var(--color-highlight-1));
+  border-color: var(--filter-color, var(--color-highlight-1));
+  color: var(--color-black);
+  font-weight: 500;
+}
+
+.filter-icon {
+  font-size: 0.75rem;
+  font-weight: bold;
+  transition: transform 0.2s ease;
+}
+
+.filter-button.active .filter-icon {
+  transform: scale(1.1);
+}
+
+.sort-by-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-info {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
+
+/* Dietary Labels in Menu Items */
+.dietary-labels {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dietary-label {
+  padding: 0.4rem 0.75rem;
+  border-radius: 3rem;
+  font-size: 0.75rem;
+  font-weight: 200;
+  border: 1px solid var(--color-white);
+}
+
+/* Responsive Design for Filters */
+@media (max-width: 768px) {
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .dietary-filters {
+    justify-content: center;
+  }
+  
+  .sort-controls {
+    justify-content: center;
+  }
+  
+  .filters-info-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}
+
+/* No Items Message */
+.no-items-message {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.no-items-message h3 {
+  color: var(--color-white);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  letter-spacing: normal;
+}
+
+.no-items-message p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 400px;
+  margin: 0 auto;
+}
 
 .order-summary-container span {
   margin: 1rem 0rem;
@@ -853,7 +1275,7 @@ Footer {
   left: 50%;
   transform: translate(-50%, -50%);
   color: var(--color-white);
-  font-size: 1.5rem;  /* Reduced from 3rem */
+  font-size: 1.5rem;
 }
 
 .reservation-content {
@@ -969,6 +1391,7 @@ form {
   border: 2px solid var(--color-yellow);
   border-radius: 1rem;
   background-color: var(--color-yellow);
+  font-weight: 1000;
 }
 
 .btn-form-active {
@@ -1080,85 +1503,81 @@ form {
 }
 
 .quantity-control {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--color-white);
-    border-radius: 0.5rem;
-    min-width: 9rem;
-    height: 3rem;
-    border: 2px solid transparent;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-white);
+  color: var(--color-green);
+  border-radius: 1rem;
+  border: 2px solid transparent;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  width: 8rem;
+  text-wrap: nowrap;
 }
 
-.quantity-control[data-active="true"] {
-    background-color: var(--color-green);
-    border: 7px solid var(--color-green);
-    transition: all 0.3s ease-in-out;
+.quantity-control-inner {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
 }
 
-.price-label {
-    display: flex;
-    align-items: center;
-    color: var(--color-green);
-    padding: 0rem 1rem;
-    border-radius: 0.5rem;
-    background-color: var(--color-white);
+.price-cart-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  height: 3rem;
 }
 
-.price-label b {
-  font-weight: 700;
+.quantity-controls {
+  width: 100%;
+  height: 100%;
 }
 
-/* Add new styles for active state */
-.quantity-control[data-active="true"] {
-    background-color: var(--color-green);
-    color: var(--color-white);
+.quantity-control:hover {
+  border-color: var(--color-green);
 }
 
-/* Update quantity button styles for active state */
-.quantity-control[data-active="true"] .quantity-btn,
-.quantity-control[data-active="true"] .quantity-display {
-    color: var(--color-white);
-}
-
-.quantity-btn {
-    background: none;
-    border: none;
-    color: var(--color-green);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.2rem;
-    max-width: 3rem;
-    display: flex;
-    align-items: center;
-}
-
-/* Default hover state */
-.quantity-btn:hover:not(:disabled) {
-    background-color: rgba(73, 94, 87, 0.1);
-}
-
-/* Active state hover */
-.quantity-control[data-active="true"] .quantity-btn:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Disabled state */
-.quantity-btn:disabled {
-    color: var(--color-grey);
-    cursor: not-allowed;
-    opacity: 0.5;
+.quantity-control.active {
+  background-color: var(--color-green);
+  border: 0.4rem solid var(--color-green);
+  color: var(--color-white);
 }
 
 .quantity-display {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    text-align: center;
-    font-weight: 700;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  color: var(--color-white);
+  user-select: none;
+  min-width: 1.5rem;
+  text-align: center;
 }
 
-.cart-item {
+.quantity-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0.6rem 0.5rem;
+  border-radius: 0.7rem;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}.cart-item {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -1267,6 +1686,16 @@ form {
 }
 
 /* Form validation styles */
+.form-error {
+  border-color: var(--color-error) !important;
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+.error-text {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  margin-top: 0.25rem;
+}
 
 .btn-successful {
   border: 2px solid green;
@@ -1334,31 +1763,39 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
 }
 
+/* Enhanced responsive design with better breakpoints */
 @media (max-width: 1315px) {
-  .main-content, .reservation-content { padding: 2rem 5%; }
+  .main-content, .reservation-content { 
+    padding: var(--spacing-md) var(--mobile-padding); 
+  }
 
   Header {
-    padding: 0rem 5%;
-    height: 6rem;
+    padding: 0 var(--mobile-padding);
+    height: var(--header-height);
   }
 
   .little-lemon-logo {
-  height: 4.5rem;
-}
+    height: 4.5rem;
+    max-width: 12rem;
+  }
   
   .hero-container {
-    padding: 4rem 5%;
+    padding: var(--spacing-xl) var(--mobile-padding);
+    min-height: 60vh;
   }
 
   .hero-container h3 {
-    max-width: 80%;
+    max-width: 90%;
   }
 
   .desktop-only {
     width: 100%;
     display: none;
   }
-  .mobile-only { display: block; }
+  
+  .mobile-only { 
+    display: block; 
+  }
   
   /* Mobile Navigation */
   .main-nav {
@@ -1367,12 +1804,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     left: 0;
     right: 0;
     background: var(--color-white);
-    padding: 1rem;
+    padding: 0rem 1rem 2rem 1rem;
     transform: translateY(-100%);
     opacity: 0;
     visibility: hidden;
     z-index: 1000;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 0rem 0rem 2rem 2rem;
   }
 
   .main-nav.open {
@@ -1383,6 +1821,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   .footer-links {
     display: list-item;
+  }
+
+  .sort-by-container {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
   }
 
   .main-nav ul {
@@ -1401,6 +1845,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  .no-page-message-container {
+    padding: 0rem 10%;
   }
   .cart-header {
     display: block;
@@ -1438,6 +1885,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .form-container {
     width: 100%;
   }
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-controls {
+    flex-direction: column;
+  }
+  .sort-by-container {
+    flex-direction: column;
+  }
 }
 
 /* Fix for mobile hover states */
@@ -1447,22 +1904,123 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 }
 
-/* Fix for mobile Safari flexbox gap support */
+/* Enhanced Mobile Safari Flexbox Gap Support */
 @supports not (gap: 1rem) {
-  .form-container > * + * {
-    margin-top: 1rem;
+  .form-container > * + *,
+  .horizontal-container > * + *,
+  .flex-column > * + *,
+  .flex-row > * + * {
+    margin-top: var(--spacing-sm);
   }
   
-  .horizontal-container > * + * {
-    margin-left: 1rem;
+  .horizontal-container > * + *,
+  .flex-row > * + * {
+    margin-top: 0;
+    margin-left: var(--spacing-sm);
+  }
+  
+  .main-nav ul > * + * {
+    margin-top: var(--spacing-sm);
   }
 }
 
-/* iOS specific form fixes */
+/* Text Clamping Utility Classes */
+.text-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.text-clamp-2 {
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.text-clamp-3 {
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.text-clamp-4 {
+  line-clamp: 4;
+  -webkit-line-clamp: 4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Fallback for browsers that don't support line-clamp */
+@supports not (-webkit-line-clamp: 1) {
+  .text-clamp,
+  .text-clamp-2,
+  .text-clamp-3,
+  .text-clamp-4 {
+    display: block;
+    overflow: hidden;
+  }
+  
+  .text-clamp-2::after,
+  .text-clamp-3::after,
+  .text-clamp-4::after {
+    content: '...';
+  }
+}
+
+/* Enhanced iOS and Mobile Safari Form Fixes */
 input[type="date"],
-input[type="time"] {
-  min-height: 2.5rem;
-  line-height: normal;
+input[type="time"],
+input[type="datetime-local"] {
+  min-height: 44px; /* Apple HIG minimum touch target */
+  font-size: max(16px, var(--font-size-base)); /* Prevent zoom on iOS */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Date input styling consistency */
+input[type="date"]::-webkit-datetime-edit { 
+  color: var(--color-green); 
+}
+
+input[type="date"]:focus::-webkit-datetime-edit { 
+  color: var(--color-green); 
+}
+
+input[type="date"]:valid::-webkit-datetime-edit { 
+  color: var(--color-green); 
+}
+
+/* Ensure consistent styling across browsers */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  cursor: pointer;
+  filter: invert(0.3);
+}
+
+/* Fix for mobile Safari blue highlight */
+input, 
+button, 
+select, 
+textarea {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in text inputs */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="search"],
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Fix for Android border radius clipping */
@@ -1505,10 +2063,15 @@ select {
 /* Button Consistency */
 button {
   line-height: normal;
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-sm);
 }
 
-/* Scrollbar Styling */
+/* Enhanced Scrollbar Styling - Cross Browser */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-green) var(--color-white);
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -1516,17 +2079,26 @@ button {
 
 ::-webkit-scrollbar-track {
   background: var(--color-white);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-green);
   border-radius: 4px;
+  border: 1px solid var(--color-white);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-dark-green);
+}
+
+/* Firefox specific scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-green) var(--color-white);
 }
 
 input::-webkit-date-and-time-value {
   min-height: 1.1rem;
   text-align: left;
 }
-
-/* Font Loading - Using Google Fonts as fallback */
-@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;700&family=Markazi+Text:wght@400;500;600&display=swap');

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
 import Header from '../components/Header.js';
 import Footer from '../components/Footer.js';
 import Promotion from '../components/Promotion.js';
@@ -13,6 +14,11 @@ function ContactUsPage() {
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submitAttempted, setSubmitAttempted] = useState(false);
+
+    // Animation refs
+    const headerRef = useRef(null);
+    const contactDetailsRef = useRef(null);
+    const formRef = useRef(null);
 
     const validateEmail = (email) => {
         return email && email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
@@ -58,20 +64,89 @@ function ContactUsPage() {
         setTimeout(() => setIsSubmitted(false), 2000);
     };
 
+    // GSAP entrance animations
+    useEffect(() => {
+        const header = headerRef.current;
+        const contactDetails = contactDetailsRef.current;
+        const form = formRef.current;
+
+        if (!header || !contactDetails || !form) return;
+
+        // Set initial states
+        gsap.set(header, {
+            opacity: 0,
+            y: 30
+        });
+
+        // Get all contact detail sections
+        const detailSections = contactDetails.querySelectorAll('div');
+        gsap.set(detailSections, {
+            opacity: 0,
+            y: 20
+        });
+
+        // Get all form fields in a specific order
+        const formFields = [
+            form.querySelector('#fullName'),
+            form.querySelector('#emailAddress'),
+            form.querySelector('#subject'),
+            form.querySelector('#message'),
+            form.querySelector('button')
+        ].filter(Boolean); // Remove any null elements
+    
+        gsap.set(formFields, {
+            opacity: 0,
+            y: 20
+        });
+
+        // Create animation timeline
+        const tl = gsap.timeline();
+
+        // Animate header first
+        tl.to(header, {
+            opacity: 1,
+            y: 0,
+            duration: 0.25,
+            ease: "power2.out",
+            delay: 0.1
+        })
+        // Animate contact detail sections with stagger
+        .to(detailSections, {
+            opacity: 1,
+            y: 0,
+            duration: 0.25,
+            stagger: 0.1,
+            ease: "power2.out"
+        }, "-=0.2")
+        // Animate form fields with consistent stagger
+        .to(formFields, {
+            opacity: 1,
+            y: 0,
+            duration: 0.25,
+            stagger: 0.08,
+            ease: "power2.out"
+        }, "-=0.2");
+
+        // Cleanup function
+        return () => {
+            tl.kill();
+        };
+    }, []);
+
     const showError = submitAttempted && !validateForm();
 
     return (
         <div className="App">
             <Header />
-            <div className="main-content">
-                <h1>Want to get in touch?</h1>
+            <div className="main-content" id="main-content">
+                <h1 ref={headerRef}>Want to get in touch?</h1>
                 <div className="contact-info">
-                    <div className="contact-details">
+                    <div className="contact-details" ref={contactDetailsRef}>
                         <div>
                             <p><b>Address</b></p>
                             <p>1358 Chestnut St. <br />Chicago<br />IL 60680<br />
                             <a href='https://maps.google.com'>
-                                <HyperlinkLabel text='Get Directions'/>
+                                <HyperlinkLabel text='Get Directions' href=''/>
                             </a>
                             </p>
                         </div>
@@ -88,7 +163,7 @@ function ContactUsPage() {
                             <p> Alternatively, please fill out the following contact form and we'll aim to get back in touch with you shortly!</p>
                         </div>
                     </div>
-                    <form className="contact-form" onSubmit={submitForm} noValidate>
+                    <form className="contact-form" onSubmit={submitForm} ref={formRef} noValidate>
                         <input
                             required
                             id='fullName'

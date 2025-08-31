@@ -10,7 +10,7 @@ function AboutUsPage() {
   return (
     <div className="App">
       <Header />
-      <div className="reservation-content">
+      <div className="reservation-content" id="main-content">
         <ReservationForm />
       </div>
       <Promotion />
