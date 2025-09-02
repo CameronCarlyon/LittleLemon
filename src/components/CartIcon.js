@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { gsap } from 'gsap';
 import Lottie from 'lottie-react';
 import cartIcon from '../assets/icons/basket-icon.json';
@@ -16,10 +16,6 @@ const CartIcon = ({ count = 0 }) => {
   const prevCount = useRef(0);
   const prevTotalQuantity = useRef(0);
   const isInitialized = useRef(false);
-  
-  // Check if on cart page
-  const location = useLocation();
-  const isOnCartPage = location.pathname === '/cart';
 
   // Pulse animation for cart count
   const pulseCartCount = () => {
@@ -105,23 +101,29 @@ const CartIcon = ({ count = 0 }) => {
   }, [count]);
 
   return (
-    <NavLink to='/cart' className="cart-icon-container">
-      <Lottie
-        lottieRef={cartLottie}
-        animationData={cartIcon}
-        autoplay={false}
-        loop={false}
-        style={{ width: '2.5rem' }}
-      />
-      <span 
-        ref={cartCount}
-        className="cart-count" 
-        style={{ display: 'flex' }}
-        data-count={count}
-      >
-        {count}
-      </span>
-    </NavLink>
+    <NavLink 
+      to="/cart" 
+      className="cart-icon-container"
+      aria-label={`Cart with ${count} item${count !== 1 ? "s" : ""}`}
+>
+  <Lottie
+    lottieRef={cartLottie}
+    animationData={cartIcon}
+    autoplay={false}
+    loop={false}
+    style={{ width: '2.5rem' }}
+    aria-hidden="true" //
+  />
+  <span 
+    ref={cartCount}
+    className="cart-count" 
+    style={{ display: 'flex' }}
+    data-count={count}
+    aria-hidden="true"
+  >
+    {count}
+  </span>
+</NavLink>
   );
 };
 
