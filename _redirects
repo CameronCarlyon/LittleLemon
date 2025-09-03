@@ -1,0 +1,5 @@
+# Handle SPA routing - redirect all requests to index.html
+/*    /index.html   200
+
+# Specific redirects for Little Lemon routes
+/littlelemon/*    /index.html   200
