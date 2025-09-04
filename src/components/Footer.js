@@ -28,9 +28,9 @@ const Footer = () => {
 
     // Social media links data
     const socialLinks = [
-        { icon: faSquareFacebook, href: 'https://facebook.com/littlelemon', label: 'Facebook' },
-        { icon: faSquareBluesky, href: 'https://bluesky.app/littlelemon', label: 'Bluesky' },
-        { icon: faSquareInstagram, href: 'https://instagram.com/littlelemon', label: 'Instagram' }
+        { icon: faSquareFacebook, href: './facebook', label: 'Facebook' },
+        { icon: faSquareBluesky, href: './bluesky', label: 'Bluesky' },
+        { icon: faSquareInstagram, href: './instagram', label: 'Instagram' }
     ];
 
     return (

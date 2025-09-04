@@ -43,18 +43,23 @@ const HamburgerMenuIcon = ({ isOpen, onToggle }) => {
   };
 
   return (
-    <Lottie
-      lottieRef={hamburgerLottie}
-      animationData={hamburgerIcon}
-      autoplay={false}
-      loop={false}
-      initialSegment={[10, 10]} // Start at frame 10 and stay there
+    <button
       className="burger-menu mobile-only"
       onClick={handleToggle}
-      aria-label="Toggle menu"
+      aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
       aria-expanded={isOpen}
-      style={{ width: '3.4rem' }}
-    />
+      aria-controls="main-navigation"
+      style={{ width: '3.4rem', background: 'none', border: 'none', padding: 0 }}
+>
+  <Lottie
+    lottieRef={hamburgerLottie}
+    animationData={hamburgerIcon}
+    autoplay={false}
+    loop={false}
+    initialSegment={[10, 10]}
+    aria-hidden="true"
+  />
+</button>
   );
 };
 

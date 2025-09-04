@@ -55,8 +55,26 @@ const LittleLemonLogo = ({ secondary = false }) => {
     opacity: 0.85
   } : {};
 
+  // More reliable Safari detection
+  const isSafari = typeof window !== 'undefined' && 
+    window.navigator && 
+    /Safari/.test(window.navigator.userAgent) && 
+    !/Chrome/.test(window.navigator.userAgent);
+
+  // Apply Safari-specific renderer settings only if definitely Safari
+  const rendererSettings = isSafari ? {
+    preserveAspectRatio: 'xMidYMid meet',
+    viewBoxOnly: true,
+    progressiveLoad: false
+  } : undefined;
+
   return (
-    <Link to='/home' ref={logoContainer}>
+    <Link 
+      to='/home' 
+      ref={logoContainer} 
+      alt="Little Lemon Logo" 
+      aria-label="Navigate to Home Page"
+    >
       <Lottie
         lottieRef={logoLottie}
         animationData={littleLemonLogo}
@@ -64,6 +82,7 @@ const LittleLemonLogo = ({ secondary = false }) => {
         loop={false}
         className='little-lemon-logo'
         style={filterStyle}
+        rendererSettings={rendererSettings}
       />
     </Link>
   );

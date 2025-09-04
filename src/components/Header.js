@@ -136,7 +136,7 @@ const Header = () => {
         refs.animation.current.kill();
       }
     };
-  }, [isMenuOpen]);
+  });
 
   // Close menu on window resize
   useEffect(() => {
@@ -190,11 +190,13 @@ const Header = () => {
       if (cleanupCart) cleanupCart();
       if (cleanupHamburger) cleanupHamburger();
     };
-  }, []);
+  });
 
   return (
     <header>
-      <LittleLemonLogo />
+      <div className='logo-container'>
+        <LittleLemonLogo />
+      </div>
       
       {/* Desktop Navigation */}
       <nav className="desktop-only">
@@ -215,7 +217,7 @@ const Header = () => {
                 text={item.text}
                 onClick={toggleMenu}
               />
-              <Divider width={1} />
+              <Divider width={'1rem'} color={'var(--color-green)'} triggerAnimation={true} />
             </React.Fragment>
           ))}
           <HyperlinkLabel
