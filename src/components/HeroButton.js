@@ -1,12 +1,16 @@
 import React, { useRef, useEffect, forwardRef } from 'react';
 import { gsap } from 'gsap';
 
+/**
+ * HeroButton component with GSAP-powered hover effects
+ * @component
+ */
 const HeroButton = forwardRef(({ 
     children, 
     onClick, 
     className = '', 
     style = {},
-    variant = 'primary', // Add variant prop with default
+    variant = 'primary',
     ...props 
 }, ref) => {
     const internalButtonRef = useRef(null);
@@ -22,11 +26,15 @@ const HeroButton = forwardRef(({
     const getColorScheme = (variant) => {
         const schemes = {
             primary: {
+                backgroundColor: 'var(--color-yellow)',
+                borderColor: 'var(--color-yellow)',
                 initialTextColor: 'var(--color-green)',
                 hoverTextColor: 'var(--color-yellow)',
                 fillColor: 'var(--color-green)'
             },
             secondary: {
+                backgroundColor: 'var(--color-green)',
+                borderColor: 'var(--color-yellow)',
                 initialTextColor: 'var(--color-yellow)',
                 hoverTextColor: 'var(--color-green)',
                 fillColor: 'var(--color-yellow)'
@@ -37,6 +45,7 @@ const HeroButton = forwardRef(({
     };
 
     const colorScheme = getColorScheme(variant);
+    const borderWidth = 2;
 
     useEffect(() => {
         const button = buttonRef.current;
@@ -53,7 +62,13 @@ const HeroButton = forwardRef(({
         });
 
         gsap.set(text, {
-            color: colorScheme.initialTextColor // Use variant-specific initial color
+            color: colorScheme.initialTextColor
+        });
+
+        // Set initial background color based on variant
+        gsap.set(button, {
+            backgroundColor: colorScheme.backgroundColor,
+            borderColor: colorScheme.borderColor,
         });
 
         // Mouse enter handler (hover animation)
@@ -68,7 +83,6 @@ const HeroButton = forwardRef(({
                 exitTimelineRef.current = null;
             }
 
-            // Always use button's bounding rect, not the event target
             const rect = button.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
@@ -78,12 +92,14 @@ const HeroButton = forwardRef(({
             const clampedY = Math.max(0, Math.min(rect.height, mouseY));
 
             // Calculate the size needed to cover the entire button
+            // Add extra padding to ensure no gaps at borders
+            const padding = 10; // Increased padding to ensure coverage
             const maxDistance = Math.max(
                 Math.sqrt(clampedX ** 2 + clampedY ** 2),
                 Math.sqrt((rect.width - clampedX) ** 2 + clampedY ** 2),
                 Math.sqrt(clampedX ** 2 + (rect.height - clampedY) ** 2),
                 Math.sqrt((rect.width - clampedX) ** 2 + (rect.height - clampedY) ** 2)
-            );
+            ) + padding;
 
             // Set the circle position and reset properties
             gsap.set(fill, {
@@ -95,35 +111,50 @@ const HeroButton = forwardRef(({
                 marginTop: -maxDistance,
                 scale: 0,
                 opacity: 1,
-                borderRadius: '50%'
+                borderRadius: '50%',
+                backgroundColor: colorScheme.fillColor
             });
 
             // Create timeline for entrance animation
             const tl = gsap.timeline({
                 onComplete: () => {
                     timelineRef.current = null;
+                    
+                    // After animation completes, set fill to cover entire button
+                    gsap.set(fill, {
+                        left: -borderWidth,
+                        top: -borderWidth,
+                        right: -borderWidth,
+                        bottom: -borderWidth,
+                        width: `calc(100% + ${borderWidth * 2}px)`,
+                        height: `calc(100% + ${borderWidth * 2}px)`,
+                        marginLeft: 0,
+                        marginTop: 0,
+                        borderRadius: `${button.style.borderRadius || '1rem'}`,
+                    });
                 }
             });
             timelineRef.current = tl;
 
-            // Animate the circle to fill the button and text color simultaneously
+            // Animate the circle to fill the button first
             tl.to(fill, {
                 scale: 1,
-                duration: 0.6,
+                duration: 0.4, // Slightly faster fill animation
                 ease: 'power2.out'
             })
+            // Then animate text color (faster transition)
             .to(text, {
-                color: colorScheme.hoverTextColor, // Use variant-specific hover color
-                duration: 0.4,
+                color: colorScheme.hoverTextColor,
+                duration: 0.2, // Fast text transition
                 ease: 'power2.out'
-            }, 0.2); // Start text animation 0.2s into the fill animation
+            }, 0.2); // Start text animation sooner
 
             // After fill animation, transition to button shape
             tl.to(fill, {
-                borderRadius: 'inherit',
-                duration: 0.3,
+                borderRadius: button.style.borderRadius || '1rem', // Match button border radius
+                duration: 0.2,
                 ease: 'power2.inOut'
-            });
+            }, '-=0.1');
         };
 
         // Mouse leave handler - fade out the fill and reset text color
@@ -138,7 +169,7 @@ const HeroButton = forwardRef(({
                 exitTimelineRef.current = null;
             }
             
-            // Create exit timeline - both animations must complete together
+            // Create exit timeline with text color change first
             const exitTl = gsap.timeline({
                 onComplete: () => {
                     // Reset to initial state after fade out
@@ -147,10 +178,10 @@ const HeroButton = forwardRef(({
                         opacity: 0,
                         borderRadius: '50%',
                         // Clear positioning properties
-                        left: 'auto',
-                        top: 'auto',
-                        width: 'auto',
-                        height: 'auto',
+                        left: '50%',
+                        top: '50%',
+                        width: 0,
+                        height: 0,
                         marginLeft: 0,
                         marginTop: 0
                     });
@@ -159,17 +190,18 @@ const HeroButton = forwardRef(({
             });
             exitTimelineRef.current = exitTl;
 
-            // Animate fill fade out and text color back to initial color
-            exitTl.to(fill, {
-                opacity: 0,
-                duration: 0.4,
+            // First animate text back to initial color - faster transition
+            exitTl.to(text, {
+                color: colorScheme.initialTextColor,
+                duration: 0.15, // Fast text transition
                 ease: 'power2.out'
             })
-            .to(text, {
-                color: colorScheme.initialTextColor, // Use variant-specific initial color
-                duration: 0.3,
+            // Then fade out the fill
+            .to(fill, {
+                opacity: 0,
+                duration: 0.25, 
                 ease: 'power2.out'
-            }, 0); // Start immediately with fill fade
+            }, 0.05); // Start sooner
         };
 
         // Add event listeners only to the button
@@ -189,17 +221,22 @@ const HeroButton = forwardRef(({
                 exitTimelineRef.current.kill();
             }
         };
-    }, [colorScheme]); // Add colorScheme to dependencies
+    }, [colorScheme, borderWidth, buttonRef]);
 
     return (
         <button
             ref={buttonRef}
-            className={`btn-hero ${className}`}
+            className={`btn-hero ${variant === 'secondary' ? 'btn-secondary' : 'btn-primary'} ${className}`}
             onClick={onClick}
             style={{
                 position: 'relative',
                 overflow: 'hidden',
                 cursor: 'pointer',
+                backgroundColor: colorScheme.backgroundColor,
+                borderColor: colorScheme.borderColor,
+                color: colorScheme.initialTextColor,
+                border: `${borderWidth}px solid ${colorScheme.borderColor}`,
+                borderRadius: '1rem', // Explicitly set border radius
                 transition: 'border-color 0.3s ease',
                 ...style
             }}
@@ -211,9 +248,11 @@ const HeroButton = forwardRef(({
                 className="btn-hero__fill"
                 style={{
                     position: 'absolute',
-                    backgroundColor: colorScheme.fillColor, // Use variant-specific fill color
+                    backgroundColor: colorScheme.fillColor,
                     pointerEvents: 'none',
-                    zIndex: 0
+                    zIndex: 0,
+                    transform: 'scale(0)', // Start scaled to zero, GSAP will control this
+                    opacity: 0
                 }}
             />
             
@@ -225,7 +264,8 @@ const HeroButton = forwardRef(({
                     position: 'relative', 
                     zIndex: 2,
                     display: 'block',
-                    pointerEvents: 'none'
+                    pointerEvents: 'none',
+                    color: colorScheme.initialTextColor
                 }}
             >
                 {children}
