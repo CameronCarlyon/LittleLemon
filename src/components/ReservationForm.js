@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
 import { fetchAPI, submitAPI } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +18,10 @@ const ReservationForm = () => {
     const [submitAttempted, setSubmitAttempted] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const navigate = useNavigate();
+
+    // Animation refs
+    const headerRef = useRef(null);
+    const formRef = useRef(null);
 
     const validateEmail = (email) => {
         return email && email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
@@ -85,11 +90,55 @@ const ReservationForm = () => {
         fetchAvailableTimes(today);
     }, []);
 
+    // GSAP entrance animations
+    useEffect(() => {
+        const header = headerRef.current;
+        const form = formRef.current;
+
+        if (!header || !form) return;
+
+        // Set initial state for header
+        gsap.set(header, {
+            opacity: 0,
+            y: 30
+        });
+
+        // Get all form elements (labels, inputs, selects, textarea, button)
+        const formElements = form.querySelectorAll('label, input, select, textarea, button');
+        gsap.set(formElements, {
+            opacity: 0
+        });
+
+        // Create animation timeline
+        const tl = gsap.timeline();
+
+        // Animate header first with fade in and down movement
+        tl.to(header, {
+            opacity: 1,
+            y: 0,
+            duration: 0.25,
+            ease: "power2.out",
+            delay: 0.1
+        })
+        // Animate form elements with tight stagger (fade in only)
+        .to(formElements, {
+            opacity: 1,
+            duration: 1,
+            stagger: 0.06,
+            ease: "power2.out"
+        }, "-=0.15");
+
+        // Cleanup function
+        return () => {
+            tl.kill();
+        };
+    }, []);
+
     const showError = submitAttempted && !validateForm();
 
     return (
-        <form onSubmit={submitForm} noValidate>
-            <h1>Secure Your Reservation</h1>
+        <form onSubmit={submitForm} noValidate ref={formRef}>
+            <h1 ref={headerRef}>Secure Your Reservation</h1>
             
             <label htmlFor="fullName" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Full Name *</label>
             <input 
