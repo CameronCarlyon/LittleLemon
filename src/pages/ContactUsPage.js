@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import Header from '../components/Header.js';
 import Footer from '../components/Footer.js';
+import HeroButton from '../components/HeroButton.js';
 import Promotion from '../components/Promotion.js';
 import HyperlinkLabel from '../components/HyperlinkLabel.js';
 
@@ -199,12 +200,14 @@ function ContactUsPage() {
                             value={formData.message}
                             onChange={handleInputChange}
                         />
-                        <button 
-                            type='submit' 
-                            className={`btn-unavail ${validateForm() ? 'btn-form-active' : ''}`}
-                        >
-                            <b>{isSubmitted ? 'Sent!' : 'Submit'}</b>
-                        </button>
+                        <HeroButton
+                            type='submit'
+                            variant={validateForm() ? 'tertiary' : 'disabled'}
+                            disabled={!validateForm()}
+                            aria-disabled={!validateForm()}
+                            >
+                            {isSubmitted ? 'Sent!' : 'Submit'}
+                        </HeroButton>
                     </form>
                 </div>
             </div>

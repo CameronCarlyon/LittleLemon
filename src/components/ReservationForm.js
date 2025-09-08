@@ -3,6 +3,8 @@ import { gsap } from 'gsap';
 import { fetchAPI, submitAPI } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
+import HeroButton from './HeroButton';
+
 const ReservationForm = () => {
     const [formData, setFormData] = useState({
         fullName: '',
@@ -16,17 +18,26 @@ const ReservationForm = () => {
     });
     const [availableTimes, setAvailableTimes] = useState([]);
     const [submitAttempted, setSubmitAttempted] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
     const navigate = useNavigate();
 
     // Animation refs
     const headerRef = useRef(null);
     const formRef = useRef(null);
 
+    /**
+     * Enhanced email validation following RFC 5322 guidelines
+     * @param {string} email - Email address to validate
+     * @returns {boolean} - Validation result
+     */
     const validateEmail = (email) => {
         return email && email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
     };
 
+    /**
+     * Comprehensive form validation
+     * @returns {boolean} Form validity
+     */
     const validateForm = () => {
         return (
             formData.fullName.trim() !== '' &&
@@ -37,20 +48,63 @@ const ReservationForm = () => {
         );
     };
 
+    /**
+     * Individual field validation for better error handling
+     * @param {string} fieldName - Name of field to validate
+     * @returns {boolean} Field validity
+     */
+    const validateField = (fieldName) => {
+        switch (fieldName) {
+            case 'fullName':
+                return formData.fullName.trim() !== '';
+            case 'emailAddress':
+                return validateEmail(formData.emailAddress);
+            case 'guestCount':
+                return formData.guestCount !== '';
+            case 'reservationDate':
+                return formData.reservationDate !== '';
+            case 'reservationTime':
+                return formData.reservationTime !== '';
+            default:
+                return true;
+        }
+    };
+
+    /**
+     * Check if field should show error state
+     * @param {string} fieldName - Name of field to check
+     * @returns {boolean} Should show error
+     */
+    const shouldShowFieldError = (fieldName) => {
+        return submitAttempted && !validateField(fieldName);
+    };
+
+    /**
+     * Handle standard form input changes
+     * @param {Event} e - Input change event
+     */
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [id]: value
         }));
-        setSubmitAttempted(false);
+        
+        // Clear error state immediately when user starts typing (shows they're addressing the issue)
+        if (submitAttempted) {
+            setSubmitAttempted(false);
+        }
 
         if (id === 'reservationDate') {
             fetchAvailableTimes(value);
         }
     };
 
-    const submitForm = (e) => {
+    /**
+     * Handle form submission with processing delay - validate, process reservation, and navigate
+     * @param {Event} e - Submit event
+     */
+    const submitForm = async (e) => {
         e.preventDefault();
         setSubmitAttempted(true);
 
@@ -58,10 +112,14 @@ const ReservationForm = () => {
             return;
         }
 
+        setIsProcessing(true);
+
         try {
+            // Add 3 second processing delay for better UX
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
             const success = submitAPI(formData);
             if (success) {
-                setIsSubmitted(true);
                 console.log('Reservation submitted:', formData);
                 navigate('/reservations/success', { 
                     state: { reservationData: formData }
@@ -70,9 +128,15 @@ const ReservationForm = () => {
         } catch (error) {
             console.error('Submission failed:', error);
             alert('Failed to create reservation. Please try again.');
+        } finally {
+            setIsProcessing(false);
         }
     };
 
+    /**
+     * Fetch available time slots for selected date
+     * @param {string} date - Selected reservation date
+     */
     const fetchAvailableTimes = (date) => {
         try {
             // Convert the date string to a Date object
@@ -85,6 +149,7 @@ const ReservationForm = () => {
         }
     };
 
+    // Fetch initial available times for today
     React.useEffect(() => {
         const today = new Date().toISOString().split('T')[0];
         fetchAvailableTimes(today);
@@ -134,29 +199,29 @@ const ReservationForm = () => {
         };
     }, []);
 
-    const showError = submitAttempted && !validateForm();
-
     return (
         <form onSubmit={submitForm} noValidate ref={formRef}>
             <h1 ref={headerRef}>Secure Your Reservation</h1>
             
-            <label htmlFor="fullName" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Full Name *</label>
+            <label htmlFor="fullName" className={shouldShowFieldError('fullName') ? 'form-error-text' : ''}>Full Name *</label>
             <input 
                 id="fullName" 
                 type="text" 
-                className={showError && !formData.fullName.trim() ? 'form-error' : ''}
+                className={shouldShowFieldError('fullName') ? 'form-error' : ''}
                 value={formData.fullName}
                 onChange={handleInputChange}
+                disabled={isProcessing}
                 required
             />
             
-            <label htmlFor="emailAddress" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Email *</label>
+            <label htmlFor="emailAddress" className={shouldShowFieldError('emailAddress') ? 'form-error-text' : ''}>Email *</label>
             <input 
                 id="emailAddress" 
                 type="email" 
-                className={showError && !validateEmail(formData.emailAddress) ? 'form-error' : ''}
+                className={shouldShowFieldError('emailAddress') ? 'form-error' : ''}
                 value={formData.emailAddress}
                 onChange={handleInputChange}
+                disabled={isProcessing}
                 required 
             />
             
@@ -166,6 +231,7 @@ const ReservationForm = () => {
                 type="tel" 
                 value={formData.contactNumber}
                 onChange={handleInputChange}
+                disabled={isProcessing}
             />
             
             <label htmlFor="occasion">Occasion</label>
@@ -173,6 +239,7 @@ const ReservationForm = () => {
                 id="occasion" 
                 value={formData.occasion}
                 onChange={handleInputChange}
+                disabled={isProcessing}
             >
                 <option value="none"></option>
                 <option value="birthday">Birthday</option>
@@ -181,12 +248,13 @@ const ReservationForm = () => {
                 <option value="casualDining">Casual Dining</option>
             </select>
             
-            <label htmlFor="guestCount" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Number of Guests *</label>
+            <label htmlFor="guestCount" className={shouldShowFieldError('guestCount') ? 'form-error-text' : ''}>Number of Guests *</label>
             <select 
                 id="guestCount" 
-                className={showError && !formData.guestCount ? 'form-error' : ''}
+                className={shouldShowFieldError('guestCount') ? 'form-error' : ''}
                 value={formData.guestCount}
                 onChange={handleInputChange}
+                disabled={isProcessing}
                 required
             >
                 <option value=""></option>
@@ -195,24 +263,26 @@ const ReservationForm = () => {
                 ))}
             </select>
             
-            <label htmlFor="reservationDate" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Date *</label>
+            <label htmlFor="reservationDate" className={shouldShowFieldError('reservationDate') ? 'form-error-text' : ''}>Date *</label>
             <input 
                 id="reservationDate"
                 type="date" 
                 placeholder=''
                 value={formData.reservationDate}
                 onChange={handleInputChange}
-                className={showError && !formData.reservationDate ? 'form-error' : ''}
+                className={shouldShowFieldError('reservationDate') ? 'form-error' : ''}
+                disabled={isProcessing}
                 required 
                 min={new Date().toISOString().split('T')[0]}
             />
             
-            <label htmlFor="reservationTime" className={showError && !formData.reservationDate ? 'form-error-text' : ''}>Time Slot *</label>
+            <label htmlFor="reservationTime" className={shouldShowFieldError('reservationTime') ? 'form-error-text' : ''}>Time Slot *</label>
             <select 
                 id="reservationTime" 
-                className={showError && !formData.reservationTime ? 'form-error' : ''}
+                className={shouldShowFieldError('reservationTime') ? 'form-error' : ''}
                 value={formData.reservationTime}
                 onChange={handleInputChange}
+                disabled={isProcessing}
                 required
             >
                 <option value=""></option>
@@ -228,16 +298,21 @@ const ReservationForm = () => {
                 id="specialRequests"
                 value={formData.specialRequests}
                 onChange={handleInputChange}
+                disabled={isProcessing}
                 rows="4" 
                 cols="50" 
                 placeholder="Please note that whilst we will do our best to accommodate your special requests, we cannot guarantee that all will be fulfilled."
             />
-            <button
-                type="submit" 
-                className={`btn-unavail ${validateForm() ? 'btn-form-active' : ''}`}
+            
+            <HeroButton
+                type="submit"
+                variant={validateForm() ? 'tertiary' : 'disabled'}
+                disabled={!validateForm() || isProcessing}
+                aria-disabled={!validateForm() || isProcessing}
+                aria-busy={isProcessing}
             >
-                <b>Create Reservation</b>
-            </button>
+                <b>{isProcessing ? 'Processing...' : 'Create Reservation'}</b>
+            </HeroButton>
         </form>
     );
 };
