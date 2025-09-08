@@ -9,19 +9,27 @@ import { gsap } from 'gsap';
  * Features:
  * - Email validation with real-time feedback
  * - Accessible form controls with proper ARIA labels
- * - Success state with auto-dismiss functionality
  * - Keyboard navigation support
  * - Mobile-optimized touch targets
- * - GSAP closing animation
+ * - GSAP closing and hover animations
  * 
  * @component
  */
 const Promotion = memo(() => {
     const [email, setEmail] = useState('');
     const [isVisible, setIsVisible] = useState(() => {
-        // Check sessionStorage for close state - persists across route navigation 
-        // but resets on page refresh
-        const isPromotionClosed = localStorage.getItem('promotion-closed');
+        // Reset promotion state on page refresh by checking if this is a fresh page load
+        // Use performance.navigation.type or performance.getEntriesByType to detect refresh
+        const isPageRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+        
+        if (isPageRefresh) {
+            // Clear any existing close state on refresh
+            sessionStorage.removeItem('promotion-closed');
+            return true;
+        }
+        
+        // Check sessionStorage for close state - persists across route navigation only
+        const isPromotionClosed = sessionStorage.getItem('promotion-closed');
         return isPromotionClosed !== 'true';
     });
     const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -33,6 +41,7 @@ const Promotion = memo(() => {
     const dismissTimeoutRef = useRef(null);
     const bannerRef = useRef(null);
     const animationTimelineRef = useRef(null);
+    const closeButtonRef = useRef(null);
 
     /**
      * Enhanced email validation following RFC 5322 guidelines
@@ -45,6 +54,37 @@ const Promotion = memo(() => {
         const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
         return emailRegex.test(email.trim());
     }, []);
+
+    /**
+     * Handle close button hover animation with GSAP
+     * Scales X SVG icon slightly on hover for interactive feedback
+     */
+    const handleCloseButtonHover = useCallback((isHovering) => {
+        if (!closeButtonRef.current || isAnimating) return;
+        
+        const svgIcon = closeButtonRef.current.querySelector('.svg-inline--fa');
+        if (!svgIcon) return;
+
+        gsap.context(() => {
+            if (isHovering) {
+                // Hover in: scale up slightly
+                gsap.to(svgIcon, {
+                    scale: 1.2,
+                    duration: 0.2,
+                    ease: 'power2.out',
+                    force3D: true
+                });
+            } else {
+                // Hover out: scale back to normal
+                gsap.to(svgIcon, {
+                    scale: 1,
+                    duration: 0.2,
+                    ease: 'power2.out',
+                    force3D: true
+                });
+            }
+        }, closeButtonRef.current);
+    }, [isAnimating]);
 
     /**
      * Animate promotion banner closing with GSAP
@@ -115,10 +155,10 @@ const Promotion = memo(() => {
 
     /**
      * Handle form submission with validation and error handling
-     * Always shows invalid state on any submit attempt
+     * Shows invalid state on any submit attempt, including blank fields
      * @param {Event} e - Form submission event
      */
-    const handleSubmit = useCallback(async (e) => {
+    const handleSubmit = useCallback((e) => {
         e.preventDefault();
         
         // Always trigger invalid state on any submit attempt
@@ -190,7 +230,7 @@ const Promotion = memo(() => {
         };
     }, []);
 
-        // Don't render if not visible
+    // Don't render if not visible
     if (!isVisible) return null;
 
     const showError = submitAttempted && !validateEmail(email);
@@ -213,11 +253,11 @@ const Promotion = memo(() => {
                     <h3 id="newsletter-heading">
                         Subscribe to Our Monthly Newsletter!
                     </h3>
-                        <label htmlFor="newsletter-email" className="sr-only">
-                            Email address for newsletter subscription
-                        </label>
-                        
-                        <div className='email-input-container'>
+                    <label htmlFor="newsletter-email" className="sr-only">
+                        Email address for newsletter subscription
+                    </label>
+                    
+                    <div className='email-input-container'>
                         <input 
                             ref={inputRef}
                             id="newsletter-email"
@@ -243,7 +283,7 @@ const Promotion = memo(() => {
                         />
                         <button 
                             type="submit" 
-                            disabled={!email.trim() || isAnimating}
+                            disabled={isAnimating} // Removed !email.trim() condition
                             className={`btn ${
                                 showError ? 'btn-error' : ''
                             }`}
@@ -251,25 +291,17 @@ const Promotion = memo(() => {
                         >
                             <FontAwesomeIcon icon={faEnvelope} aria-hidden="true" />
                         </button>  
-                        </div>
-                        
-                        {showError && (
-                            <div 
-                                id="email-error" 
-                                className="error-text"
-                                role="alert"
-                                aria-live="assertive"
-                            >
-                                Please enter a valid email address
-                            </div>
-                        )}
+                    </div>
                 </div>
             </form>
             
             <button
+                ref={closeButtonRef}
                 type="button"
                 className="close-btn"
                 onClick={handleDismiss}
+                onMouseEnter={() => handleCloseButtonHover(true)}
+                onMouseLeave={() => handleCloseButtonHover(false)}
                 disabled={isAnimating}
                 aria-label="Close newsletter promotion"
                 title="Close promotion (Press Escape)"

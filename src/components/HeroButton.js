@@ -11,6 +11,7 @@ const HeroButton = forwardRef(({
     className = '', 
     style = {},
     variant = 'primary',
+    disabled = false,
     ...props 
 }, ref) => {
     const internalButtonRef = useRef(null);
@@ -38,13 +39,46 @@ const HeroButton = forwardRef(({
                 initialTextColor: 'var(--color-yellow)',
                 hoverTextColor: 'var(--color-green)',
                 fillColor: 'var(--color-yellow)'
+            },
+            tertiary: {
+                backgroundColor: 'var(--color-green)',
+                borderColor: 'var(--color-green)',
+                initialTextColor: 'var(--color-white)',
+                hoverTextColor: 'var(--color-green)',
+                fillColor: 'var(--color-white)'
+            },
+            disabled: {
+                backgroundColor: 'var(--color-white)',
+                borderColor: 'var(--color-white)',
+                initialTextColor: 'var(--color-grey)',
+                hoverTextColor: 'var(--color-grey)',
+                fillColor: 'var(--color-grey)'
             }
         };
         
         return schemes[variant] || schemes.primary;
     };
 
-    const colorScheme = getColorScheme(variant);
+    /**
+     * Generate variant-specific className
+     * @param {string} variant - Button variant
+     * @returns {string} - CSS className for the variant
+     */
+    const getVariantClassName = (variant) => {
+        const variantClasses = {
+            primary: 'btn-hero--primary',
+            secondary: 'btn-hero--secondary',
+            tertiary: 'btn-hero--tertiary',
+            disabled: 'btn-hero--disabled'
+        };
+        
+        return variantClasses[variant] || variantClasses.primary;
+    };
+
+    // Determine effective variant - use 'disabled' if disabled prop is true
+    const effectiveVariant = disabled ? 'disabled' : variant;
+    const colorScheme = getColorScheme(effectiveVariant);
+    const variantClassName = getVariantClassName(effectiveVariant);
     const borderWidth = 2;
 
     useEffect(() => {
@@ -70,6 +104,11 @@ const HeroButton = forwardRef(({
             backgroundColor: colorScheme.backgroundColor,
             borderColor: colorScheme.borderColor,
         });
+
+        // Don't add event listeners if button is disabled
+        if (disabled) {
+            return;
+        }
 
         // Mouse enter handler (hover animation)
         const handleMouseEnter = (e) => {
@@ -177,7 +216,6 @@ const HeroButton = forwardRef(({
                         scale: 0,
                         opacity: 0,
                         borderRadius: '50%',
-                        // Clear positioning properties
                         left: '50%',
                         top: '50%',
                         width: 0,
@@ -221,23 +259,22 @@ const HeroButton = forwardRef(({
                 exitTimelineRef.current.kill();
             }
         };
-    }, [colorScheme, borderWidth, buttonRef]);
+    }, [colorScheme, borderWidth, buttonRef, disabled]);
 
     return (
         <button
             ref={buttonRef}
-            className={`btn-hero ${variant === 'secondary' ? 'btn-secondary' : 'btn-primary'} ${className}`}
+            className={`btn-hero ${variantClassName} ${className}`}
             onClick={onClick}
             style={{
                 position: 'relative',
                 overflow: 'hidden',
-                cursor: 'pointer',
+                cursor: disabled ? 'not-allowed' : 'pointer',
                 backgroundColor: colorScheme.backgroundColor,
                 borderColor: colorScheme.borderColor,
                 color: colorScheme.initialTextColor,
                 border: `${borderWidth}px solid ${colorScheme.borderColor}`,
-                borderRadius: '1rem', // Explicitly set border radius
-                transition: 'border-color 0.3s ease',
+                transition: disabled ? 'none' : 'border-color 0.3s ease',
                 ...style
             }}
             {...props}
@@ -251,7 +288,7 @@ const HeroButton = forwardRef(({
                     backgroundColor: colorScheme.fillColor,
                     pointerEvents: 'none',
                     zIndex: 0,
-                    transform: 'scale(0)', // Start scaled to zero, GSAP will control this
+                    transform: 'scale(0)',
                     opacity: 0
                 }}
             />

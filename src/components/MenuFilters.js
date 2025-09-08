@@ -186,9 +186,9 @@ const MenuFilters = ({
     return (
         <div ref={filtersRef} className="filter-container">
             <div className='filter-controls'>
-            <div className='flex-row'>
+            <div className='filter-by-container'>
                 <label>Filter by:</label>
-                <div className='filter-categories'>
+                <div className='menu-categories'>
                     {dietaryFilters.map((filter) => (
                         <button
                             key={filter.key}
@@ -202,8 +202,8 @@ const MenuFilters = ({
             </div>
             
             <div className="sort-by-container">
-                    <div className='flex-row'>
                     <label htmlFor="sort-select" >Sort by:</label>
+                    <div className='menu-categories'>
                     <select
                         id="sort-select"
                         className="menu-category"

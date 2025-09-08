@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
+import HeroButton from './HeroButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMotorcycle, faStore, faXmark, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
@@ -104,6 +105,47 @@ const Cart = () => {
     );
   }, [formData, validateEmail]);
 
+
+  /**
+   * Individual field validation for better error handling
+   * @param {string} fieldName - Name of field to validate
+   * @returns {boolean} Field validity
+   */
+  const validateField = useCallback((fieldName) => {
+    const isHomeDelivery = formData.deliveryMethod === 'homeDelivery';
+    
+    switch (fieldName) {
+      case 'fullName':
+        return formData.fullName.trim() !== '';
+      case 'emailAddress':
+        return validateEmail(formData.emailAddress);
+      case 'cardNumber':
+        return formData.cardNumber.trim() !== '';
+      case 'expiryDate':
+        return formData.expiryDate.trim() !== '';
+      case 'cvv':
+        return formData.cvv.trim() !== '';
+      case 'deliveryMethod':
+        return !!formData.deliveryMethod;
+      case 'address':
+        return !isHomeDelivery || formData.address.trim() !== '';
+      case 'zip':
+        return !isHomeDelivery || formData.zip.trim() !== '';
+      case 'terms':
+        return formData.terms === true;
+      default:
+        return true;
+    }
+  }, [formData, validateEmail]);
+
+  /**
+   * Check if field should show error state
+   * @param {string} fieldName - Name of field to check
+   * @returns {boolean} Should show error
+   */
+  const shouldShowFieldError = useCallback((fieldName) => {
+    return submitAttempted && !validateField(fieldName);
+  }, [submitAttempted, validateField]);
 
   /**
    * Update pricing calculations when dependencies change
@@ -220,7 +262,7 @@ const Cart = () => {
         state: { 
             orderData: formData,
             pricing: pricing,
-            orderItems: orderItems // Add ordered items to state
+            orderItems: orderItems
         }
     });
     
@@ -228,8 +270,7 @@ const Cart = () => {
     clearCart();
   };
 
-  const showErrorMessage = submitAttempted && !validateForm();
-  
+
   return (
     <div className='app'>
       <div className='main-content' id='main-content'>
@@ -241,7 +282,7 @@ const Cart = () => {
           id='fullName' 
           type='text' 
           placeholder='Full Name' 
-          className={showErrorMessage && !formData.fullName.trim() ? 'form-error' : ''}
+          className={shouldShowFieldError('fullName') ? 'form-error' : ''}
           value={formData.fullName}
           onChange={handleInputChange}
           required 
@@ -250,7 +291,7 @@ const Cart = () => {
           id='emailAddress' 
           type='email' 
           placeholder='Email Address' 
-          className={showErrorMessage && !validateEmail(formData.emailAddress) ? 'form-error' : ''}
+          className={shouldShowFieldError('emailAddress') ? 'form-error' : ''}
           value={formData.emailAddress}
           onChange={handleInputChange}
           required 
@@ -260,7 +301,7 @@ const Cart = () => {
               id='cardNumber' 
               type='text' 
               placeholder='Card Number' 
-              className={showErrorMessage && !formData.cardNumber.trim() ? 'form-error' : ''}
+              className={shouldShowFieldError('cardNumber') ? 'form-error' : ''}
               value={formData.cardNumber}
               onChange={handleInputChange}
               required 
@@ -269,7 +310,7 @@ const Cart = () => {
               id='expiryDate' 
               type='text' 
               placeholder='MM/YY' 
-              className={showErrorMessage && !formData.expiryDate.trim() ? 'form-error' : ''}
+              className={shouldShowFieldError('expiryDate') ? 'form-error' : ''}
               value={formData.expiryDate}
               onChange={handleInputChange}
               required 
@@ -278,7 +319,7 @@ const Cart = () => {
               id='cvv' 
               type='text' 
               placeholder='CVV' 
-              className={showErrorMessage && !formData.cvv.trim() ? 'form-error' : ''}
+              className={shouldShowFieldError('cvv') ? 'form-error' : ''}
               value={formData.cvv}
               onChange={handleInputChange}
               required 
@@ -298,7 +339,7 @@ const Cart = () => {
             className="delivery-radio-input"
             required
         />
-        <div className={`delivery-option-content ${showErrorMessage && !formData.deliveryMethod ? 'btn-error' : ''}`}>
+        <div className={`delivery-option-content ${shouldShowFieldError('deliveryMethod') ? 'btn-error' : ''}`}>
             <FontAwesomeIcon icon={faStore} className="delivery-icon" />
             <p className="delivery-label"><b>Store Pickup</b></p>
             <p className="delivery-price"><b>$0.00</b></p>
@@ -318,7 +359,7 @@ const Cart = () => {
             className="delivery-radio-input"
             required
         />
-        <div className={`delivery-option-content ${showErrorMessage && !formData.deliveryMethod ? 'btn-error' : ''}`}>
+        <div className={`delivery-option-content ${shouldShowFieldError('deliveryMethod') ? 'btn-error' : ''}`}>
             <FontAwesomeIcon icon={faMotorcycle} className="delivery-icon" />
             <p><b>Home Delivery</b></p>
             <p><b>$4.99</b></p>
@@ -337,7 +378,7 @@ const Cart = () => {
               id='address' 
               type='text' 
               placeholder='Address' 
-              className={showErrorMessage && !formData.address.trim() ? 'form-error' : ''}
+              className={shouldShowFieldError('address') ? 'form-error' : ''}
               value={formData.address}
               onChange={handleInputChange}
               required 
@@ -348,7 +389,7 @@ const Cart = () => {
               id='zip' 
               type='text' 
               placeholder='Zip Code' 
-              className={showErrorMessage && !formData.zip.trim() ? 'form-error' : ''}
+              className={shouldShowFieldError('zip') ? 'form-error' : ''}
               value={formData.zip}
               onChange={handleInputChange}
               required 
@@ -497,12 +538,12 @@ const Cart = () => {
                     <label><b>No Tip</b></label>
                   </div>
                 </div>
-                <div className={`checkbox-container ${showErrorMessage && !formData.terms ? 'form-error' : ''}`}>
+                <div className={`checkbox-container ${shouldShowFieldError('terms') ? 'form-error' : ''}`}>
                   <label 
                     htmlFor='terms' 
-                    style={{ color: showErrorMessage && !formData.terms ? 'darkred' : 'inherit' }}
+                    style={{ color: shouldShowFieldError('terms') ? 'darkred' : 'inherit' }}
                   >
-                    I agree to the <Link to='' style={{ color: showErrorMessage && !formData.terms ? 'darkred' : 'inherit' }}>Terms and Conditions</Link>
+                    I agree to the <Link to='' style={{ color: shouldShowFieldError('terms') ? 'darkred' : 'inherit' }}>Terms and Conditions</Link>
                   </label>
                   <input 
                     type='checkbox' 
@@ -519,14 +560,20 @@ const Cart = () => {
               />
           </div>
           <div className='horizontal-container'>
-              <button 
-                  type='submit' 
-                  className={`btn-unavail ${validateForm() ? 'btn-form-active' : ''}`}
-                  disabled={isProcessing}
+            <HeroButton
+                  type='submit'
+                  variant={validateForm() ? 'tertiary' : 'disabled'}
+                  disabled={!validateForm() || isProcessing}
+                  aria-disabled={!validateForm() || isProcessing}
+                  aria-busy={isProcessing}
               >
                   <b>{isProcessing ? 'Processing...' : 'Place Order'}</b>
-              </button>
-              <Link to="/menu"><div className='btn'><b>Add More Items</b></div></Link>
+                  </HeroButton>
+              <Link to="/menu">
+                <div className='btn'>
+                  <b>Add More Items</b>
+                </div>
+              </Link>
           </div>
         </div> 
       </form>

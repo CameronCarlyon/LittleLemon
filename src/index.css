@@ -145,7 +145,7 @@ input, textarea, select {
   background-color: var(--color-white);
   outline: none;
   padding: var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
+  border-radius: 1rem;
   font-size: var(--font-size-base);
   resize: vertical;
   width: 100%;
@@ -232,7 +232,7 @@ Header {
   width: auto;
 }
 
-/* Safari-only fixes using the most reliable method */
+/* Safari-only fixes */
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   _::-webkit-full-page-media, _:future, :root Header a {
     padding: 0 !important;
@@ -288,7 +288,7 @@ Header {
   }
 }
 
-/* Firefox-specific logo visibility fixes */
+/* Firefox-specific logo visibility */
 @-moz-document url-prefix() {
   Header .little-lemon-logo,
   footer .little-lemon-logo {
@@ -704,30 +704,20 @@ Footer {
   text-align: center;
 }
 
-.promotion-banner h3 {
-  font-family: 'Karla', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  padding-bottom: 1rem;
-  color: var(--color-white);
-}
-
-.promotion-banner .close-btn {
+.close-btn {
   position: absolute;
+  display: flex;
   top: 1rem;
   right: 1rem;
   cursor: pointer;
-  color: var(--color-white);
+  color: var(--color-green);
   background-color: var(--color-white);
+  border-radius: 2rem;
 }
 
 .promotion-banner button .svg-inline--fa {
-  height: auto !important;
-  width: auto !important;
-}
-
-.promotion-banner .close-btn:hover {
-  color: var(--color-yellow);
+  height: 1.5rem !important;
+  width: 1.5rem !important;
 }
 
 .email-input-container {
@@ -745,7 +735,11 @@ Footer {
 }
 
 #newsletter-heading {
-    width: 80%;
+  font-family: 'Karla', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-white);
+  width: 80%;
 }
 
 .newsletter-input {
@@ -753,6 +747,8 @@ Footer {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
 }
 
 .newsletter-input input {
@@ -990,6 +986,7 @@ Footer {
   flex-direction: row;
   gap: 1rem;
   align-items: start;
+  width: 100%;
 }
 
 .clear-filters-container {
@@ -1047,9 +1044,19 @@ Footer {
 
 .sort-by-container {
   display: flex;
+  flex-direction: row;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+}
+
+.filter-by-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  gap: 1rem;
 }
 
 .filter-info {
@@ -1142,7 +1149,7 @@ Footer {
 .prefilled {
   background-color: var(--color-white);
   padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   font-weight: 400;
   font-size: 1rem;
   cursor: not-allowed;
@@ -1155,10 +1162,11 @@ Footer {
   gap: 1rem;
   padding: 1rem;
   border: 2px solid transparent;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   width: 100%;
   font-size: 1rem;
   background-color: var(--color-white);
+  transition: all 0.3s ease;
   mask-image: -webkit-radial-gradient(white, black);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
@@ -1216,6 +1224,10 @@ Footer {
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
+.form-container * {
+  transition: all 0.3s ease;
+}
+
 .form-container:nth-of-type(2) {
   width: 50%;
 }
@@ -1227,9 +1239,12 @@ Footer {
 }
 
 .order-summary-container {
+  display: flex;
+  gap: 0.1rem;
+  flex-direction: column;
   background-color: var(--color-white);
   padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   mask-image: -webkit-radial-gradient(white, black);;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
@@ -1248,7 +1263,7 @@ Footer {
   padding: 1rem;
   gap: 1rem;
   border: 2px solid transparent;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   background-color: var(--color-white);
 }
 
@@ -1256,12 +1271,14 @@ Footer {
   width: 2rem;  
   min-height: 2rem;
   border: 2px solid var(--color-green);
+  border-radius: 3rem;
   background-color: transparent;
   color: var(--color-green);
   position: relative;
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .checkbox-container input:checked {
@@ -1362,13 +1379,12 @@ form {
   color: var(--color-green);
   background-color: var(--color-white);
   padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   border: 2px solid transparent;
   cursor: pointer;
   font-size: 1.1rem;
   width: 100%;
   text-wrap: nowrap;
-  border-radius: 1.5rem;
 }
 
 .btn:hover {
@@ -1387,12 +1403,14 @@ form {
 
 .btn-hero {
   display: flex;
-  max-width: fit-content;
+  width: 100%;
   border: 2px solid var(--color-yellow);
   border-radius: 1rem;
   background-color: var(--color-yellow);
   font-weight: 1000;
 }
+
+
 
 .btn-form-active {
   background-color: var(--color-green);
@@ -1432,7 +1450,6 @@ form {
   flex-direction: column;
   background-color: var(--color-white);
   padding: 1rem;
-  border-radius: 0.5rem;
 }
 
 .tip-option {
@@ -1442,9 +1459,10 @@ form {
   align-items: center;
   width: 100%;
   background-color: var(--color-white);
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   cursor: pointer;
   border: 2px solid var(--color-white);
+  transition: all 0.3s ease;
 }
 
 .tip-option label {
@@ -1823,12 +1841,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: list-item;
   }
 
-  .sort-by-container {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-  }
-
   .main-nav ul {
     display: flex;
     flex-direction: column;
@@ -1892,8 +1904,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .filter-controls {
     flex-direction: column;
   }
-  .sort-by-container {
-    flex-direction: column;
+  #sort-select {
+    width: 100%;
   }
 }
 
@@ -2047,7 +2059,6 @@ button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  border-radius: var(--border-radius-sm);
   font-size: 1.1rem;
 }
 
