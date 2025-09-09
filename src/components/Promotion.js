@@ -12,6 +12,7 @@ import { gsap } from 'gsap';
  * - Keyboard navigation support
  * - Mobile-optimized touch targets
  * - GSAP closing and hover animations
+ * - Auto-close after successful submission
  * 
  * @component
  */
@@ -19,7 +20,6 @@ const Promotion = memo(() => {
     const [email, setEmail] = useState('');
     const [isVisible, setIsVisible] = useState(() => {
         // Reset promotion state on page refresh by checking if this is a fresh page load
-        // Use performance.navigation.type or performance.getEntriesByType to detect refresh
         const isPageRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
         
         if (isPageRefresh) {
@@ -34,6 +34,7 @@ const Promotion = memo(() => {
     });
     const [submitAttempted, setSubmitAttempted] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [isSubmissionSuccessful, setIsSubmissionSuccessful] = useState(false);
     
     // Refs for accessibility and animations
     const inputRef = useRef(null);
@@ -42,6 +43,7 @@ const Promotion = memo(() => {
     const bannerRef = useRef(null);
     const animationTimelineRef = useRef(null);
     const closeButtonRef = useRef(null);
+    const autoCloseTimeoutRef = useRef(null);
 
     /**
      * Enhanced email validation following RFC 5322 guidelines
@@ -154,22 +156,38 @@ const Promotion = memo(() => {
     }, [isAnimating]);
 
     /**
-     * Handle form submission with validation and error handling
-     * Shows invalid state on any submit attempt, including blank fields
+     * Handle form submission with validation and success behavior
+     * Shows invalid state or processes successful submission with auto-close
      * @param {Event} e - Form submission event
      */
     const handleSubmit = useCallback((e) => {
         e.preventDefault();
         
-        // Always trigger invalid state on any submit attempt
+        // Always trigger submit attempt for validation
         setSubmitAttempted(true);
         
-        // Focus input for accessibility
-        inputRef.current?.focus();
+        // If email is valid, proceed with submission
+        if (validateEmail(email)) {
+            console.log('Newsletter subscription:', email);
+            
+            // Clear input field instantly on successful submission
+            setEmail('');
+            
+            // Set successful submission state
+            setIsSubmissionSuccessful(true);
+            setSubmitAttempted(false);
+            
+            // Auto-close after 3 seconds
+            autoCloseTimeoutRef.current = setTimeout(() => {
+                animateClose();
+            }, 3000);
+            
+            return;
+        }
         
-        // Don't proceed with actual submission - just show invalid state
-        return;
-    }, []);
+        // If invalid, focus input for accessibility
+        inputRef.current?.focus();
+    }, [email, validateEmail, animateClose]);
 
     /**
      * Handle email input changes with validation reset
@@ -179,17 +197,32 @@ const Promotion = memo(() => {
         const newEmail = e.target.value;
         setEmail(newEmail);
         
-        // Reset validation state when user starts typing
+        // Clear error state immediately when user starts typing (shows they're addressing the issue)
         if (submitAttempted) {
             setSubmitAttempted(false);
         }
-    }, [submitAttempted]);
+        
+        if (isSubmissionSuccessful) {
+            setIsSubmissionSuccessful(false);
+            // Clear auto-close timeout if user starts typing after success
+            if (autoCloseTimeoutRef.current) {
+                clearTimeout(autoCloseTimeoutRef.current);
+                autoCloseTimeoutRef.current = null;
+            }
+        }
+    }, [submitAttempted, isSubmissionSuccessful]);
 
     /**
      * Handle promotion banner dismissal with GSAP animation
      * Stores close state in sessionStorage to persist across route navigation
      */
     const handleDismiss = useCallback(() => {
+        // Clear any pending auto-close timeout
+        if (autoCloseTimeoutRef.current) {
+            clearTimeout(autoCloseTimeoutRef.current);
+            autoCloseTimeoutRef.current = null;
+        }
+        
         if (dismissTimeoutRef.current) {
             clearTimeout(dismissTimeoutRef.current);
             dismissTimeoutRef.current = null;
@@ -210,19 +243,22 @@ const Promotion = memo(() => {
     }, [handleDismiss]);
 
     /**
-     * Handle input focus - clear error state for better UX
+     * Handle input focus - no longer clears error state automatically
+     * Error state should only clear when the field becomes valid
      */
     const handleInputFocus = useCallback(() => {
-        if (submitAttempted) {
-            setSubmitAttempted(false);
-        }
-    }, [submitAttempted]);
+        // Focus no longer automatically clears error state
+        // Error state will only clear when field becomes valid through handleEmailChange
+    }, []);
 
-    // Cleanup timeout and animations on unmount
+    // Cleanup timeouts and animations on unmount
     React.useEffect(() => {
         return () => {
             if (dismissTimeoutRef.current) {
                 clearTimeout(dismissTimeoutRef.current);
+            }
+            if (autoCloseTimeoutRef.current) {
+                clearTimeout(autoCloseTimeoutRef.current);
             }
             if (animationTimelineRef.current) {
                 animationTimelineRef.current.kill();
@@ -265,14 +301,18 @@ const Promotion = memo(() => {
                             name="email"
                             autoComplete="email"
                             required
-                            disabled={isAnimating}
+                            disabled={isAnimating || isSubmissionSuccessful}
                             className={`newsletter-email-input ${
                                 showError ? 'form-error' : ''
+                            } ${
+                                isSubmissionSuccessful ? 'form-success' : ''
                             }`}
                             placeholder={
-                                showError 
-                                    ? "Please enter a valid email address" 
-                                    : "Enter your email address"
+                                isSubmissionSuccessful 
+                                    ? "It's on the way!"
+                                    : showError 
+                                        ? "Please enter a valid email address" 
+                                        : "Enter your email address"
                             }
                             value={email}
                             onChange={handleEmailChange}
@@ -283,9 +323,11 @@ const Promotion = memo(() => {
                         />
                         <button 
                             type="submit" 
-                            disabled={isAnimating} // Removed !email.trim() condition
+                            disabled={isAnimating || isSubmissionSuccessful}
                             className={`btn ${
                                 showError ? 'btn-error' : ''
+                            } ${
+                                isSubmissionSuccessful ? 'btn-success' : ''
                             }`}
                             aria-label="Subscribe to newsletter"
                         >

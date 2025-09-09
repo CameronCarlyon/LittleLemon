@@ -694,7 +694,7 @@ Footer {
   padding: 2rem 3rem;
   gap: 1rem;
   color: var(--color-white);
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./assets/images/bruchetta.svg');
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./assets/images/Bruchetta.webp');
   background-size: cover;
   background-position: center;
   position: relative;
@@ -1408,9 +1408,8 @@ form {
   border-radius: 1rem;
   background-color: var(--color-yellow);
   font-weight: 1000;
+  justify-content: center;
 }
-
-
 
 .btn-form-active {
   background-color: var(--color-green);
@@ -1906,13 +1905,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   #sort-select {
     width: 100%;
-  }
-}
-
-/* Fix for mobile hover states */
-@media (hover: hover) {
-  .btn:hover {
-    border: 2px solid var(--color-green);
   }
 }
 
