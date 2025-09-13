@@ -15,16 +15,6 @@ const Hero = () => {
     const videoRef = useRef(null);
 
     useLayoutEffect(() => {
-        // Video loading check
-        const video = videoRef.current;
-        if (video) {
-            video.addEventListener('loadeddata', () => {
-                console.log('Video loaded successfully');
-            });
-            video.addEventListener('error', (e) => {
-                console.error('Video failed to load:', e);
-            });
-        }
 
         const elements = [titleRef.current, subtitleRef.current, descriptionRef.current,];
         
@@ -67,10 +57,7 @@ const Hero = () => {
                 playsInline
                 poster={HeroVideoPoster}
                 preload="auto"
-                aria-hidden="true"
-                onError={(e) => console.error('Video error:', e)}
-                onLoadStart={() => console.log('Video loading started')}
-                onCanPlay={() => console.log('Video can play')}>
+                aria-hidden="true">
                 <source src={HeroVideoWebM} type="video/webm" />
                 <source src={HeroVideo} type="video/mp4" />
             </video>
