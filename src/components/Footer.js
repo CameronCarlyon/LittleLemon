@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import LittleLemonLogo from '../components/LittleLemonLogo';
 import HyperlinkLabel from './HyperlinkLabel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -35,9 +34,7 @@ const Footer = () => {
 
     return (
         <footer>
-            <Link to='/home'>
                 <LittleLemonLogo secondary={true} />
-            </Link>
             <ul>
                 {navigationItems.map((item) => (
                     <li key={item.href} className='footer-links'>
