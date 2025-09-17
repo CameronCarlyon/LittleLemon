@@ -10,12 +10,7 @@ A sophisticated, responsive Mediterranean restaurant website built with React, d
 
 ## 📋 Project Overview
 
-Little Lemon represents a complete modern web application for a family-owned Mediterranean restaurant. This project demonstrates proficiency in contemporary web development practices, advanced React patterns, bespoke iconography, sophisticated animations, and enterprise-level code architecture.
-
-### 🎯 Target Audience
-- **Recruiters**: Showcasing technical competency and modern development practices
-- **Developers**: Demonstrating clean code architecture and best practices
-- **Stakeholders**: Highlighting user experience and business functionality
+Little Lemon represents a complete modern web application for a family-owned Mediterranean restaurant. This project demonstrates proficiency in contemporary web development practices, advanced React patterns, bespoke iconography using industry-standard design tools, sophisticated animations using GSAP and Lottie, and enterprise-level code architecture.
 
 ---
 
@@ -26,7 +21,7 @@ Little Lemon represents a complete modern web application for a family-owned Med
 - **Routing**: React Router v6 with nested routing and dynamic navigation
 - **Animations**: GSAP (GreenSock) with timeline-based motion graphics + Lottie integration
 - **Styling**: Vanilla CSS with CSS custom properties, Flexbox, and Grid
-- **Build System**: Create React App with custom webpack optimizations
+- **Build System**: Create React App with custom webpack optimisations
 - **Testing**: Jest and React Testing Library with unit and integration tests
 - **Icons & Assets**: **Custom-designed iconography** created in Illustrator/After Effects, exported as SVG/Lottie animations
 
@@ -157,9 +152,9 @@ LittleLemon/
 ## 📊 Performance & Quality Metrics
 
 ### Google Lighthouse Scores (v2.0)
-- **Performance**: **98**
+- **Performance**: **100**
 - **Accessibility**: **100**
-- **Best Practices**: **96**
+- **Best Practices**: **100**
 - **SEO**: **100**
 
 ### Technical Specifications
@@ -198,4 +193,4 @@ LittleLemon/
 
 ---
 
-**Note**: This is a portfolio project demonstrating technical capabilities. The Little Lemon brand and associated assets are used for educational and demonstration purposes.
+**Note**: This project is intended solely as a portfolio piece to demonstrate technical capabilities. The Little Lemon brand originates from the Meta Front-End Developer Certificate and has been adapted for educational and demonstration purposes. All original animated and static Little Lemon iconography are the intellectual property of Cameron Carlyon.
