@@ -1,7 +1,12 @@
+Options -MultiViews
 RewriteEngine On
-RewriteBase /littlelemon/
-RewriteRule ^index\.html$ - [L]
+
+# Handle Little Lemon SPA routing within subdirectory
+RewriteCond %{REQUEST_URI} ^/littlelemon/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-l
-RewriteRule . /littlelemon/index.html [L]
+RewriteRule ^ /littlelemon/index.html [QSA,L]
+
+# Ensure static assets are served correctly
+RewriteCond %{REQUEST_URI} \.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$
+RewriteRule ^ - [L]
