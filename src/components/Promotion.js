@@ -287,7 +287,7 @@ const Promotion = memo(() => {
             >
                 <div className="newsletter-input">
                     <h3 id="newsletter-heading">
-                        Subscribe to Our Monthly Newsletter!
+                        Subscribe to our monthly newsletter!
                     </h3>
                     <label htmlFor="newsletter-email" className="sr-only">
                         Email address for newsletter subscription
