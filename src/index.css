@@ -282,9 +282,10 @@ Header {
     opacity: 1 !important;
   }
   
-  _::-webkit-full-page-media, _:future, :root .filter-btn > div {
-    width: 1.6rem !important;
-    max-width: 1.6rem !important;
+  _::-webkit-full-page-media, _:future, :root .filter-btn svg {
+    width: var(--filter-icon-size) !important;
+    max-width: var(--filter-icon-size) !important;
+    height: var(--filter-icon-size) !important;
   }
 }
 
@@ -865,7 +866,6 @@ Footer {
 
 .menu-categories {
   display: flex;
-  width: 100%;
   flex-direction: row;
   gap: 1rem;
   overflow-x: scroll;
@@ -880,7 +880,6 @@ Footer {
   display: flex;
   align-items: center;
   text-align: center;
-  font-family: 'Karla', sans-serif;
   font-weight: 1000;
   color: var(--color-green);
   border: 2px solid var(--color-white);
@@ -904,6 +903,23 @@ Footer {
   color: var(--color-white);
   border: 2px solid var(--color-green);
   font-weight: var(--font-weight-bold);
+}
+
+.filter-btn {
+  --filter-icon-size: 1.7rem;
+  aspect-ratio: 1 / 1;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.filter-btn > div {
+  width: var(--filter-icon-size) !important;
+  height: var(--filter-icon-size) !important;
+}
+
+.filter-btn svg {
+  width: var(--filter-icon-size) !important;
+  height: var(--filter-icon-size) !important;
 }
 
 .menu-categories ul::-webkit-scrollbar {
@@ -1045,8 +1061,9 @@ Footer {
 .sort-by-container {
   display: flex;
   flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
+  flex: 0 0 auto;
+  min-width: 0;
+  justify-content: flex-start;
   align-items: center;
   gap: 1rem;
 }
@@ -1054,9 +1071,25 @@ Footer {
 .filter-by-container {
   display: flex;
   flex-direction: row;
+  flex: 1 1 0;
   width: 100%;
+  min-width: 0;
   align-items: center;
   gap: 1rem;
+}
+
+.filter-by-container .menu-categories {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+#sort-select {
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 0 auto;
 }
 
 .filter-info {
@@ -1422,6 +1455,19 @@ form {
   outline-offset: -0.2rem;
 }
 
+.btn-dropdown {
+  height: 3.5rem;
+  min-width: 0;
+  max-width: 100%;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-weight: 1000;
+}
+
+.btn-dropdown:hover {
+  border: 2px solid var(--color-green);
+}
+
 .mobile-only {
   display: none;
 }
@@ -1780,7 +1826,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
 }
 
-/* Enhanced responsive design with better breakpoints */
 @media (max-width: 1315px) {
   .main-content, .reservation-content { 
     padding: var(--spacing-md) var(--mobile-padding); 
@@ -1813,6 +1858,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .mobile-only { 
     display: block; 
   }
+
+  .btn-dropdown {
+    max-width: 100%;
+  }
   
   /* Mobile Navigation */
   .main-nav {
@@ -1821,19 +1870,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     left: 0;
     right: 0;
     background: var(--color-white);
-    padding: 0rem 1rem 2rem 1rem;
-    transform: translateY(-100%);
+    padding: 0rem 1rem 0rem 1rem;
+    transform: translateY(0);
     opacity: 0;
     visibility: hidden;
     z-index: 1000;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
     border-radius: 0rem 0rem 2rem 2rem;
+    transition: padding-bottom 0.24s ease-in-out;
   }
 
-  .main-nav.open {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
+  .main-nav.is-rendered {
+    padding-bottom: 2rem;
   }
 
   .footer-links {
@@ -1903,8 +1951,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .filter-controls {
     flex-direction: column;
   }
-  #sort-select {
+}
+
+@media (max-width: 520px) {
+  .sort-by-container {
     width: 100%;
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .sort-by-container label {
+    white-space: nowrap;
+  }
+  .btn-dropdown {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  #sort-select {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
   }
 }
 

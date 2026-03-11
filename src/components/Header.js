@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
 import { gsap } from 'gsap';
 
 import { useCart } from '../context/CartContext.js';
@@ -47,8 +47,13 @@ const NavigationItems = ({ items, onClick = () => {} }) => (
 // Main Header Component
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuRendered, setIsMenuRendered] = useState(false);
+  const [isMenuPaddingExpanded, setIsMenuPaddingExpanded] = useState(false);
   const { cartItems } = useCart();
   const refs = useAnimationRefs();
+  const mobileNavRef = refs.mobileNav;
+  const animationRef = refs.animation;
+  const paddingAnimationFrameRef = useRef(null);
   
   // Memoized cart count calculation
   const cartCount = useMemo(() => 
@@ -59,90 +64,147 @@ const Header = () => {
   // Toggle menu with animation
   const toggleMenu = useCallback(() => {
     if (window.innerWidth <= CONFIG.DESKTOP_BREAKPOINT) {
-      setIsMenuOpen(prev => !prev);
+      setIsMenuOpen((prev) => {
+        const next = !prev;
+        if (next) {
+          setIsMenuRendered(true);
+        }
+        return next;
+      });
     }
   }, []);
 
   // Mobile menu animation
-  useEffect(() => {
-    const nav = refs.mobileNav.current;
+  useLayoutEffect(() => {
+    const nav = mobileNavRef.current;
     if (!nav) return;
 
-    // Kill any running animation
-    if (refs.animation.current) {
-      refs.animation.current.kill();
+    // Kill any running timeline so we start fresh
+    if (animationRef.current) {
+      animationRef.current.kill();
+      animationRef.current = null;
     }
 
-    const ctx = gsap.context(() => {
-      if (isMenuOpen) {
-        // Opening animation
-        const tl = gsap.timeline();
-        refs.animation.current = tl;
+    const list = nav.querySelector('ul');
+    const items = list
+      ? Array.from(list.children).filter(
+          (child) =>
+            child.classList.contains('hyperlink-label') ||
+            child.classList.contains('divider')
+        )
+      : [];
 
-        gsap.set(nav, {
-          display: 'block',
-          overflow: 'hidden',
-          height: 0,
-          opacity: 0,
-          transformOrigin: 'top'
-        });
+    // STATE 1: Not rendered — ensure everything is hidden
+    if (!isMenuRendered) {
+      gsap.set(nav, { display: 'none', visibility: 'hidden', height: 0, opacity: 0 });
+      if (items.length) gsap.set(items, { opacity: 0 });
+      return;
+    }
 
-        const items = nav.querySelectorAll('li');
-        gsap.set(items, { opacity: 0, y: -15 });
+    // STATE 2: Opening
+    if (isMenuOpen) {
+      gsap.set(items, { opacity: 0 });
+      gsap.set(nav, {
+        display: 'block',
+        visibility: 'visible',
+        overflow: 'hidden',
+        height: 0,
+        opacity: 1,
+      });
 
-        tl.to(nav, {
-          height: 'auto',
-          opacity: 1,
-          duration: 0.4,
-          ease: 'power2.inOut',
-          clearProps: 'height'
-        })
-        .to(items, {
-          opacity: 1,
-          y: 0,
-          stagger: 0.05,
-          duration: 0.3,
-          ease: 'power2.out',
-        }, '-=0.2');
+      const tl = gsap.timeline();
+      animationRef.current = tl;
 
-      } else if (getComputedStyle(nav).display !== 'none') {
-        // Closing animation
-        const tl = gsap.timeline({
-          onComplete: () => gsap.set(nav, { display: 'none' })
-        });
-        refs.animation.current = tl;
+      tl.to(nav, {
+        height: 'auto',
+        duration: 0.24,
+        ease: 'power2.inOut',
+      })
+      .to(items, {
+        opacity: 1,
+        stagger: 0.02,
+        duration: 0.08,
+        ease: 'power2.out',
+      }, '+=0.04');
 
-        const items = nav.querySelectorAll('li');
-        
-        tl.to(items, {
-          opacity: 0,
-          y: 15,
-          stagger: 0.03,
-          duration: 0.25,
-          ease: 'power2.in',
-        })
-        .to(nav, {
-          height: 0,
-          opacity: 0,
-          duration: 0.3,
-          ease: 'power2.inOut',
-        }, '-=0.15');
+      return;
+    }
+
+    // STATE 3: Closing (isMenuRendered && !isMenuOpen)
+    // Capture current height before we start collapsing
+    const currentHeight = nav.offsetHeight;
+
+    gsap.set(nav, { overflow: 'hidden', height: currentHeight });
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        gsap.set(nav, { display: 'none', visibility: 'hidden', height: 0, opacity: 0 });
+        setIsMenuRendered(false);
       }
+    });
+    animationRef.current = tl;
+
+    // Reverse of entrance: items fade out (from end), then nav collapses
+    tl.to(items, {
+      opacity: 0,
+      stagger: { each: 0.02, from: 'end' },
+      duration: 0.08,
+      ease: 'power2.in',
+    })
+    .to(nav, {
+      height: 0,
+      duration: 0.24,
+      ease: 'power2.inOut',
+    });
+
+    // Cleanup: only kill the running timeline, do NOT revert inline styles
+    return () => {
+      if (animationRef.current) {
+        animationRef.current.kill();
+        animationRef.current = null;
+      }
+    };
+  }, [isMenuOpen, isMenuRendered, mobileNavRef, animationRef]);
+
+  useEffect(() => {
+    if (paddingAnimationFrameRef.current) {
+      cancelAnimationFrame(paddingAnimationFrameRef.current);
+      paddingAnimationFrameRef.current = null;
+    }
+
+    if (!isMenuRendered) {
+      setIsMenuPaddingExpanded(false);
+      return;
+    }
+
+    if (!isMenuOpen) {
+      setIsMenuPaddingExpanded(false);
+      return;
+    }
+
+    setIsMenuPaddingExpanded(false);
+
+    paddingAnimationFrameRef.current = requestAnimationFrame(() => {
+      paddingAnimationFrameRef.current = requestAnimationFrame(() => {
+        setIsMenuPaddingExpanded(true);
+        paddingAnimationFrameRef.current = null;
+      });
     });
 
     return () => {
-      ctx.revert();
-      if (refs.animation.current) {
-        refs.animation.current.kill();
+      if (paddingAnimationFrameRef.current) {
+        cancelAnimationFrame(paddingAnimationFrameRef.current);
+        paddingAnimationFrameRef.current = null;
       }
     };
-  });
+  }, [isMenuOpen, isMenuRendered]);
 
   // Close menu on window resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > CONFIG.DESKTOP_BREAKPOINT && isMenuOpen) {
         setIsMenuOpen(false);
+        setIsMenuRendered(false);
       }
     };
 
@@ -206,7 +268,7 @@ const Header = () => {
       {/* Mobile Navigation */}
       <nav
         ref={refs.mobileNav}
-        className={`main-nav mobile-only ${isMenuOpen ? 'open' : ''}`}
+        className={`main-nav mobile-only${isMenuPaddingExpanded ? ' is-rendered' : ''}`}
         style={{ display: 'none' }}
       >
         <ul>
@@ -217,7 +279,7 @@ const Header = () => {
                 text={item.text}
                 onClick={toggleMenu}
               />
-              <Divider width={'1rem'} color={'var(--color-green)'} triggerAnimation={true} />
+              <Divider width={'1rem'} color={'var(--color-green)'} triggerAnimation={false} />
             </React.Fragment>
           ))}
           <HyperlinkLabel

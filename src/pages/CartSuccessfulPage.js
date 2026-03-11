@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useCart } from '../context/CartContext.js';
 import Header from '../components/Header.js';
 import Footer from '../components/Footer.js';
 

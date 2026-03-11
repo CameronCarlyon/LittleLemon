@@ -18,10 +18,12 @@ const Menu = () => {
     });
     const [sortBy, setSortBy] = useState('default');
     const [showFilters, setShowFilters] = useState(false);
+    const [isFilterClosing, setIsFilterClosing] = useState(false);
     const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart();
     const menuItemsRef = useRef(null);
     const animationRef = useRef(null);
     const filterLottieRef = useRef(null);
+    const categoriesRef = useRef(null);
 
     /**
      * Triggers the filter icon Lottie animation
@@ -46,9 +48,18 @@ const Menu = () => {
      * Handle filter toggle with Lottie animation
      */
     const handleFilterToggle = useCallback(() => {
-        setShowFilters(prev => !prev);
+        if (showFilters) {
+            setIsFilterClosing(true);
+        } else {
+            setShowFilters(true);
+        }
         triggerFilterAnimation();
-    }, [triggerFilterAnimation]);
+    }, [triggerFilterAnimation, showFilters]);
+
+    const handleFiltersClosed = useCallback(() => {
+        setIsFilterClosing(false);
+        setShowFilters(false);
+    }, []);
 
     /**
      * Enhanced filter change handler with animation trigger
@@ -142,6 +153,23 @@ const Menu = () => {
             'Specials': specialsMenu,
             'Drinks': drinksMenu
         };
+    }, []);
+
+    // Horizontal scroll for menu categories via mouse wheel
+    useEffect(() => {
+        const container = categoriesRef.current;
+        if (!container) return;
+
+        const handleWheel = (e) => {
+            if (!e.deltaY || e.deltaX) return;
+
+            e.preventDefault();
+            const px = e.deltaMode === 1 ? e.deltaY * 50 : e.deltaY;
+            container.scrollBy({ left: px, behavior: 'instant' });
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
     }, []);
 
     // Handle tab click
@@ -271,7 +299,7 @@ const Menu = () => {
     return (
         <div className='menu'>
             <div className='menu-categories-container'>
-                <div className='menu-categories'>
+                <div className='menu-categories' ref={categoriesRef}>
                     {availableCategories.map((category) => (
                         <button 
                             key={category}
@@ -293,7 +321,7 @@ const Menu = () => {
                         animationData={showFilters ? filterIconSolid : filterIconRegular}
                         autoplay={false}
                         loop={false}
-                        style={{ width: '100%', height: '2rem' }}
+                        style={{}}
                     />
                 </button>
             </div>
@@ -306,6 +334,8 @@ const Menu = () => {
                     onSortChange={handleSortChange}
                     itemCount={currentMenuItems.length}
                     totalItems={totalItemsInCategory}
+                    isClosing={isFilterClosing}
+                    onExitComplete={handleFiltersClosed}
                 />
             )}
             
