@@ -4,6 +4,8 @@
   "private": true,
   "homepage": "https://cameroncarlyon.com/littlelemon",
   "dependencies": {
+    "@fontsource/karla": "^5.2.8",
+    "@fontsource/markazi-text": "^5.2.9",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",

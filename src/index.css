@@ -1,20 +1,3 @@
-/* Local Font Declarations */
-@font-face {
-  font-family: 'Karla';
-  src: url('./assets/fonts/Karla-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Markazi Text';
-  src: url('./assets/fonts/MarkaziText-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* CSS Custom Properties */
 :root {
   /* Colors */
@@ -44,9 +27,9 @@
   --font-weight-light: 200;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
-  --font-weight-bold: 700;
+  --font-weight-bold: 500;
   --font-weight-black: 800;
-  --font-weight-heavy: 1000;
+  --font-weight-heavy: 600;
   
   /* Spacing */
   --spacing-xs: 0.5rem;
@@ -96,6 +79,8 @@ body {
   display: flex;
   flex-direction: column;
   font-family: var(--font-body);
+  font-synthesis: none;
+  font-optical-sizing: auto;
   overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -123,7 +108,7 @@ h3 { letter-spacing: 1px; }
 a {
   color: var(--color-green);
   text-decoration: none;
-  font-weight: var(--font-weight-black);
+  font-weight: var(--font-weight-heavy);
   max-width: fit-content;
   transition: var(--transition-base);
 }
@@ -141,6 +126,7 @@ nav {
 input, textarea, select {
   color: var(--color-green);
   font-family: var(--font-body);
+  font-synthesis: none;
   border: var(--border-width) solid transparent;
   background-color: var(--color-white);
   outline: none;
@@ -170,11 +156,12 @@ select {
 }
 
 b {
-  font-weight: 800;
+  font-weight: var(--font-weight-bold);
 }
 
 button {
   font-family: var(--font-body);
+  font-synthesis: none;
   font-size: var(--font-size-lg);
   color: var(--color-white);
   border: none;
@@ -407,13 +394,13 @@ article {
   color: var(--color-yellow);
   font-family: 'Markazi Text', serif;
   font-size: 4rem;
-  font-weight: 1000;
+  font-weight: var(--font-weight-heavy);
 }
 
 .hero-container h2 {
   font-family: 'Markazi Text', serif;
   font-size: 2.5rem;
-  font-weight: 1000;
+  font-weight: var(--font-weight-heavy);
   color: #FFF;
 }
 
@@ -421,7 +408,7 @@ article {
   max-width: 30rem;
   font-family: 'Karla', sans-serif;
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 2rem;
   color: var(--color-white);
   letter-spacing: 0px;
@@ -470,7 +457,7 @@ article {
   padding: 1rem;
   border-radius: 1rem;
   border: 2px solid transparent;
-  font-weight: 1000;
+  font-weight: var(--font-weight-heavy);
   display: flex;
   max-width: 6rem;
   text-align: center;
@@ -482,7 +469,7 @@ article {
   padding: 0rem 25%;
   text-align: left;
   font-family: 'Karla', sans-serif;
-  font-weight: 50;
+  font-weight: var(--font-weight-light);
   font-size: 0.7rem;
   gap: 1rem;
 }
@@ -644,7 +631,7 @@ Footer {
   color: var(--color-green);
   font-family: 'Markazi Text', serif;
   font-size: 2rem;
-  font-weight: 1000;
+  font-weight: var(--font-weight-heavy);
 }
 
 .showcase-img img {
@@ -776,7 +763,7 @@ Footer {
 
 .read-more {
   color: var(--color-green);
-  font-weight: 800;
+  font-weight: var(--font-weight-heavy);
   cursor: pointer;
 }
 
@@ -814,7 +801,7 @@ Footer {
 .no-page-message {
   max-width: 100%;
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--color-yellow);
   text-align: center;
   font-family: 'Karla', sans-serif;
@@ -880,7 +867,7 @@ Footer {
   display: flex;
   align-items: center;
   text-align: center;
-  font-weight: 1000;
+  font-weight: var(--font-weight-bold);
   color: var(--color-green);
   border: 2px solid var(--color-white);
   list-style-type: none;
@@ -941,8 +928,12 @@ Footer {
 .menu-item {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   color: var(--color-green);
+  gap: 1px;
+}
+
+.menu-item > :last-child {
+  margin-top: 0.5rem;
 }
 
 .menu-items {
@@ -1364,7 +1355,7 @@ Footer {
 }
 
 .reservation-details p strong {
-  font-weight: 1000;
+  font-weight: var(--font-weight-bold);
   color: var (--color-green);
   overflow-x: scroll;
 }
@@ -1440,7 +1431,7 @@ form {
   border: 2px solid var(--color-yellow);
   border-radius: 1rem;
   background-color: var(--color-yellow);
-  font-weight: 1000;
+  font-weight: var(--font-weight-bold);
   justify-content: center;
 }
 
@@ -1461,7 +1452,7 @@ form {
   max-width: 100%;
   transition: all 0.3s ease;
   text-align: center;
-  font-weight: 1000;
+  font-weight: var(--font-weight-bold);
 }
 
 .btn-dropdown:hover {
