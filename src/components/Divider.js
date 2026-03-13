@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 
-const Divider = ({ width = 100, color, triggerAnimation = true, delay = 0.50 }) => {
+const Divider = ({ width = 100, color, triggerAnimation = true, delay = 0.1 }) => {
     const dividerRef = useRef(null);
     const hasAnimated = useRef(false);
 
@@ -11,16 +11,18 @@ const Divider = ({ width = 100, color, triggerAnimation = true, delay = 0.50 }) 
 
         if (!triggerAnimation) {
             gsap.set(divider, {
+                opacity: 1,
                 scaleX: 1,
-                transformOrigin: 'left'
+                transformOrigin: 'left center'
             });
             return;
         }
 
         // Set initial state for animated dividers.
         gsap.set(divider, { 
+            opacity: 1,
             scaleX: 0,
-            transformOrigin: 'left'
+            transformOrigin: 'left center'
         });
     }, [triggerAnimation]);
 
@@ -32,12 +34,12 @@ const Divider = ({ width = 100, color, triggerAnimation = true, delay = 0.50 }) 
         if (triggerAnimation) {
             hasAnimated.current = true;
             
-            // Animate entrance from left to right
+            // Animate entrance by growing from left to right.
             gsap.to(divider, {
                 scaleX: 1,
-                duration: 1,
+                duration: 0.4,
                 ease: 'power2.out',
-                delay: delay // Use the provided delay
+                delay: delay
             });
         }
     }, [triggerAnimation, delay]);

@@ -278,10 +278,10 @@ const Menu = () => {
                 opacity: 1,
                 y: 0,
                 scale: 1,
-                duration: 0.4,
+                duration: 0.25,
                 ease: 'power2.out',
                 stagger: {
-                    amount: 0.5, // Total time for all items to finish staggering
+                    amount: 0.24, // Keep reveal snappy even with many items
                     from: 'start'
                 }
             });

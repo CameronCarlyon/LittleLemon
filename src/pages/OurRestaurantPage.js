@@ -163,30 +163,14 @@ function OurRestaurantPage() {
                     scrollTrigger: {
                         trigger: section,
                         start: 'top 80%',
-                        toggleActions: 'play none none reverse',
+                        toggleActions: 'play none none none',
                         onEnter: () => {
                             // Mark section as visible for divider animation
                             setVisibleSections(prev => new Set([...prev, idx]));
                         },
-                        onLeave: () => {
-                            // Remove section from visible set when scrolling past
-                            setVisibleSections(prev => {
-                                const newSet = new Set(prev);
-                                newSet.delete(idx);
-                                return newSet;
-                            });
-                        },
                         onEnterBack: () => {
                             // Re-add section when scrolling back up
                             setVisibleSections(prev => new Set([...prev, idx]));
-                        },
-                        onLeaveBack: () => {
-                            // Remove section when scrolling back up past it
-                            setVisibleSections(prev => {
-                                const newSet = new Set(prev);
-                                newSet.delete(idx);
-                                return newSet;
-                            });
                         }
                     },
                 }

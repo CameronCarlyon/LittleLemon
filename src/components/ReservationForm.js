@@ -171,7 +171,8 @@ const ReservationForm = () => {
         // Get all form elements (labels, inputs, selects, textarea, button)
         const formElements = form.querySelectorAll('label, input, select, textarea, button');
         gsap.set(formElements, {
-            opacity: 0
+            opacity: 0,
+            y: 20
         });
 
         // Create animation timeline
@@ -185,13 +186,14 @@ const ReservationForm = () => {
             ease: "power2.out",
             delay: 0.1
         })
-        // Animate form elements with tight stagger (fade in only)
+        // Animate form elements with snappier timing to match Contact Us
         .to(formElements, {
             opacity: 1,
-            duration: 1,
-            stagger: 0.06,
+            y: 0,
+            duration: 0.25,
+            stagger: 0.04,
             ease: "power2.out"
-        }, "-=0.15");
+        }, "-=0.2");
 
         // Cleanup function
         return () => {

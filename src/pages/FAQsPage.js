@@ -34,7 +34,8 @@ function FAQsPage() {
 
             // Set initial states for FAQ items
             gsap.set(faqItems, {
-                opacity: 0
+                opacity: 0,
+                y: 20
             });
 
             // Create animation timeline
@@ -53,21 +54,21 @@ function FAQsPage() {
                 opacity: 1,
                 y: 0,
                 duration: 0.25,
-                delay: 0.1,
                 ease: "power2.out"
             }, "-=0.3")
             // Animate FAQ items with stagger
             .to(faqItems, {
                 opacity: 1,
+                y: 0,
                 duration: 0.25,
-                stagger: 0.1,
+                stagger: 0.08,
                 ease: "power2.out"
             }, "-=0.2")
             // Animate footer text
             .to(footerText, {
                 opacity: 1,
                 y: 0,
-                duration: 0.5,
+                duration: 0.25,
                 ease: "power2.out"
             }, "-=0.3");
 

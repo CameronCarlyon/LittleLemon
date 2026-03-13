@@ -54,7 +54,12 @@ const CartEmpty = () => {
         if (!messageElement || !buttonsElement || !lottieContainer) return;
 
         // Set initial states
-        gsap.set([lottieContainer, messageElement, buttonsElement], {
+        gsap.set(lottieContainer, {
+            opacity: 0,
+            y: 0
+        });
+
+        gsap.set([messageElement, buttonsElement], {
             opacity: 0,
             y: 30
         });
@@ -65,25 +70,24 @@ const CartEmpty = () => {
         // Animate in the Lottie animation first
         tl.to(lottieContainer, {
             opacity: 1,
-            y: 0,
-            duration: 0.6,
+            duration: 0.25,
             ease: "power2.out",
-            delay: 0.5
+            delay: 0.1
         })
         // Animate in the message
         .to(messageElement, {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.25,
             ease: "power2.out"
-        }, "-=0.3")
+        }, "-=0.2")
         // Animate in the buttons
         .to(buttonsElement, {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.25,
             ease: "power2.out"
-        }, "-=0.3");
+        }, "-=0.2");
 
         // Cleanup function
         return () => {
