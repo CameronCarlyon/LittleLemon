@@ -290,7 +290,7 @@ const Header = () => {
         </ul>
       </nav>
 
-      <div className='horizontal-container nav-icons'>
+      <div className='nav-icons'>
         {/* Cart Icon Component */}
         <div ref={refs.cartIcon}>
           <CartIcon count={cartCount} />

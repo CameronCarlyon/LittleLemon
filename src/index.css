@@ -1680,8 +1680,14 @@ form {
 
 .nav-icons {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   position: relative;
+}
+
+.nav-icons > * {
+  width: 100%;
+  text-align: center;
 }
 
 .cart-item-details {
@@ -1864,6 +1870,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   
   .mobile-only { 
     display: block; 
+  }
+
+  .nav-icons {
+    gap: 1rem;
   }
 
   .btn-dropdown {
