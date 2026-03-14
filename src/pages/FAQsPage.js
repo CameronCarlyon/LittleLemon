@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 
 import Header from '../components/Header.js';
@@ -13,7 +13,7 @@ function FAQsPage() {
     const faqContainerRef = useRef(null);
     const footerTextRef = useRef(null);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const header = headerRef.current;
         const subheader = subheaderRef.current;
         const faqContainer = faqContainerRef.current;
@@ -21,27 +21,22 @@ function FAQsPage() {
 
         if (!header || !subheader || !faqContainer || !footerText) return;
 
-        // Set initial states
-        gsap.set([header, subheader, footerText], {
-            opacity: 0,
-            y: 30
-        });
+        const ctx = gsap.context(() => {
+            const faqItems = faqContainer.querySelectorAll('.QA');
+            if (!faqItems.length) return;
 
-        // Function to run animations when FAQ items are ready
-        const runAnimations = () => {
-            // Get all FAQ items (try multiple selectors)
-            const faqItems = faqContainer.querySelectorAll('.FAQ, .QA');
-
-            // Set initial states for FAQ items
+            // Set all start states before first paint to prevent flashing.
+            gsap.set([header, subheader, footerText], {
+                opacity: 0,
+                y: 30
+            });
             gsap.set(faqItems, {
                 opacity: 0,
                 y: 20
             });
 
-            // Create animation timeline
             const tl = gsap.timeline();
 
-            // Animate header first
             tl.to(header, {
                 opacity: 1,
                 y: 0,
@@ -49,14 +44,12 @@ function FAQsPage() {
                 ease: "power2.out",
                 delay: 0.1
             })
-            // Animate subheader
             .to(subheader, {
                 opacity: 1,
                 y: 0,
                 duration: 0.25,
                 ease: "power2.out"
             }, "-=0.3")
-            // Animate FAQ items with stagger
             .to(faqItems, {
                 opacity: 1,
                 y: 0,
@@ -64,54 +57,16 @@ function FAQsPage() {
                 stagger: 0.08,
                 ease: "power2.out"
             }, "-=0.2")
-            // Animate footer text
             .to(footerText, {
                 opacity: 1,
                 y: 0,
                 duration: 0.25,
                 ease: "power2.out"
             }, "-=0.3");
-
-            // Store timeline for cleanup
-            faqContainer._timeline = tl;
-        };
-
-        // Use MutationObserver to detect when FAQ items are added to the DOM
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                    // Check if any added nodes contain FAQ items
-                    const hasNewFAQs = Array.from(mutation.addedNodes).some(node => 
-                        node.nodeType === 1 && (
-                            node.classList?.contains('FAQ') || 
-                            node.classList?.contains('QA') ||
-                            node.querySelector?.('.FAQ, .QA')
-                        )
-                    );
-                    
-                    if (hasNewFAQs) {
-                        observer.disconnect(); // Stop observing
-                        runAnimations();
-                    }
-                }
-            });
         });
 
-        // Start observing the FAQ container
-        observer.observe(faqContainer, {
-            childList: true,
-            subtree: true
-        });
-
-        // Also try to run animations immediately in case items are already there
-        runAnimations();
-
-        // Cleanup function
         return () => {
-            observer.disconnect();
-            if (faqContainer._timeline) {
-                faqContainer._timeline.kill();
-            }
+            ctx.revert();
         };
     }, []);
 

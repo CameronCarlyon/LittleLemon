@@ -593,7 +593,7 @@ Footer {
   padding: 1.5rem;
   color: var(--color-green);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease;
 }
 
 .QA:hover {
