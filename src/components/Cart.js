@@ -278,6 +278,7 @@ const Cart = () => {
       <form className='basket-container' onSubmit={handleSubmit} noValidate>
         <div className='form-container'>
           <label>Your Details</label>
+          <label htmlFor='fullName' className='sr-only'>Full Name</label>
           <input 
           id='fullName' 
           type='text' 
@@ -287,6 +288,7 @@ const Cart = () => {
           onChange={handleInputChange}
           required 
           />
+          <label htmlFor='emailAddress' className='sr-only'>Email Address</label>
           <input 
           id='emailAddress' 
           type='email' 
@@ -297,6 +299,7 @@ const Cart = () => {
           required 
           />
           <label>Billing</label>
+            <label htmlFor='cardNumber' className='sr-only'>Card Number</label>
           <input 
               id='cardNumber' 
               type='text' 
@@ -306,6 +309,7 @@ const Cart = () => {
               onChange={handleInputChange}
               required 
           />
+            <label htmlFor='expiryDate' className='sr-only'>Expiry Date</label>
           <input 
               id='expiryDate' 
               type='text' 
@@ -315,6 +319,7 @@ const Cart = () => {
               onChange={handleInputChange}
               required 
           />
+            <label htmlFor='cvv' className='sr-only'>CVV</label>
           <input 
               id='cvv' 
               type='text' 
@@ -374,6 +379,7 @@ const Cart = () => {
           {formData.deliveryMethod === 'homeDelivery' && (
           <>
             <label>Delivery Address</label>
+            <label htmlFor='address' className='sr-only'>Address</label>
             <input 
               id='address' 
               type='text' 
@@ -385,6 +391,7 @@ const Cart = () => {
             />
             <p className='prefilled'>{formData.city}</p>
             <p className='prefilled'>{formData.state}</p>
+            <label htmlFor='zip' className='sr-only'>Zip Code</label>
             <input 
               id='zip' 
               type='text' 
@@ -476,8 +483,8 @@ const Cart = () => {
                         checked={selectedTipPercentage === 0.15}
                         readOnly
                       />
-                      <label><b>15%</b></label>
-                      <label>${(pricing.subtotal * 0.15).toFixed(2)}</label>
+                      <label htmlFor='tip1'><b>15%</b></label>
+                      <span>${(pricing.subtotal * 0.15).toFixed(2)}</span>
                     </div>
 
                     <div 
@@ -491,8 +498,8 @@ const Cart = () => {
                         checked={selectedTipPercentage === 0.20}
                         readOnly
                       />
-                      <label><b>20%</b></label>
-                      <label>${(pricing.subtotal * 0.20).toFixed(2)}</label>
+                      <label htmlFor='tip2'><b>20%</b></label>
+                      <span>${(pricing.subtotal * 0.20).toFixed(2)}</span>
                     </div>
 
                     <div 
@@ -506,11 +513,12 @@ const Cart = () => {
                         checked={selectedTipPercentage === 0.25}
                         readOnly
                       />
-                      <label><b>25%</b></label>
-                      <label>${(pricing.subtotal * 0.25).toFixed(2)}</label>
+                      <label htmlFor='tip3'><b>25%</b></label>
+                      <span>${(pricing.subtotal * 0.25).toFixed(2)}</span>
                     </div>
                   </div>
                   <div className='custom-tip-input'>
+                    <label htmlFor='customTip' className='sr-only'>Custom tip amount</label>
                     <input
                       type='number' 
                       id='customTip' 
@@ -535,7 +543,7 @@ const Cart = () => {
                       checked={selectedTipPercentage === 0}
                       readOnly
                     />
-                    <label><b>No Tip</b></label>
+                    <label htmlFor='tip4'><b>No Tip</b></label>
                   </div>
                 </div>
                 <div className={`checkbox-container ${shouldShowFieldError('terms') ? 'form-error' : ''}`}>

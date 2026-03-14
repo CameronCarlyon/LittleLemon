@@ -119,7 +119,6 @@ const MenuFilters = ({
             opacity: 0,
             scale: 0,
             duration: 0.18,
-            stagger: 0.03,
             ease: 'power2.in'
         })
         .to(container, {

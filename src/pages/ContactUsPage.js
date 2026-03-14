@@ -165,6 +165,7 @@ function ContactUsPage() {
                         </div>
                     </div>
                     <form className="contact-form" onSubmit={submitForm} ref={formRef} noValidate>
+                        <label htmlFor='fullName' className='sr-only'>Full Name</label>
                         <input
                             required
                             id='fullName'
@@ -174,6 +175,7 @@ function ContactUsPage() {
                             value={formData.fullName}
                             onChange={handleInputChange}
                         />
+                        <label htmlFor='emailAddress' className='sr-only'>Email Address</label>
                         <input
                             required
                             id='emailAddress'
@@ -183,6 +185,7 @@ function ContactUsPage() {
                             value={formData.emailAddress}
                             onChange={handleInputChange}
                         />
+                        <label htmlFor='subject' className='sr-only'>Subject</label>
                         <input
                             required
                             id='subject'
@@ -192,6 +195,7 @@ function ContactUsPage() {
                             value={formData.subject}
                             onChange={handleInputChange}
                         />
+                        <label htmlFor='message' className='sr-only'>Message</label>
                         <textarea
                             required
                             id='message'

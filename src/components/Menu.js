@@ -26,8 +26,8 @@ const Menu = () => {
     const categoriesRef = useRef(null);
 
     /**
-     * Triggers the filter icon Lottie animation
-     * Used when filters change or filter panel is toggled
+     * Triggers the filter icon Lottie animation.
+     * Only used when filter values actually change.
      */
     const triggerFilterAnimation = useCallback(() => {
         if (filterLottieRef.current) {
@@ -45,7 +45,7 @@ const Menu = () => {
     };
 
     /**
-     * Handle filter toggle with Lottie animation
+     * Handle filter panel toggle without triggering icon playback.
      */
     const handleFilterToggle = useCallback(() => {
         if (showFilters) {
@@ -53,8 +53,7 @@ const Menu = () => {
         } else {
             setShowFilters(true);
         }
-        triggerFilterAnimation();
-    }, [triggerFilterAnimation, showFilters]);
+    }, [showFilters]);
 
     const handleFiltersClosed = useCallback(() => {
         setIsFilterClosing(false);
@@ -65,17 +64,24 @@ const Menu = () => {
      * Enhanced filter change handler with animation trigger
      */
     const handleFiltersChange = useCallback((newFilters) => {
+        const hasFilterChanged = Object.keys(newFilters).some(
+            (key) => newFilters[key] !== filters[key]
+        );
+
         setFilters(newFilters);
-        triggerFilterAnimation();
-    }, [triggerFilterAnimation]);
+        if (hasFilterChanged) {
+            triggerFilterAnimation();
+        }
+    }, [filters, triggerFilterAnimation]);
 
     /**
      * Enhanced sort change handler with animation trigger
      */
     const handleSortChange = useCallback((newSortBy) => {
+        if (newSortBy === sortBy) return;
         setSortBy(newSortBy);
         triggerFilterAnimation();
-    }, [triggerFilterAnimation]);
+    }, [sortBy, triggerFilterAnimation]);
 
     // Map of category names to their corresponding menu arrays
     const menuMap = useMemo(() => {
@@ -344,7 +350,7 @@ const Menu = () => {
                     currentMenuItems.map((item, index) => (
                         <React.Fragment key={`${activeCategory}-${index}`}>
                             <div className='menu-item'>
-                                <label>{item.name}</label>
+                                <h3 className='menu-item-title'>{item.name}</h3>
                                 <p>{item.description}</p>
                                 <div className='flex-row'>
                                     <p>{item.calories} kcal</p>

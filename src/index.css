@@ -87,6 +87,19 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Accessibility utility for labels that should remain available to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Typography */
 h1, h2 {
   font-family: var(--font-heading);
@@ -894,8 +907,11 @@ Footer {
 
 .filter-btn {
   --filter-icon-size: 1.7rem;
+  width: 3.5rem;
+  min-width: 3.5rem;
+  max-width: 3.5rem;
   aspect-ratio: 1 / 1;
-  width: auto;
+  padding: 0;
   flex-shrink: 0;
 }
 
@@ -952,7 +968,7 @@ Footer {
     -webkit-flex-shrink: 0;
 }
 
-.menu-item label {
+.menu-item-title {
   font-weight: bold;
   color: var(--color-green);
 }
