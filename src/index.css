@@ -378,9 +378,9 @@ article {
   justify-content: space-evenly;
   font-size: calc(10px + 2vmin);
   color: white;
-  padding: 5rem 25%;
+  padding: clamp(3.5rem, 5vw, 5rem) 25%;
   gap: 2rem;
-  min-height: 60vh;
+  min-height: min(60vh, 44rem);
   overflow: hidden;
 }
 
@@ -637,7 +637,7 @@ Footer {
   font-weight: 200;
   font-size: 1.1rem;
   gap: 1rem;
-  min-height: 90vh;
+  min-height: 60vh;
 }
 
 .main-content h1 {
@@ -945,7 +945,7 @@ Footer {
   display: flex;
   flex-direction: column;
   color: var(--color-green);
-  gap: 1px;
+  gap: 2px;
 }
 
 .menu-item > :last-child {
@@ -1113,7 +1113,7 @@ Footer {
 }
 
 .dietary-label {
-  padding: 0.4rem 0.75rem;
+  padding: 0.3rem 0.75rem;
   border-radius: 3rem;
   font-size: 0.75rem;
   font-weight: 200;
@@ -1297,28 +1297,35 @@ Footer {
 }
 
 .checkbox-container {
-  display: inline-flex;
+  --checkbox-container-radius: 1rem;
+  --checkbox-inset-y: 0.375rem;
+  --checkbox-inset-right: 0.375rem;
+  --checkbox-inset-left: 1rem;
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  min-height: 3.5rem;
+  padding: var(--checkbox-inset-y) 0.5rem var(--checkbox-inset-y) var(--checkbox-inset-left);
   gap: 1rem;
   border: 2px solid transparent;
-  border-radius: 1rem;
+  border-radius: var(--checkbox-container-radius);
   background-color: var(--color-white);
 }
 
 .checkbox-container input {
-  width: 2rem;  
-  min-height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 1.5rem;
+  min-height: 1.5rem;
   border: 2px solid var(--color-green);
-  border-radius: 3rem;
+  border-radius: calc(var(--checkbox-container-radius) - var(--checkbox-inset-y));
   background-color: transparent;
   color: var(--color-green);
   position: relative;
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .checkbox-container input:checked {
@@ -1332,7 +1339,7 @@ Footer {
   left: 50%;
   transform: translate(-50%, -50%);
   color: var(--color-white);
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 .reservation-content {
@@ -1406,6 +1413,16 @@ form {
   flex-direction: row;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.horizontal-container > * {
+  flex: 1 1 0;
+  width: 100%;
+}
+
+.horizontal-container > a {
+  width: 100%;
+  max-width: none;
 }
 
 .horizontal-container * {
@@ -1613,10 +1630,25 @@ form {
   border-color: var(--color-green);
 }
 
+.quantity-control.disabled,
+.quantity-control.disabled:hover {
+  cursor: not-allowed;
+  border-color: transparent;
+  opacity: 0.65;
+}
+
 .quantity-control.active {
   background-color: var(--color-green);
   border: 0.4rem solid var(--color-green);
   color: var(--color-white);
+}
+
+.add-to-cart-text {
+  transition: opacity 0.2s ease;
+}
+
+.add-to-cart-text.disabled {
+  opacity: 0.55;
 }
 
 .quantity-display {

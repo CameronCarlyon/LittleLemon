@@ -44,6 +44,10 @@ const Menu = () => {
         return cartItem ? cartItem.quantity : 0;
     };
 
+    const totalCartQuantity = useMemo(() => {
+        return cartItems.reduce((total, item) => total + item.quantity, 0);
+    }, [cartItems]);
+
     /**
      * Handle filter panel toggle without triggering icon playback.
      */
@@ -376,6 +380,7 @@ const Menu = () => {
                                             }
                                         }}
                                         minQuantity={0}
+                                        maxQuantity={Math.min(99, getCartQuantity(item.name) + (99 - totalCartQuantity))}
                                     />
                                 </div>
                             </div>

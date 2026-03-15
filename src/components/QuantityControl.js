@@ -20,6 +20,7 @@ const QuantityControl = memo(({
 }) => {
   const [isActive, setIsActive] = useState(quantity > 0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const isAddDisabled = !isActive && maxQuantity <= 0;
   const controlRef = useRef(null);
   const quantityDisplayRef = useRef(null);
   const minusButtonRef = useRef(null);
@@ -117,7 +118,7 @@ const QuantityControl = memo(({
   
   // Handle add to cart click - with no delay
   const handleAddToCart = () => {
-    if (isAnimating || isActive) return;
+    if (isAnimating || isActive || isAddDisabled) return;
     
     setIsActive(true);
     onIncrease();
@@ -156,12 +157,13 @@ const QuantityControl = memo(({
   return (
     <div 
       ref={controlRef}
-      className={`quantity-control${isActive ? ' active' : ''}`}
+      className={`quantity-control${isActive ? ' active' : ''}${isAddDisabled ? ' disabled' : ''}`}
       aria-live="polite"
       onClick={handleAddToCart}
-      role={!isActive ? "button" : undefined}
-      tabIndex={!isActive ? 0 : undefined}
+      role={!isActive && !isAddDisabled ? "button" : undefined}
+      tabIndex={!isActive && !isAddDisabled ? 0 : undefined}
       aria-label={!isActive ? "Add to cart" : undefined}
+      aria-disabled={isAddDisabled}
     >
       {isActive ? (
         <div className="quantity-controls" onClick={(e) => e.stopPropagation()}>
@@ -208,7 +210,7 @@ const QuantityControl = memo(({
           </div>
         </div>
       ) : (
-        <span className="add-to-cart-text">Add to Cart</span>
+        <span className={`add-to-cart-text${isAddDisabled ? ' disabled' : ''}`}>Add to Cart</span>
       )}
     </div>
   );
