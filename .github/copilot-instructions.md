@@ -51,7 +51,7 @@ Little Lemon is a modern, responsive React application for a Mediterranean resta
   - Avoid layout thrashing by batching DOM reads/writes
 
 ### Lottie Animations
-- Keep Lottie JSON files optimized (<100KB where possible)
+- Keep Lottie JSON files optimised (<100KB where possible)
 - Use the Lottie-React component with proper configuration
 - Implement lazy loading for Lottie animations not visible on initial load
 - Control playback with React state when appropriate
@@ -75,7 +75,7 @@ Little Lemon is a modern, responsive React application for a Mediterranean resta
 - Implement proper semantic HTML
 - Use ARIA attributes where appropriate
 - Ensure keyboard navigation works correctly
-- Maintain sufficient WCAG color contrast standards
+- Maintain sufficient WCAG colour contrast standards
 
 ## Performance Optimisation
 
@@ -89,7 +89,7 @@ Little Lemon is a modern, responsive React application for a Mediterranean resta
 - Use React.Fragment to avoid unnecessary DOM nodes
 
 ### Asset Optimisation
-- Optimize images before importing
+- Optimise images before importing
 - Consider using WebP format with fallbacks
 - Implement proper lazy loading for off-screen images
 
@@ -103,14 +103,14 @@ Little Lemon is a modern, responsive React application for a Mediterranean resta
 ## Testing Guidelines
 
 - Write tests for critical user flows
-- Test responsive behavior across different viewports
+- Test responsive behaviour across different viewports
 - Verify animations work correctly and don't cause layout issues
 - Test performance on both high and low-end devices
 
 ## Styling Approach
 
 - Use CSS custom properties for theming
-- Follow existing color palette and typography
+- Follow existing colour palette and typography
 - Maintain consistent spacing using the established spacing system
 - Ensure styles work across all supported browsers
 

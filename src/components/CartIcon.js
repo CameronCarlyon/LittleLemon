@@ -15,7 +15,7 @@ const CartIcon = ({ count = 0 }) => {
   const cartCount = useRef(null);
   const prevCount = useRef(0);
   const prevTotalQuantity = useRef(0);
-  const isInitialized = useRef(false);
+  const isInitialised = useRef(false);
 
   // Pulse animation for cart count
   const pulseCartCount = () => {
@@ -35,14 +35,14 @@ const CartIcon = ({ count = 0 }) => {
       });
   };
 
-  // Initialize animations
+  // Initialise animations
   useEffect(() => {
-    // Cart icon initialization
+    // Cart icon initialisation
     if (cartLottie.current) {
       cartLottie.current.goToAndStop(0, true);
     }
     
-    // Cart count badge initialization
+    // Cart count badge initialisation
     if (cartCount.current) {
       gsap.set(cartCount.current, {
         scale: 0,
@@ -50,7 +50,7 @@ const CartIcon = ({ count = 0 }) => {
       });
     }
     
-    isInitialized.current = true;
+    isInitialised.current = true;
   }, []);
 
   // Cart count animation effect (removed hover logic)
@@ -82,7 +82,7 @@ const CartIcon = ({ count = 0 }) => {
           ease: 'back.out(1.7)',
           transformOrigin: 'center center'
         });
-      } else if (quantityChanged && isInitialized.current) {
+      } else if (quantityChanged && isInitialised.current) {
         // Pulse for quantity change between non-zero values
         pulseCartCount();
       }

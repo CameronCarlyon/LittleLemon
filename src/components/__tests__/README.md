@@ -8,7 +8,7 @@ This directory contains the test suite for the Little Lemon restaurant website, 
 **Purpose**: Validates core React framework integration and fundamental app functionality
 - React component rendering verification
 - DOM manipulation and interaction testing
-- Interactive button component behavior
+- Interactive button component behaviour
 - Semantic HTML structure validation
 - Accessibility features testing
 
@@ -30,7 +30,7 @@ This directory contains the test suite for the Little Lemon restaurant website, 
 
 ## Testing Philosophy
 
-This test suite employs a **reliability-focused approach** that prioritizes:
+This test suite employs a **reliability-focused approach** that prioritises:
 
 1. **Smoke Testing**: Verifying core functionality works without complex mocking
 2. **User-Centric Testing**: Testing from the user's perspective rather than implementation details

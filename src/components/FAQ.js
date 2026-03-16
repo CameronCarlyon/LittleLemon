@@ -52,9 +52,9 @@ const FAQ = () => {
     const [visibleIndex, setVisibleIndex] = useState(null);
     const answerRefs = useRef([]);
     const timelinesRef = useRef([]); // Individual timeline for each FAQ
-    const isInitialized = useRef(false);
+    const isInitialised = useRef(false);
 
-    // Initialize refs arrays
+    // Initialise refs arrays
     useEffect(() => {
         answerRefs.current = answerRefs.current.slice(0, FAQ_DATA.length);
         timelinesRef.current = timelinesRef.current.slice(0, FAQ_DATA.length);
@@ -73,7 +73,7 @@ const FAQ = () => {
                     });
                 }
             });
-            isInitialized.current = true;
+            isInitialised.current = true;
         }, 0);
 
         return () => clearTimeout(timer);
@@ -82,7 +82,7 @@ const FAQ = () => {
     // Animation handler for individual FAQs
     const animateAnswer = useCallback((index, isOpening) => {
         const answerElement = answerRefs.current[index];
-        if (!answerElement || !isInitialized.current) return;
+        if (!answerElement || !isInitialised.current) return;
 
         // Kill any existing animation for this specific FAQ
         if (timelinesRef.current[index]) {
@@ -132,7 +132,7 @@ const FAQ = () => {
 
     // Handle FAQ click
     const handleFAQClick = useCallback((index) => {
-        if (!isInitialized.current) return;
+        if (!isInitialised.current) return;
 
         const isCurrentlyVisible = visibleIndex === index;
         

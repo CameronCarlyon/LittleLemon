@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, forwardRef } from 'react';
+import React, { useRef, useEffect, useMemo, forwardRef } from 'react';
 import { gsap } from 'gsap';
 
 /**
@@ -23,36 +23,36 @@ const HeroButton = forwardRef(({
     // Use the forwarded ref OR fallback to internal ref
     const buttonRef = ref || internalButtonRef;
 
-    // Define color schemes based on variant
-    const getColorScheme = (variant) => {
+    // Define colour schemes based on variant
+    const getColourScheme = (variant) => {
         const schemes = {
             primary: {
                 backgroundColor: 'var(--color-yellow)',
                 borderColor: 'var(--color-yellow)',
-                initialTextColor: 'var(--color-green)',
-                hoverTextColor: 'var(--color-yellow)',
-                fillColor: 'var(--color-green)'
+                initialTextColour: 'var(--color-green)',
+                hoverTextColour: 'var(--color-yellow)',
+                fillColour: 'var(--color-green)'
             },
             secondary: {
                 backgroundColor: 'var(--color-green)',
                 borderColor: 'var(--color-yellow)',
-                initialTextColor: 'var(--color-yellow)',
-                hoverTextColor: 'var(--color-green)',
-                fillColor: 'var(--color-yellow)'
+                initialTextColour: 'var(--color-yellow)',
+                hoverTextColour: 'var(--color-green)',
+                fillColour: 'var(--color-yellow)'
             },
             tertiary: {
                 backgroundColor: 'var(--color-green)',
                 borderColor: 'var(--color-green)',
-                initialTextColor: 'var(--color-white)',
-                hoverTextColor: 'var(--color-green)',
-                fillColor: 'var(--color-white)'
+                initialTextColour: 'var(--color-white)',
+                hoverTextColour: 'var(--color-green)',
+                fillColour: 'var(--color-white)'
             },
             disabled: {
                 backgroundColor: 'var(--color-white)',
                 borderColor: 'var(--color-white)',
-                initialTextColor: 'var(--color-grey)',
-                hoverTextColor: 'var(--color-grey)',
-                fillColor: 'var(--color-grey)'
+                initialTextColour: 'var(--color-grey)',
+                hoverTextColour: 'var(--color-grey)',
+                fillColour: 'var(--color-grey)'
             }
         };
         
@@ -77,9 +77,11 @@ const HeroButton = forwardRef(({
 
     // Determine effective variant - use 'disabled' if disabled prop is true
     const effectiveVariant = disabled ? 'disabled' : variant;
-    const colorScheme = getColorScheme(effectiveVariant);
-    const variantClassName = getVariantClassName(effectiveVariant);
+    const colourScheme = useMemo(() => getColourScheme(effectiveVariant), [effectiveVariant]);
+    const variantClassName = useMemo(() => getVariantClassName(effectiveVariant), [effectiveVariant]);
     const borderWidth = 2;
+    const textColourTransitionDuration = 0.12;
+    const textColourTransitionStart = 0.1;
 
     useEffect(() => {
         const button = buttonRef.current;
@@ -88,7 +90,7 @@ const HeroButton = forwardRef(({
 
         if (!button || !fill || !text) return;
 
-        // Set initial state - circle is hidden, text uses initial color
+        // Set initial state - circle is hidden, text uses initial colour
         gsap.set(fill, {
             scale: 0,
             opacity: 0,
@@ -96,13 +98,13 @@ const HeroButton = forwardRef(({
         });
 
         gsap.set(text, {
-            color: colorScheme.initialTextColor
+            color: colourScheme.initialTextColour
         });
 
-        // Set initial background color based on variant
+        // Set initial background colour based on variant
         gsap.set(button, {
-            backgroundColor: colorScheme.backgroundColor,
-            borderColor: colorScheme.borderColor,
+            backgroundColor: colourScheme.backgroundColor,
+            borderColor: colourScheme.borderColor,
         });
 
         // Don't add event listeners if button is disabled
@@ -151,7 +153,7 @@ const HeroButton = forwardRef(({
                 scale: 0,
                 opacity: 1,
                 borderRadius: '50%',
-                backgroundColor: colorScheme.fillColor
+                backgroundColor: colourScheme.fillColour
             });
 
             // Create timeline for entrance animation
@@ -181,12 +183,12 @@ const HeroButton = forwardRef(({
                 duration: 0.4, // Slightly faster fill animation
                 ease: 'power2.out'
             })
-            // Then animate text color (faster transition)
+            // Then animate text colour (faster transition)
             .to(text, {
-                color: colorScheme.hoverTextColor,
-                duration: 0.2, // Fast text transition
+                color: colourScheme.hoverTextColour,
+                duration: textColourTransitionDuration,
                 ease: 'power2.out'
-            }, 0.2); // Start text animation sooner
+            }, textColourTransitionStart);
 
             // After fill animation, transition to button shape
             tl.to(fill, {
@@ -196,7 +198,7 @@ const HeroButton = forwardRef(({
             }, '-=0.1');
         };
 
-        // Mouse leave handler - fade out the fill and reset text color
+        // Mouse leave handler - fade out the fill and reset text colour
         const handleMouseLeave = () => {
             // Kill entrance animation if it's still running
             if (timelineRef.current) {
@@ -208,7 +210,7 @@ const HeroButton = forwardRef(({
                 exitTimelineRef.current = null;
             }
             
-            // Create exit timeline with text color change first
+            // Create exit timeline with text colour change first
             const exitTl = gsap.timeline({
                 onComplete: () => {
                     // Reset to initial state after fade out
@@ -228,10 +230,10 @@ const HeroButton = forwardRef(({
             });
             exitTimelineRef.current = exitTl;
 
-            // First animate text back to initial color - faster transition
+            // First animate text back to initial colour - faster transition
             exitTl.to(text, {
-                color: colorScheme.initialTextColor,
-                duration: 0.15, // Fast text transition
+                color: colourScheme.initialTextColour,
+                duration: textColourTransitionDuration,
                 ease: 'power2.out'
             })
             // Then fade out the fill
@@ -259,7 +261,7 @@ const HeroButton = forwardRef(({
                 exitTimelineRef.current.kill();
             }
         };
-    }, [colorScheme, borderWidth, buttonRef, disabled]);
+    }, [colourScheme, borderWidth, buttonRef, disabled]);
 
     return (
         <button
@@ -270,10 +272,10 @@ const HeroButton = forwardRef(({
                 position: 'relative',
                 overflow: 'hidden',
                 cursor: disabled ? 'not-allowed' : 'pointer',
-                backgroundColor: colorScheme.backgroundColor,
-                borderColor: colorScheme.borderColor,
-                color: colorScheme.initialTextColor,
-                border: `${borderWidth}px solid ${colorScheme.borderColor}`,
+                backgroundColor: colourScheme.backgroundColor,
+                borderColor: colourScheme.borderColor,
+                color: colourScheme.initialTextColour,
+                border: `${borderWidth}px solid ${colourScheme.borderColor}`,
                 transition: disabled ? 'none' : 'border-color 0.3s ease',
                 ...style
             }}
@@ -285,7 +287,7 @@ const HeroButton = forwardRef(({
                 className="btn-hero__fill"
                 style={{
                     position: 'absolute',
-                    backgroundColor: colorScheme.fillColor,
+                    backgroundColor: colourScheme.fillColour,
                     pointerEvents: 'none',
                     zIndex: 0,
                     transform: 'scale(0)',
@@ -302,7 +304,7 @@ const HeroButton = forwardRef(({
                     zIndex: 2,
                     display: 'block',
                     pointerEvents: 'none',
-                    color: colorScheme.initialTextColor
+                    color: colourScheme.initialTextColour
                 }}
             >
                 {children}

@@ -1,6 +1,6 @@
 /* CSS Custom Properties */
 :root {
-  /* Colors */
+  /* Colours */
   --color-green: #495E57;
   --color-dark-green: #3D4C46;
   --color-yellow: #F4CE14;
@@ -1266,6 +1266,11 @@ Footer {
 
 .form-container * {
   transition: all 0.3s ease;
+}
+
+.form-container .btn-hero__fill,
+.form-container .btn-hero__text {
+  transition: none;
 }
 
 .form-container:nth-of-type(2) {

@@ -135,6 +135,7 @@ function ContactUsPage() {
     }, []);
 
     const showError = submitAttempted && !validateForm();
+    const canSubmit = validateForm();
 
     return (
         <div className="App">
@@ -206,10 +207,10 @@ function ContactUsPage() {
                         />
                         <HeroButton
                             type='submit'
-                            variant={validateForm() ? 'tertiary' : 'disabled'}
-                            disabled={!validateForm()}
-                            aria-disabled={!validateForm()}
-                            >
+                            variant={canSubmit ? 'tertiary' : 'disabled'}
+                            disabled={!canSubmit}
+                            aria-disabled={!canSubmit}
+                        >
                             {isSubmitted ? 'Sent!' : 'Submit'}
                         </HeroButton>
                     </form>

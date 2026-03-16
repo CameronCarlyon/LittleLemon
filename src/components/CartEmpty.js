@@ -11,7 +11,7 @@ const BASKET_MESSAGES = [
     "Nothing in here yet, but your next Mediterranean feast is just a click away!",
     "Craving something delicious? Check out our specials and fill up your basket.",
     "Your cart tells us you're a minimalist, but our falafel would disagree!",
-    "An empty basket? Not on our watch! Let's add some flavour to your day.",
+    "An empty basket? Not on our watch! Let's add some flavor to your day.",
     "Your basket is empty. Might we tempt you with our famous Shakshuka?",
     "Like an olive grove without olives, your basket is empty. Let's fix that!",
 ];

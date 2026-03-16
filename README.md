@@ -68,7 +68,7 @@ LittleLemon/
 │   │   └── MenuContext.js           # Menu data and filtering logic
 │   │
 │   ├── assets/                      # Static assets and media
-│   │   ├── images/                  # Optimized photography
+│   │   ├── images/                  # Optimised photography
 │   │   │   ├── hero-video.webm      # Hero background video
 │   │   │   ├── hero-video.mp4       # Video fallback
 │   │   │   ├── hero-poster.jpg      # Video poster image

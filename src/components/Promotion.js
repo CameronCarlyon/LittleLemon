@@ -10,7 +10,7 @@ import { gsap } from 'gsap';
  * - Email validation with real-time feedback
  * - Accessible form controls with proper ARIA labels
  * - Keyboard navigation support
- * - Mobile-optimized touch targets
+ * - Mobile-optimised touch targets
  * - GSAP closing and hover animations
  * - Auto-close after successful submission
  * 
@@ -156,7 +156,7 @@ const Promotion = memo(() => {
     }, [isAnimating]);
 
     /**
-     * Handle form submission with validation and success behavior
+     * Handle form submission with validation and success behaviour
      * Shows invalid state or processes successful submission with auto-close
      * @param {Event} e - Form submission event
      */

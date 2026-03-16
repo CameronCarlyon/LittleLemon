@@ -270,6 +270,7 @@ const Cart = () => {
     clearCart();
   };
 
+  const canSubmit = validateForm();
 
   return (
     <div className='app'>
@@ -570,13 +571,13 @@ const Cart = () => {
           <div className='horizontal-container'>
             <HeroButton
                   type='submit'
-                  variant={validateForm() ? 'tertiary' : 'disabled'}
-                  disabled={!validateForm() || isProcessing}
-                  aria-disabled={!validateForm() || isProcessing}
+                  variant={canSubmit ? 'tertiary' : 'disabled'}
+                  disabled={!canSubmit || isProcessing}
+                  aria-disabled={!canSubmit || isProcessing}
                   aria-busy={isProcessing}
               >
                   <b>{isProcessing ? 'Processing...' : 'Place Order'}</b>
-                  </HeroButton>
+            </HeroButton>
               <Link to="/menu">
                 <div className='btn'>
                   <b>Add More Items</b>

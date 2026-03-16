@@ -71,7 +71,7 @@ const QuantityControl = memo(({
     });
   };
 
-  // Initialize GSAP settings for all animated elements
+  // Initialise GSAP settings for all animated elements
   useEffect(() => {
     const quantityElement = quantityDisplayRef.current;
     const minusElement = minusButtonRef.current;
