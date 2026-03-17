@@ -4,6 +4,7 @@ import { fetchAPI, submitAPI } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 import HeroButton from './HeroButton';
+import Dropdown from './Dropdown';
 
 const ReservationForm = () => {
     const [formData, setFormData] = useState({
@@ -168,8 +169,8 @@ const ReservationForm = () => {
             y: 30
         });
 
-        // Get all form elements (labels, inputs, selects, textarea, button)
-        const formElements = form.querySelectorAll('label, input, select, textarea, button');
+        // Get all form elements (labels, inputs, dropdowns, textarea, button)
+        const formElements = form.querySelectorAll('label, input, .dropdown, textarea, [type="submit"]');
         gsap.set(formElements, {
             opacity: 0,
             y: 20
@@ -192,7 +193,8 @@ const ReservationForm = () => {
             y: 0,
             duration: 0.25,
             stagger: 0.04,
-            ease: "power2.out"
+            ease: "power2.out",
+            clearProps: 'opacity,transform'
         }, "-=0.2");
 
         // Cleanup function
@@ -237,33 +239,34 @@ const ReservationForm = () => {
             />
             
             <label htmlFor="occasion">Occasion</label>
-            <select 
-                id="occasion" 
+            <Dropdown
+                id="occasion"
                 value={formData.occasion}
                 onChange={handleInputChange}
                 disabled={isProcessing}
-            >
-                <option value="none"></option>
-                <option value="birthday">Birthday</option>
-                <option value="anniversary">Anniversary</option>
-                <option value="business">Business Meeting</option>
-                <option value="casualDining">Casual Dining</option>
-            </select>
+                placeholder=""
+                options={[
+                    { value: 'birthday', label: 'Birthday' },
+                    { value: 'anniversary', label: 'Anniversary' },
+                    { value: 'business', label: 'Business Meeting' },
+                    { value: 'casualDining', label: 'Casual Dining' }
+                ]}
+            />
             
             <label htmlFor="guestCount" className={shouldShowFieldError('guestCount') ? 'form-error-text' : ''}>Number of Guests *</label>
-            <select 
-                id="guestCount" 
-                className={shouldShowFieldError('guestCount') ? 'form-error' : ''}
+            <Dropdown
+                id="guestCount"
+                hasError={shouldShowFieldError('guestCount')}
                 value={formData.guestCount}
                 onChange={handleInputChange}
                 disabled={isProcessing}
                 required
-            >
-                <option value=""></option>
-                {Array.from({ length: 20 }, (_, i) => (
-                    <option key={i + 1} value={i + 1}>{i + 1}</option>
-                ))}
-            </select>
+                placeholder=""
+                options={Array.from({ length: 20 }, (_, i) => ({
+                    value: String(i + 1),
+                    label: String(i + 1)
+                }))}
+            />
             
             <label htmlFor="reservationDate" className={shouldShowFieldError('reservationDate') ? 'form-error-text' : ''}>Date *</label>
             <input 
@@ -279,21 +282,19 @@ const ReservationForm = () => {
             />
             
             <label htmlFor="reservationTime" className={shouldShowFieldError('reservationTime') ? 'form-error-text' : ''}>Time Slot *</label>
-            <select 
-                id="reservationTime" 
-                className={shouldShowFieldError('reservationTime') ? 'form-error' : ''}
+            <Dropdown
+                id="reservationTime"
+                hasError={shouldShowFieldError('reservationTime')}
                 value={formData.reservationTime}
                 onChange={handleInputChange}
                 disabled={isProcessing}
                 required
-            >
-                <option value=""></option>
-                {availableTimes.map((time, index) => (
-                    <option key={index} value={time}>
-                        {time}
-                    </option>
-                ))}
-            </select>
+                placeholder=""
+                options={availableTimes.map(time => ({
+                    value: time,
+                    label: time
+                }))}
+            />
             
             <label htmlFor="specialRequests">Special Requests</label>
             <textarea 

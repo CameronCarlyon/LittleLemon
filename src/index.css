@@ -168,6 +168,158 @@ select {
   cursor: pointer;
 }
 
+/* Custom Dropdown Component */
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown--open {
+  z-index: 1;
+}
+
+.dropdown--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.dropdown__surface {
+  background-color: var(--color-white);
+  border: var(--border-width) solid transparent;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.dropdown:hover .dropdown__surface,
+.dropdown--open .dropdown__surface {
+  border-color: var(--color-green);
+}
+
+.dropdown:focus-within .dropdown__surface {
+  border-color: var(--color-green);
+}
+
+.dropdown__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 3.3rem;
+  padding: var(--spacing-sm);
+  background-color: var(--color-white);
+  color: var(--color-green);
+  font-family: var(--font-body);
+  font-size: max(16px, var(--font-size-base));
+  font-weight: var(--font-weight-normal);
+  text-align: left;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  transition: none;
+  -webkit-appearance: none;
+  appearance: none;
+  line-height: normal;
+}
+
+.dropdown__trigger:focus-visible {
+  outline: none;
+}
+
+.dropdown__trigger--placeholder .dropdown__value {
+  color: var(--color-grey);
+}
+
+.dropdown__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown__chevron {
+  display: block;
+  flex-shrink: 0;
+  color: var(--color-green);
+  transition: transform var(--transition-base);
+  transform: translateZ(0);
+  transform-origin: center;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.dropdown__chevron--open {
+  transform: translateZ(0) rotate(180deg);
+}
+
+.dropdown__panel {
+  overflow: hidden;
+}
+
+.dropdown__listbox {
+  list-style: none;
+  margin: 0;
+  padding: 0 0.35rem 0.35rem;
+  background-color: var(--color-white);
+  overflow: auto;
+  max-height: 14rem;
+  overscroll-behavior: contain;
+}
+
+.dropdown__option {
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.65rem;
+  font-size: max(16px, var(--font-size-base));
+  color: var(--color-green);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown__option:hover,
+.dropdown__option--highlighted {
+  background-color: var(--color-green);
+  color: var(--color-white);
+}
+
+.dropdown__option--selected {
+  font-weight: var(--font-weight-bold);
+}
+
+.dropdown__option--selected.dropdown__option--highlighted {
+  background-color: var(--color-green);
+  color: var(--color-white);
+}
+
+/* Error state for Dropdown */
+.dropdown.form-error .dropdown__surface {
+  border: 2px solid darkred;
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Dropdown used in btn-dropdown context (MenuFilters sort) */
+.dropdown.btn-dropdown {
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 0 auto;
+}
+
+.dropdown.btn-dropdown .dropdown__trigger {
+  height: 3.5rem;
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+  font-weight: var(--font-weight-bold);
+}
+
+.dropdown.btn-dropdown .dropdown__listbox {
+  white-space: nowrap;
+  min-width: 100%;
+}
+
 b {
   font-weight: var(--font-weight-bold);
 }
@@ -1916,6 +2068,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .btn-dropdown {
     max-width: 100%;
   }
+
+  .dropdown.btn-dropdown {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .dropdown.btn-dropdown .dropdown__listbox {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
   
   /* Mobile Navigation */
   .main-nav {
@@ -2021,6 +2184,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .btn-dropdown {
     max-width: 100%;
     box-sizing: border-box;
+  }
+  .dropdown.btn-dropdown {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
   }
   #sort-select {
     width: auto;
@@ -2193,7 +2362,7 @@ button {
 
 /* Enhanced Scrollbar Styling - Cross Browser */
 * {
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scrollbar-color: var(--color-green) var(--color-white);
 }
 

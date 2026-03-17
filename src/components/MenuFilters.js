@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useLayoutEffect, useMemo, useCallback } from 'react';
 import { gsap } from 'gsap';
+import Dropdown from './Dropdown';
 
 const MenuFilters = ({ 
     activeFilters, 
@@ -48,6 +49,11 @@ const MenuFilters = ({
     const handleSortChange = useCallback((e) => {
         onSortChange(e.target.value);
     }, [onSortChange]);
+
+    // Memoize sort options in { value, label } format for Dropdown
+    const dropdownSortOptions = useMemo(() =>
+        sortOptions.map(opt => ({ value: opt.key, label: opt.label })),
+    [sortOptions]);
 
     useLayoutEffect(() => {
         const container = filtersRef.current;
@@ -152,20 +158,15 @@ const MenuFilters = ({
             
             <div className="sort-by-container">
                     <label htmlFor="sort-select" data-filter-animation-item style={labelAnimationStyle}>Sort by:</label>
-                    <select
+                    <Dropdown
                         id="sort-select"
                         className="btn-dropdown"
                         value={sortBy}
                         onChange={handleSortChange}
+                        options={dropdownSortOptions}
                         data-filter-animation-item
                         style={animationItemStyle}
-                    >
-                        {sortOptions.map((option) => (
-                            <option key={option.key} value={option.key}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 </div>
         </div>
