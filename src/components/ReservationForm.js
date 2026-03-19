@@ -1,10 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
-import { fetchAPI, submitAPI } from '../utils/api';
+import { fetchAPI, getReservationTimeSlots, submitAPI } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 import HeroButton from './HeroButton';
 import Dropdown from './Dropdown';
+import DatePicker from './DatePicker';
+
+const toDateValue = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+const parseDateValue = (dateValue) => {
+    const [year, month, day] = dateValue.split('-').map(Number);
+    return new Date(year, month - 1, day);
+};
 
 const ReservationForm = () => {
     const [formData, setFormData] = useState({
@@ -21,6 +34,10 @@ const ReservationForm = () => {
     const [submitAttempted, setSubmitAttempted] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const navigate = useNavigate();
+
+    const todayValue = toDateValue(new Date());
+    const reservationDateValue = formData.reservationDate || todayValue;
+    const selectedReservationDate = parseDateValue(reservationDateValue);
 
     // Animation refs
     const headerRef = useRef(null);
@@ -140,21 +157,46 @@ const ReservationForm = () => {
      */
     const fetchAvailableTimes = (date) => {
         try {
-            // Convert the date string to a Date object
-            const dateObj = new Date(date);
+            const dateObj = parseDateValue(date);
             const times = fetchAPI(dateObj);
             setAvailableTimes(times);
+
+            setFormData((prev) => {
+                if (!prev.reservationTime || times.includes(prev.reservationTime)) {
+                    return prev;
+                }
+                return {
+                    ...prev,
+                    reservationTime: ''
+                };
+            });
         } catch (error) {
             console.error('Error fetching available times:', error);
             alert('Failed to fetch available times. Please try again later.');
         }
     };
 
+    const availableTimeSet = new Set(availableTimes);
+    const allReservationTimeSlots = getReservationTimeSlots(selectedReservationDate);
+    const reservationTimeOptions = allReservationTimeSlots.map((time) => ({
+        value: time,
+        label: time,
+        disabled: !availableTimeSet.has(time)
+    }));
+
+    let reservationTimeStatusMessage = '';
+    if (allReservationTimeSlots.length === 0) {
+        reservationTimeStatusMessage = 'Little Lemon is closed on the selected date.';
+    } else if (reservationTimeOptions.every((option) => option.disabled)) {
+        reservationTimeStatusMessage = reservationDateValue === todayValue
+            ? 'There are no remaining reservation times available today.'
+            : 'No reservation times are currently available for the selected date.';
+    }
+
     // Fetch initial available times for today
     React.useEffect(() => {
-        const today = new Date().toISOString().split('T')[0];
-        fetchAvailableTimes(today);
-    }, []);
+        fetchAvailableTimes(todayValue);
+    }, [todayValue]);
 
     // GSAP entrance animations
     useEffect(() => {
@@ -170,7 +212,7 @@ const ReservationForm = () => {
         });
 
         // Get all form elements (labels, inputs, dropdowns, textarea, button)
-        const formElements = form.querySelectorAll('label, input, .dropdown, textarea, [type="submit"]');
+        const formElements = form.querySelectorAll('label, input, .dropdown, .datepicker, textarea, [type="submit"]');
         gsap.set(formElements, {
             opacity: 0,
             y: 20
@@ -269,16 +311,14 @@ const ReservationForm = () => {
             />
             
             <label htmlFor="reservationDate" className={shouldShowFieldError('reservationDate') ? 'form-error-text' : ''}>Date *</label>
-            <input 
+            <DatePicker
                 id="reservationDate"
-                type="date" 
-                placeholder=''
                 value={formData.reservationDate}
                 onChange={handleInputChange}
-                className={shouldShowFieldError('reservationDate') ? 'form-error' : ''}
+                hasError={shouldShowFieldError('reservationDate')}
                 disabled={isProcessing}
-                required 
-                min={new Date().toISOString().split('T')[0]}
+                required
+                placeholder=""
             />
             
             <label htmlFor="reservationTime" className={shouldShowFieldError('reservationTime') ? 'form-error-text' : ''}>Time Slot *</label>
@@ -287,14 +327,16 @@ const ReservationForm = () => {
                 hasError={shouldShowFieldError('reservationTime')}
                 value={formData.reservationTime}
                 onChange={handleInputChange}
-                disabled={isProcessing}
+                disabled={isProcessing || reservationTimeOptions.length === 0}
                 required
                 placeholder=""
-                options={availableTimes.map(time => ({
-                    value: time,
-                    label: time
-                }))}
+                options={reservationTimeOptions}
             />
+            {reservationTimeStatusMessage && (
+                <p className="form-helper-text" role="status" aria-live="polite">
+                    {reservationTimeStatusMessage}
+                </p>
+            )}
             
             <label htmlFor="specialRequests">Special Requests</label>
             <textarea 

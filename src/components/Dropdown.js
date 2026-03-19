@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { gsap } from 'gsap';
+import useAnimatedPanel from '../hooks/useAnimatedPanel';
 
 const Dropdown = ({
     id,
@@ -14,201 +14,130 @@ const Dropdown = ({
     ...rest
 }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isRendered, setIsRendered] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const containerRef = useRef(null);
     const panelRef = useRef(null);
     const listboxRef = useRef(null);
     const buttonRef = useRef(null);
-    const animatingRef = useRef(false);
 
-    const selectedOption = options.find(opt => opt.value === value);
+    const selectedOption = options.find((opt) => opt.value === value);
     const displayText = selectedOption ? selectedOption.label : placeholder;
 
-    const openDropdown = useCallback(() => {
-        if (disabled || animatingRef.current) return;
-        animatingRef.current = true;
+    const findNextEnabledIndex = useCallback((startIndex, direction) => {
+        if (!options.length) return -1;
+        let index = startIndex;
+        while (index >= 0 && index < options.length) {
+            if (!options[index].disabled) return index;
+            index += direction;
+        }
+        return -1;
+    }, [options]);
 
-        const currentIndex = options.findIndex(opt => opt.value === value);
-        setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);
-        setIsRendered(true);
-        setIsOpen(true);
-    }, [disabled, options, value]);
+    const { animatePanel, broadcastOpen, closeFnRef } = useAnimatedPanel({
+        id, isOpen, panelRef, buttonRef, containerRef
+    });
 
     const closeDropdown = useCallback((focusButton = true) => {
-        if (!isOpen || animatingRef.current) return;
-        animatingRef.current = true;
+        if (!isOpen) return;
+        setIsOpen(false);
+        animatePanel(false, focusButton);
+    }, [isOpen, animatePanel]);
 
-        const panel = panelRef.current;
-        const listbox = listboxRef.current;
-        const trigger = buttonRef.current;
+    closeFnRef.current = closeDropdown;
 
-        if (!panel || !listbox || !trigger) {
-            setIsOpen(false);
-            setIsRendered(false);
-            animatingRef.current = false;
-            return;
-        }
+    const openDropdown = useCallback(() => {
+        if (disabled || isOpen) return;
+        broadcastOpen();
+        const currentIndex = options.findIndex((opt) => opt.value === value);
+        const initialIndex = currentIndex >= 0 && !options[currentIndex]?.disabled
+            ? currentIndex
+            : findNextEnabledIndex(0, 1);
+        setHighlightedIndex(initialIndex);
+        setIsOpen(true);
+        animatePanel(true);
+    }, [disabled, isOpen, options, value, animatePanel, broadcastOpen, findNextEnabledIndex]);
 
-        const items = listbox.querySelectorAll('[role="option"]');
-        const currentHeight = panel.offsetHeight;
-
-        gsap.set(panel, { height: currentHeight });
-
-        const tl = gsap.timeline({
-            onComplete: () => {
-                setIsOpen(false);
-                setIsRendered(false);
-                animatingRef.current = false;
-                gsap.set(panel, { clearProps: 'height,opacity' });
-                if (focusButton) buttonRef.current?.focus();
-            }
-        });
-
-        tl.to(items, {
-            opacity: 0,
-            y: -4,
-            duration: 0.12,
-            stagger: 0.015,
-            ease: 'power2.in'
-        })
-        .to(panel, {
-            opacity: 0,
-            height: 0,
-            duration: 0.18,
-            ease: 'power2.in'
-        }, '-=0.08');
-    }, [isOpen]);
-
-    // Animate open
-    useEffect(() => {
-        if (!isOpen || !isRendered || !panelRef.current || !listboxRef.current) {
-            return;
-        }
-
-        const panel = panelRef.current;
-        const listbox = listboxRef.current;
-        const items = listbox.querySelectorAll('[role="option"]');
-
-        gsap.set(panel, { opacity: 0 });
-        gsap.set(items, { opacity: 0, y: -4 });
-
-        gsap.set(panel, { height: 'auto' });
-        const targetHeight = panel.offsetHeight;
-        gsap.set(panel, { height: 0 });
-
-        const tl = gsap.timeline({
-            onComplete: () => {
-                animatingRef.current = false;
-                gsap.set(panel, { clearProps: 'height,opacity' });
-            }
-        });
-
-        tl.to(panel, {
-            height: targetHeight,
-            duration: 0.2,
-            ease: 'power2.inOut'
-        })
-        .to(panel, {
-            opacity: 1,
-            duration: 0.12,
-            ease: 'power2.out'
-        }, '-=0.12')
-        .to(items, {
-            opacity: 1,
-            y: 0,
-            duration: 0.15,
-            stagger: 0.02,
-            ease: 'power2.out'
-        }, '-=0.1');
-    }, [isOpen, isRendered]);
-
-    // Scroll highlighted item into view
     useEffect(() => {
         if (!isOpen || highlightedIndex < 0 || !listboxRef.current) return;
         const item = listboxRef.current.querySelector(`[data-index="${highlightedIndex}"]`);
         item?.scrollIntoView({ block: 'nearest' });
     }, [highlightedIndex, isOpen]);
 
-    // Close on outside click
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const handleClickOutside = (e) => {
-            if (containerRef.current && !containerRef.current.contains(e.target)) {
-                closeDropdown(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isOpen, closeDropdown]);
-
     const selectOption = useCallback((optionValue) => {
+        const option = options.find((opt) => opt.value === optionValue);
+        if (!option || option.disabled) return;
         onChange({ target: { id, value: optionValue } });
         closeDropdown();
-    }, [id, onChange, closeDropdown]);
+    }, [id, onChange, closeDropdown, options]);
 
-    const handleKeyDown = useCallback((e) => {
+    const handleKeyDown = useCallback((event) => {
         if (disabled) return;
 
-        switch (e.key) {
+        switch (event.key) {
             case 'Enter':
-            case ' ':
-                e.preventDefault();
+            case ' ': {
+                event.preventDefault();
                 if (isOpen && highlightedIndex >= 0) {
-                    selectOption(options[highlightedIndex].value);
+                    const highlightedOption = options[highlightedIndex];
+                    if (highlightedOption && !highlightedOption.disabled) {
+                        selectOption(highlightedOption.value);
+                    }
                 } else if (!isOpen) {
                     openDropdown();
                 }
                 break;
-            case 'ArrowDown':
-                e.preventDefault();
+            }
+            case 'ArrowDown': {
+                event.preventDefault();
                 if (!isOpen) {
                     openDropdown();
                 } else {
-                    setHighlightedIndex(prev =>
-                        prev < options.length - 1 ? prev + 1 : prev
-                    );
+                    setHighlightedIndex((prev) => {
+                        const startIndex = prev < 0 ? 0 : prev + 1;
+                        const nextIndex = findNextEnabledIndex(startIndex, 1);
+                        return nextIndex >= 0 ? nextIndex : prev;
+                    });
                 }
                 break;
-            case 'ArrowUp':
-                e.preventDefault();
+            }
+            case 'ArrowUp': {
+                event.preventDefault();
                 if (!isOpen) {
                     openDropdown();
                 } else {
-                    setHighlightedIndex(prev => prev > 0 ? prev - 1 : prev);
+                    setHighlightedIndex((prev) => {
+                        const startIndex = prev < 0 ? options.length - 1 : prev - 1;
+                        const nextIndex = findNextEnabledIndex(startIndex, -1);
+                        return nextIndex >= 0 ? nextIndex : prev;
+                    });
                 }
                 break;
-            case 'Home':
-                e.preventDefault();
-                if (isOpen) setHighlightedIndex(0);
+            }
+            case 'Home': {
+                event.preventDefault();
+                if (isOpen) setHighlightedIndex(findNextEnabledIndex(0, 1));
                 break;
-            case 'End':
-                e.preventDefault();
-                if (isOpen) setHighlightedIndex(options.length - 1);
+            }
+            case 'End': {
+                event.preventDefault();
+                if (isOpen) setHighlightedIndex(findNextEnabledIndex(options.length - 1, -1));
                 break;
-            case 'Escape':
+            }
+            case 'Escape': {
                 if (isOpen) {
-                    e.preventDefault();
+                    event.preventDefault();
                     closeDropdown();
                 }
                 break;
-            case 'Tab':
+            }
+            case 'Tab': {
                 if (isOpen) closeDropdown(false);
                 break;
+            }
             default:
                 break;
         }
-    }, [disabled, isOpen, highlightedIndex, options, selectOption, openDropdown, closeDropdown]);
-
-    const handleButtonClick = () => {
-        if (isOpen) {
-            closeDropdown();
-        } else {
-            openDropdown();
-        }
-    };
+    }, [disabled, isOpen, highlightedIndex, options, selectOption, openDropdown, closeDropdown, findNextEnabledIndex]);
 
     const listboxId = `${id}-listbox`;
     const activeDescendantId = isOpen && highlightedIndex >= 0
@@ -234,7 +163,7 @@ const Dropdown = ({
                     aria-required={required}
                     disabled={disabled}
                     className={`dropdown__trigger${!selectedOption ? ' dropdown__trigger--placeholder' : ''}`}
-                    onClick={handleButtonClick}
+                    onClick={() => (isOpen ? closeDropdown() : openDropdown())}
                     onKeyDown={handleKeyDown}
                 >
                     <span className="dropdown__value">{displayText}</span>
@@ -254,35 +183,35 @@ const Dropdown = ({
                     </svg>
                 </button>
 
-                {isRendered && (
-                    <div ref={panelRef} className="dropdown__panel">
-                        <ul
-                            ref={listboxRef}
-                            role="listbox"
-                            id={listboxId}
-                            aria-label={rest['aria-label'] || undefined}
-                            className="dropdown__listbox"
-                            tabIndex={-1}
-                        >
-                            {options.map((option, index) => (
-                                <li
-                                    key={option.value}
-                                    role="option"
-                                    id={`${id}-option-${index}`}
-                                    data-index={index}
-                                    aria-selected={option.value === value}
-                                    className={`dropdown__option${option.value === value ? ' dropdown__option--selected' : ''}${index === highlightedIndex ? ' dropdown__option--highlighted' : ''}`}
-                                    onMouseDown={(e) => {
-                                        e.preventDefault();
-                                        selectOption(option.value);
-                                    }}
-                                >
-                                    {option.label}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
+                <div ref={panelRef} className="dropdown__panel">
+                    <ul
+                        ref={listboxRef}
+                        role="listbox"
+                        id={listboxId}
+                        aria-label={rest['aria-label'] || undefined}
+                        className="dropdown__listbox"
+                        tabIndex={-1}
+                    >
+                        {options.map((option, index) => (
+                            <li
+                                key={option.value}
+                                role="option"
+                                id={`${id}-option-${index}`}
+                                data-index={index}
+                                aria-selected={option.value === value}
+                                aria-disabled={option.disabled ? 'true' : undefined}
+                                className={`dropdown__option${option.value === value ? ' dropdown__option--selected' : ''}${index === highlightedIndex ? ' dropdown__option--highlighted' : ''}${option.disabled ? ' dropdown__option--disabled' : ''}`}
+                                onMouseDown={(event) => {
+                                    if (option.disabled) return;
+                                    event.preventDefault();
+                                    selectOption(option.value);
+                                }}
+                            >
+                                {option.label}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </div>
     );
