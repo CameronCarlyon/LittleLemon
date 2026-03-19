@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import HeroButton from './HeroButton';
 import Dropdown from './Dropdown';
 import DatePicker from './DatePicker';
+import GuestCountControl from './GuestCountControl';
 
 const toDateValue = (date) => {
     const year = date.getFullYear();
@@ -25,7 +26,7 @@ const ReservationForm = () => {
         emailAddress: '',
         contactNumber: '',
         occasion: '',
-        guestCount: '',
+        guestCount: '2',
         reservationDate: '',
         reservationTime: '',
         specialRequests: ''
@@ -212,7 +213,7 @@ const ReservationForm = () => {
         });
 
         // Get all form elements (labels, inputs, dropdowns, textarea, button)
-        const formElements = form.querySelectorAll('label, input, .dropdown, .datepicker, textarea, [type="submit"]');
+        const formElements = form.querySelectorAll('label, input, .dropdown, .datepicker, .guest-count-control, textarea, [type="submit"]');
         gsap.set(formElements, {
             opacity: 0,
             y: 20
@@ -296,18 +297,15 @@ const ReservationForm = () => {
             />
             
             <label htmlFor="guestCount" className={shouldShowFieldError('guestCount') ? 'form-error-text' : ''}>Number of Guests *</label>
-            <Dropdown
+            <GuestCountControl
                 id="guestCount"
                 hasError={shouldShowFieldError('guestCount')}
                 value={formData.guestCount}
                 onChange={handleInputChange}
                 disabled={isProcessing}
-                required
-                placeholder=""
-                options={Array.from({ length: 20 }, (_, i) => ({
-                    value: String(i + 1),
-                    label: String(i + 1)
-                }))}
+                min={1}
+                max={14}
+                defaultValue={2}
             />
             
             <label htmlFor="reservationDate" className={shouldShowFieldError('reservationDate') ? 'form-error-text' : ''}>Date *</label>
