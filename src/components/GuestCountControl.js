@@ -162,12 +162,22 @@ const GuestCountControl = ({
             }, '-=0.08');
     }, [isAtMax]);
 
+    useEffect(() => {
+        if (isAtMax) return;
+        const helperPanel = helperPanelRef.current;
+        if (!helperPanel) return;
+        const helperLink = helperPanel.querySelector('a');
+        if (helperLink && document.activeElement === helperLink) {
+            valueRef.current?.focus();
+        }
+    }, [isAtMax]);
+
     return (
         <div
             className={`guest-count-control${className ? ` ${className}` : ''}${hasError ? ' form-error' : ''}${disabled ? ' guest-count-control--disabled' : ''}`}
             role="group"
             aria-label={rest['aria-label'] || 'Number of guests'}
-            aria-disabled={disabled}
+            aria-disabled={disabled ? 'true' : undefined}
         >
             <div className="guest-count-control__main">
                 <button
@@ -175,6 +185,7 @@ const GuestCountControl = ({
                     type="button"
                     className="guest-count-control__button"
                     aria-label="Decrease number of guests"
+                    aria-controls={id}
                     onClick={() => setGuestCount(currentValue - 1)}
                     onMouseDown={() => pressButton(minusButtonRef.current)}
                     onMouseUp={() => releaseButton(minusButtonRef.current)}
@@ -204,6 +215,9 @@ const GuestCountControl = ({
                     aria-valuemin={min}
                     aria-valuemax={max}
                     aria-valuenow={currentValue}
+                    aria-invalid={hasError || undefined}
+                    aria-describedby={hasError ? `${id}-error` : undefined}
+                    aria-label={`Number of guests: ${currentValue}`}
                     tabIndex={disabled ? -1 : 0}
                     onKeyDown={(event) => {
                         if (disabled) return;
@@ -225,6 +239,7 @@ const GuestCountControl = ({
                     type="button"
                     className="guest-count-control__button"
                     aria-label="Increase number of guests"
+                    aria-controls={id}
                     onClick={() => setGuestCount(currentValue + 1)}
                     onMouseDown={() => pressButton(plusButtonRef.current)}
                     onMouseUp={() => releaseButton(plusButtonRef.current)}
@@ -251,10 +266,17 @@ const GuestCountControl = ({
             <div
                 ref={helperPanelRef}
                 className="guest-count-control__helper-panel"
+                aria-hidden={!isAtMax}
             >
                 <p className="guest-count-control__helper-text" role="status" aria-live="polite">
                     Booking for an event? Please{' '}
-                    <HyperlinkLabel href="/contact-us" className="guest-count-control__helper-link" text="contact us" />
+                    <HyperlinkLabel
+                        href="/contact-us"
+                        className="guest-count-control__helper-link"
+                        text="contact us"
+                        tabIndex={isAtMax ? 0 : -1}
+                        aria-hidden={!isAtMax}
+                    />
                     .
                 </p>
             </div>

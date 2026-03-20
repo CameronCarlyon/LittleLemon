@@ -34,11 +34,15 @@ const ReservationForm = () => {
     const [availableTimes, setAvailableTimes] = useState([]);
     const [submitAttempted, setSubmitAttempted] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [formError, setFormError] = useState('');
     const navigate = useNavigate();
 
     const todayValue = toDateValue(new Date());
-    const reservationDateValue = formData.reservationDate || todayValue;
-    const selectedReservationDate = parseDateValue(reservationDateValue);
+    const hasSelectedReservationDate = formData.reservationDate !== '';
+    const reservationDateValue = formData.reservationDate;
+    const selectedReservationDate = hasSelectedReservationDate
+        ? parseDateValue(reservationDateValue)
+        : null;
 
     // Animation refs
     const headerRef = useRef(null);
@@ -108,11 +112,6 @@ const ReservationForm = () => {
             ...prev,
             [id]: value
         }));
-        
-        // Clear error state immediately when user starts typing (shows they're addressing the issue)
-        if (submitAttempted) {
-            setSubmitAttempted(false);
-        }
 
         if (id === 'reservationDate') {
             fetchAvailableTimes(value);
@@ -126,6 +125,7 @@ const ReservationForm = () => {
     const submitForm = async (e) => {
         e.preventDefault();
         setSubmitAttempted(true);
+        setFormError('');
 
         if (!validateForm()) {
             return;
@@ -146,7 +146,7 @@ const ReservationForm = () => {
             }
         } catch (error) {
             console.error('Submission failed:', error);
-            alert('Failed to create reservation. Please try again.');
+            setFormError('Failed to create reservation. Please try again.');
         } finally {
             setIsProcessing(false);
         }
@@ -157,6 +157,15 @@ const ReservationForm = () => {
      * @param {string} date - Selected reservation date
      */
     const fetchAvailableTimes = (date) => {
+        if (!date) {
+            setAvailableTimes([]);
+            setFormData((prev) => ({
+                ...prev,
+                reservationTime: ''
+            }));
+            return;
+        }
+
         try {
             const dateObj = parseDateValue(date);
             const times = fetchAPI(dateObj);
@@ -173,12 +182,14 @@ const ReservationForm = () => {
             });
         } catch (error) {
             console.error('Error fetching available times:', error);
-            alert('Failed to fetch available times. Please try again later.');
+            setFormError('Failed to fetch available times. Please try again later.');
         }
     };
 
     const availableTimeSet = new Set(availableTimes);
-    const allReservationTimeSlots = getReservationTimeSlots(selectedReservationDate);
+    const allReservationTimeSlots = selectedReservationDate
+        ? getReservationTimeSlots(selectedReservationDate)
+        : [];
     const reservationTimeOptions = allReservationTimeSlots.map((time) => ({
         value: time,
         label: time,
@@ -186,18 +197,11 @@ const ReservationForm = () => {
     }));
 
     let reservationTimeStatusMessage = '';
-    if (allReservationTimeSlots.length === 0) {
-        reservationTimeStatusMessage = 'Little Lemon is closed on the selected date.';
-    } else if (reservationTimeOptions.every((option) => option.disabled)) {
+    if (hasSelectedReservationDate && reservationTimeOptions.length > 0 && reservationTimeOptions.every((option) => option.disabled)) {
         reservationTimeStatusMessage = reservationDateValue === todayValue
-            ? 'There are no remaining reservation times available today.'
-            : 'No reservation times are currently available for the selected date.';
+            ? 'Sorry, there are no remaining reservation times available for today.'
+            : 'Sorry, there are no reservation times currently available for the selected date.';
     }
-
-    // Fetch initial available times for today
-    React.useEffect(() => {
-        fetchAvailableTimes(todayValue);
-    }, [todayValue]);
 
     // GSAP entrance animations
     useEffect(() => {
@@ -247,8 +251,8 @@ const ReservationForm = () => {
     }, []);
 
     return (
-        <form onSubmit={submitForm} noValidate ref={formRef}>
-            <h1 ref={headerRef}>Secure Your Reservation</h1>
+        <form onSubmit={submitForm} noValidate ref={formRef} aria-labelledby="reservation-heading">
+            <h1 ref={headerRef} id="reservation-heading">Secure Your Reservation</h1>
             
             <label htmlFor="fullName" className={shouldShowFieldError('fullName') ? 'form-error-text' : ''}>Full Name *</label>
             <input 
@@ -259,7 +263,12 @@ const ReservationForm = () => {
                 onChange={handleInputChange}
                 disabled={isProcessing}
                 required
+                aria-invalid={shouldShowFieldError('fullName') || undefined}
+                aria-describedby={shouldShowFieldError('fullName') ? 'fullName-error' : undefined}
             />
+            {shouldShowFieldError('fullName') && (
+                <span id="fullName-error" className="form-error-text" role="alert">Please enter your full name.</span>
+            )}
             
             <label htmlFor="emailAddress" className={shouldShowFieldError('emailAddress') ? 'form-error-text' : ''}>Email *</label>
             <input 
@@ -269,8 +278,13 @@ const ReservationForm = () => {
                 value={formData.emailAddress}
                 onChange={handleInputChange}
                 disabled={isProcessing}
-                required 
+                required
+                aria-invalid={shouldShowFieldError('emailAddress') || undefined}
+                aria-describedby={shouldShowFieldError('emailAddress') ? 'emailAddress-error' : undefined}
             />
+            {shouldShowFieldError('emailAddress') && (
+                <span id="emailAddress-error" className="form-error-text" role="alert">Please enter a valid email address.</span>
+            )}
             
             <label htmlFor="contactNumber">Contact Number</label>
             <input 
@@ -307,6 +321,9 @@ const ReservationForm = () => {
                 max={14}
                 defaultValue={2}
             />
+            {shouldShowFieldError('guestCount') && (
+                <span id="guestCount-error" className="form-error-text" role="alert">Please select the number of guests.</span>
+            )}
             
             <label htmlFor="reservationDate" className={shouldShowFieldError('reservationDate') ? 'form-error-text' : ''}>Date *</label>
             <DatePicker
@@ -318,6 +335,9 @@ const ReservationForm = () => {
                 required
                 placeholder=""
             />
+            {shouldShowFieldError('reservationDate') && (
+                <span id="reservationDate-error" className="form-error-text" role="alert">Please select a date.</span>
+            )}
             
             <label htmlFor="reservationTime" className={shouldShowFieldError('reservationTime') ? 'form-error-text' : ''}>Time Slot *</label>
             <Dropdown
@@ -325,11 +345,14 @@ const ReservationForm = () => {
                 hasError={shouldShowFieldError('reservationTime')}
                 value={formData.reservationTime}
                 onChange={handleInputChange}
-                disabled={isProcessing || reservationTimeOptions.length === 0}
+                disabled={isProcessing || !hasSelectedReservationDate || reservationTimeOptions.length === 0}
                 required
                 placeholder=""
                 options={reservationTimeOptions}
             />
+            {shouldShowFieldError('reservationTime') && (
+                <span id="reservationTime-error" className="form-error-text" role="alert">Please select a time slot.</span>
+            )}
             {reservationTimeStatusMessage && (
                 <p className="form-helper-text" role="status" aria-live="polite">
                     {reservationTimeStatusMessage}
@@ -347,6 +370,10 @@ const ReservationForm = () => {
                 placeholder="Please note that whilst we will do our best to accommodate your special requests, we cannot guarantee that all will be fulfilled."
             />
             
+            {formError && (
+                <p className="form-error-text" role="alert">{formError}</p>
+            )}
+
             <HeroButton
                 type="submit"
                 variant={validateForm() ? 'tertiary' : 'disabled'}

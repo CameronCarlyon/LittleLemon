@@ -19,6 +19,9 @@ const Dropdown = ({
     const panelRef = useRef(null);
     const listboxRef = useRef(null);
     const buttonRef = useRef(null);
+    const isOpenSyncRef = useRef(false);
+    const skipNextFocusOpenRef = useRef(false);
+    const pointerFocusRef = useRef(false);
 
     const selectedOption = options.find((opt) => opt.value === value);
     const displayText = selectedOption ? selectedOption.label : placeholder;
@@ -39,6 +42,8 @@ const Dropdown = ({
 
     const closeDropdown = useCallback((focusButton = true) => {
         if (!isOpen) return;
+        isOpenSyncRef.current = false;
+        if (focusButton) skipNextFocusOpenRef.current = true;
         setIsOpen(false);
         animatePanel(false, focusButton);
     }, [isOpen, animatePanel]);
@@ -46,7 +51,8 @@ const Dropdown = ({
     closeFnRef.current = closeDropdown;
 
     const openDropdown = useCallback(() => {
-        if (disabled || isOpen) return;
+        if (disabled || isOpen || isOpenSyncRef.current) return;
+        isOpenSyncRef.current = true;
         broadcastOpen();
         const currentIndex = options.findIndex((opt) => opt.value === value);
         const initialIndex = currentIndex >= 0 && !options[currentIndex]?.disabled
@@ -131,7 +137,30 @@ const Dropdown = ({
                 break;
             }
             case 'Tab': {
-                if (isOpen) closeDropdown(false);
+                const effectivelyOpen = isOpen || isOpenSyncRef.current;
+                if (effectivelyOpen) {
+                    if (event.shiftKey) {
+                        const previousIndex = findNextEnabledIndex(highlightedIndex - 1, -1);
+                        if (highlightedIndex > 0 && previousIndex >= 0) {
+                            event.preventDefault();
+                            setHighlightedIndex(previousIndex);
+                        } else {
+                            closeDropdown(false);
+                            setHighlightedIndex(-1);
+                        }
+                    } else {
+                        const startIndex = highlightedIndex < 0 ? 0 : highlightedIndex + 1;
+                        const nextIndex = findNextEnabledIndex(startIndex, 1);
+                        if (nextIndex >= 0) {
+                            event.preventDefault();
+                            setHighlightedIndex(nextIndex);
+                        } else {
+                            closeDropdown(false);
+                            setHighlightedIndex(-1);
+                        }
+                    }
+                }
+                // Not open: onFocus handles opening; let Tab proceed naturally.
                 break;
             }
             default:
@@ -161,10 +190,34 @@ const Dropdown = ({
                     aria-controls={listboxId}
                     aria-activedescendant={activeDescendantId}
                     aria-required={required}
+                    aria-invalid={hasError || undefined}
+                    aria-describedby={hasError ? `${id}-error` : undefined}
+                    aria-disabled={disabled ? 'true' : undefined}
                     disabled={disabled}
                     className={`dropdown__trigger${!selectedOption ? ' dropdown__trigger--placeholder' : ''}`}
-                    onClick={() => (isOpen ? closeDropdown() : openDropdown())}
+                    onPointerDown={() => {
+                        pointerFocusRef.current = true;
+                    }}
+                    onClick={() => {
+                        pointerFocusRef.current = false;
+                        if (isOpen) {
+                            closeDropdown();
+                            return;
+                        }
+                        openDropdown();
+                    }}
                     onKeyDown={handleKeyDown}
+                    onFocus={() => {
+                        if (skipNextFocusOpenRef.current) {
+                            skipNextFocusOpenRef.current = false;
+                            return;
+                        }
+                        if (pointerFocusRef.current) return;
+                        openDropdown();
+                    }}
+                    onBlur={() => {
+                        pointerFocusRef.current = false;
+                    }}
                 >
                     <span className="dropdown__value">{displayText}</span>
                     <svg

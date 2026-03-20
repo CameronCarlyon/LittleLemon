@@ -6,7 +6,7 @@ import Footer from '../components/Footer.js';
 
 import ReservationForm from '../components/ReservationForm.js';
 
-function AboutUsPage() {
+function ReservationsPage() {
   return (
     <div className="App">
       <Header />
@@ -18,4 +18,4 @@ function AboutUsPage() {
     </div>);
 }
 
-export default AboutUsPage;
+export default ReservationsPage;

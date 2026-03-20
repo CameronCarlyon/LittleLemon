@@ -344,6 +344,8 @@ const Promotion = memo(() => {
                 onClick={handleDismiss}
                 onMouseEnter={() => handleCloseButtonHover(true)}
                 onMouseLeave={() => handleCloseButtonHover(false)}
+                onFocus={() => handleCloseButtonHover(true)}
+                onBlur={() => handleCloseButtonHover(false)}
                 disabled={isAnimating}
                 aria-label="Close newsletter promotion"
                 title="Close promotion (Press Escape)"

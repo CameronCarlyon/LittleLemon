@@ -34,7 +34,7 @@ const HyperlinkLabel = ({ href, text, children, footer = false, ...props }) => {
         // Only add hover effects if not on current page or if it's a footer link
         if (!isCurrentPage || footer) {
             // Mouse enter event - animate underline from left to right
-            const handleMouseEnter = () => {
+            const showUnderline = () => {
                 gsap.set(underline, { transformOrigin: 'left top' });
                 gsap.to(underline, {
                     scaleX: 1,
@@ -44,7 +44,7 @@ const HyperlinkLabel = ({ href, text, children, footer = false, ...props }) => {
             };
 
             // Mouse leave event - hide underline from left to right
-            const handleMouseLeave = () => {
+            const hideUnderline = () => {
                 gsap.set(underline, { transformOrigin: 'right top' });
                 gsap.to(underline, {
                     scaleX: 0,
@@ -57,13 +57,17 @@ const HyperlinkLabel = ({ href, text, children, footer = false, ...props }) => {
             };
 
             // Add event listeners
-            link.addEventListener('mouseenter', handleMouseEnter);
-            link.addEventListener('mouseleave', handleMouseLeave);
+            link.addEventListener('mouseenter', showUnderline);
+            link.addEventListener('mouseleave', hideUnderline);
+            link.addEventListener('focus', showUnderline);
+            link.addEventListener('blur', hideUnderline);
 
             // Cleanup
             return () => {
-                link.removeEventListener('mouseenter', handleMouseEnter);
-                link.removeEventListener('mouseleave', handleMouseLeave);
+                link.removeEventListener('mouseenter', showUnderline);
+                link.removeEventListener('mouseleave', hideUnderline);
+                link.removeEventListener('focus', showUnderline);
+                link.removeEventListener('blur', hideUnderline);
             };
         }
     }, [isCurrentPage, footer]);

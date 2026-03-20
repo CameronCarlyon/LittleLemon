@@ -34,7 +34,12 @@ const DatePicker = ({
     const panelRef = useRef(null);
     const buttonRef = useRef(null);
     const gridRef = useRef(null);
-    const isOpenRef = useRef(false);
+    const prevBtnRef = useRef(null);
+    const nextBtnRef = useRef(null);
+    const isOpenSyncRef = useRef(false);
+    const openFocusTargetRef = useRef(null);
+    const skipNextFocusOpenRef = useRef(false);
+    const pointerFocusRef = useRef(false);
 
     const selectedDate = useMemo(() => {
         if (!value) return null;
@@ -165,36 +170,61 @@ const DatePicker = ({
 
     const closePicker = useCallback((focusButton = true) => {
         if (!isOpen) return;
-        isOpenRef.current = false;
+        isOpenSyncRef.current = false;
+        if (focusButton) skipNextFocusOpenRef.current = true;
         setIsOpen(false);
         animatePanel(false, focusButton);
     }, [isOpen, animatePanel]);
 
     closeFnRef.current = closePicker;
 
-    const openPicker = useCallback(() => {
-        if (disabled || isOpen) return;
-        broadcastOpen();
-        if (selectedDate) {
-            setViewMonth({ year: selectedDate.getFullYear(), month: selectedDate.getMonth() });
-            setFocusedDate(new Date(selectedDate));
-        } else {
-            setViewMonth({ year: today.getFullYear(), month: today.getMonth() });
-            setFocusedDate(new Date(today));
+    const exitFocus = useCallback((backward = false) => {
+        const selector = [
+            'a[href]:not([tabindex="-1"])',
+            'button:not(:disabled):not([tabindex="-1"])',
+            'input:not(:disabled):not([tabindex="-1"])',
+            'select:not(:disabled):not([tabindex="-1"])',
+            'textarea:not(:disabled):not([tabindex="-1"])',
+            '[tabindex]:not([tabindex="-1"])',
+        ].join(', ');
+        const focusable = Array.from(document.querySelectorAll(selector))
+            .filter((el) => !panelRef.current?.contains(el));
+        const idx = focusable.indexOf(buttonRef.current);
+        if (idx !== -1) {
+            focusable[backward ? idx - 1 : idx + 1]?.focus();
         }
-        isOpenRef.current = true;
+    }, []);
+
+    const openPicker = useCallback(() => {
+        if (disabled || isOpen || isOpenSyncRef.current) return;
+        broadcastOpen();
+        const dateToFocus = selectedDate || today;
+        const targetYear = dateToFocus.getFullYear();
+        const targetMonth = dateToFocus.getMonth();
+        const willCanGoPrev = targetYear > today.getFullYear()
+            || (targetYear === today.getFullYear() && targetMonth > today.getMonth());
+        openFocusTargetRef.current = willCanGoPrev ? 'prev' : 'grid';
+        setViewMonth({ year: targetYear, month: targetMonth });
+        setFocusedDate(new Date(dateToFocus));
+        isOpenSyncRef.current = true;
         setIsOpen(true);
         animatePanel(true);
     }, [disabled, isOpen, selectedDate, today, animatePanel, broadcastOpen]);
 
     useEffect(() => {
         if (!isOpen || !focusedDate || !gridRef.current) return;
-        const key = toValueString(focusedDate);
-        const cell = gridRef.current.querySelector(`[data-date="${key}"]`);
-        if (!cell) return;
+        const focusTarget = openFocusTargetRef.current;
+        openFocusTargetRef.current = null;
 
         const raf = requestAnimationFrame(() => {
-            if (isOpenRef.current) cell.focus();
+            if (!isOpenSyncRef.current) return;
+            if (focusTarget === 'prev' && prevBtnRef.current) {
+                prevBtnRef.current.focus();
+                return;
+            }
+            const key = toValueString(focusedDate);
+            const cell = gridRef.current?.querySelector(`[data-date="${key}"]`);
+            cell?.focus();
         });
 
         return () => cancelAnimationFrame(raf);
@@ -274,9 +304,45 @@ const DatePicker = ({
                 event.preventDefault();
                 closePicker();
                 return;
-            case 'Tab':
-                closePicker(false);
+            case 'Tab': {
+                event.preventDefault();
+                if (event.shiftKey) {
+                    // Shift+Tab: previous available day → prev btn → exit backward
+                    const currentIdx = calendarDays.findIndex(
+                        (d) => d.isCurrentMonth && isSameDate(d.date, focusedDate)
+                    );
+                    const prevAvail = currentIdx > 0
+                        ? calendarDays.slice(0, currentIdx).reverse()
+                            .find((d) => d.isCurrentMonth && !isDateDisabled(d.date))
+                        : null;
+                    if (prevAvail) {
+                        setFocusedDate(new Date(prevAvail.date));
+                    } else if (canGoPrev) {
+                        prevBtnRef.current?.focus();
+                    } else {
+                        closePicker(false);
+                        exitFocus(true);
+                    }
+                } else {
+                    // Tab: next available day → next btn → exit forward
+                    const currentIdx = calendarDays.findIndex(
+                        (d) => d.isCurrentMonth && isSameDate(d.date, focusedDate)
+                    );
+                    const nextAvail = currentIdx >= 0
+                        ? calendarDays.slice(currentIdx + 1)
+                            .find((d) => d.isCurrentMonth && !isDateDisabled(d.date))
+                        : calendarDays.find((d) => d.isCurrentMonth && !isDateDisabled(d.date));
+                    if (nextAvail) {
+                        setFocusedDate(new Date(nextAvail.date));
+                    } else if (canGoNext) {
+                        nextBtnRef.current?.focus();
+                    } else {
+                        closePicker(false);
+                        exitFocus(false);
+                    }
+                }
                 return;
+            }
             default:
                 return;
         }
@@ -287,7 +353,52 @@ const DatePicker = ({
                 setViewMonth({ year: newDate.getFullYear(), month: newDate.getMonth() });
             }
         }
-    }, [focusedDate, viewMonth, today, maxDate, isDateDisabled, selectDate, closePicker]);
+    }, [focusedDate, viewMonth, today, maxDate, isDateDisabled, selectDate, closePicker, calendarDays, canGoPrev, canGoNext, exitFocus]);
+
+    const handleNavKeyDown = useCallback((event, isNext) => {
+        switch (event.key) {
+            case 'Tab': {
+                event.preventDefault();
+                if (event.shiftKey) {
+                    if (isNext) {
+                        // Shift+Tab on next btn: focus last available day
+                        const lastAvail = [...calendarDays].reverse()
+                            .find((d) => d.isCurrentMonth && !isDateDisabled(d.date));
+                        if (lastAvail && gridRef.current) {
+                            setFocusedDate(new Date(lastAvail.date));
+                            const key = toValueString(lastAvail.date);
+                            gridRef.current.querySelector(`[data-date="${key}"]`)?.focus();
+                        }
+                    } else {
+                        // Shift+Tab on prev btn: exit backward
+                        closePicker(false);
+                        exitFocus(true);
+                    }
+                } else if (!isNext) {
+                    // Tab on prev btn: focus first available day
+                    const firstAvail = calendarDays
+                        .find((d) => d.isCurrentMonth && !isDateDisabled(d.date));
+                    if (firstAvail && gridRef.current) {
+                        setFocusedDate(new Date(firstAvail.date));
+                        const key = toValueString(firstAvail.date);
+                        gridRef.current.querySelector(`[data-date="${key}"]`)?.focus();
+                    }
+                } else {
+                    // Tab on next btn: exit forward
+                    closePicker(false);
+                    exitFocus(false);
+                }
+                break;
+            }
+            case 'Escape': {
+                event.preventDefault();
+                closePicker();
+                break;
+            }
+            default:
+                break;
+        }
+    }, [calendarDays, isDateDisabled, closePicker, exitFocus]);
 
     const handleButtonKeyDown = useCallback((event) => {
         if (disabled) return;
@@ -295,7 +406,26 @@ const DatePicker = ({
             event.preventDefault();
             if (!isOpen) openPicker();
         }
-    }, [disabled, isOpen, openPicker]);
+        if (event.key === 'Tab') {
+            if (!isOpen) {
+                event.preventDefault();
+                openPicker();
+            } else {
+                // Edge case: Tab on trigger while open — move into panel
+                event.preventDefault();
+                if (canGoPrev && prevBtnRef.current) {
+                    prevBtnRef.current.focus();
+                } else if (gridRef.current) {
+                    const firstAvail = calendarDays
+                        .find((d) => d.isCurrentMonth && !isDateDisabled(d.date));
+                    if (firstAvail) {
+                        const key = toValueString(firstAvail.date);
+                        gridRef.current.querySelector(`[data-date="${key}"]`)?.focus();
+                    }
+                }
+            }
+        }
+    }, [disabled, isOpen, openPicker, canGoPrev, calendarDays, isDateDisabled]);
 
     const displayText = formatDisplayDate(value);
 
@@ -312,10 +442,34 @@ const DatePicker = ({
                     id={id}
                     aria-haspopup="dialog"
                     aria-expanded={isOpen}
+                    aria-label={`Choose date${value ? `, current selection ${formatDisplayDate(value)}` : ''}`}
+                    aria-describedby={hasError ? `${id}-error` : undefined}
+                    aria-disabled={disabled ? 'true' : undefined}
                     disabled={disabled}
                     className={`datepicker__trigger${!value ? ' datepicker__trigger--placeholder' : ''}`}
-                    onClick={() => (isOpen ? closePicker() : openPicker())}
+                    onPointerDown={() => {
+                        pointerFocusRef.current = true;
+                    }}
+                    onClick={() => {
+                        pointerFocusRef.current = false;
+                        if (isOpen) {
+                            closePicker();
+                            return;
+                        }
+                        openPicker();
+                    }}
                     onKeyDown={handleButtonKeyDown}
+                    onFocus={() => {
+                        if (skipNextFocusOpenRef.current) {
+                            skipNextFocusOpenRef.current = false;
+                            return;
+                        }
+                        if (pointerFocusRef.current) return;
+                        openPicker();
+                    }}
+                    onBlur={() => {
+                        pointerFocusRef.current = false;
+                    }}
                 >
                     <span className="datepicker__value">{displayText}</span>
                     <svg
@@ -343,11 +497,14 @@ const DatePicker = ({
                 >
                     <div className="datepicker__header">
                         <button
+                            ref={prevBtnRef}
                             type="button"
                             className="datepicker__nav-btn"
                             onClick={goToPrevMonth}
                             disabled={!canGoPrev}
                             aria-label="Previous month"
+                            tabIndex={isOpen ? 0 : -1}
+                            onKeyDown={(e) => handleNavKeyDown(e, false)}
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M15 18l-6-6 6-6" />
@@ -357,11 +514,14 @@ const DatePicker = ({
                             {MONTHS[viewMonth.month]} {viewMonth.year}
                         </span>
                         <button
+                            ref={nextBtnRef}
                             type="button"
                             className="datepicker__nav-btn"
                             onClick={goToNextMonth}
                             disabled={!canGoNext}
                             aria-label="Next month"
+                            tabIndex={isOpen ? 0 : -1}
+                            onKeyDown={(e) => handleNavKeyDown(e, true)}
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M9 18l6-6-6-6" />

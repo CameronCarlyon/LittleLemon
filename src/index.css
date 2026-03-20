@@ -111,12 +111,7 @@ h3 {
   font-family: var(--font-body);
   font-weight: var(--font-weight-black);
   color: var(--color-green);
-  letter-spacing: 1px;
 }
-
-h1 { font-size: var(--font-size-2xl); }
-h2 { font-size: var(--font-size-xl); }
-h3 { letter-spacing: 1px; }
 
 a {
   color: var(--color-green);
@@ -180,7 +175,7 @@ select {
 
 .dropdown--disabled {
   opacity: 0.5;
-  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .dropdown__surface {
@@ -191,7 +186,7 @@ select {
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
-.dropdown:hover .dropdown__surface,
+.dropdown:not(.dropdown--disabled):hover .dropdown__surface,
 .dropdown--open .dropdown__surface {
   border-color: var(--color-green);
 }
@@ -221,6 +216,10 @@ select {
   -webkit-appearance: none;
   appearance: none;
   line-height: normal;
+}
+
+.dropdown--disabled .dropdown__trigger {
+  cursor: not-allowed;
 }
 
 .dropdown__trigger:focus-visible {
@@ -363,9 +362,11 @@ select {
   overflow: visible;
 }
 
-.guest-count-control .guest-count-control__button:hover:not(:disabled) {
+.guest-count-control .guest-count-control__button:hover:not(:disabled),
+.guest-count-control .guest-count-control__button:focus-visible:not(:disabled) {
   background-color: var(--color-green);
   color: var(--color-white);
+  outline: none;
 }
 
 .guest-count-control .guest-count-control__button:disabled {
@@ -381,7 +382,6 @@ select {
   font-weight: var(--font-weight-bold);
   color: var(--color-green);
   user-select: none;
-  outline: none;
 }
 
 .guest-count-control.form-error {
@@ -539,9 +539,11 @@ select {
   flex-shrink: 0;
 }
 
-.datepicker__nav-btn:hover:not(:disabled) {
+.datepicker__nav-btn:hover:not(:disabled),
+.datepicker__nav-btn:focus-visible:not(:disabled) {
   background-color: var(--color-green);
   color: var(--color-white);
+  outline: none;
 }
 
 .datepicker__nav-btn:disabled {
@@ -588,13 +590,11 @@ select {
   transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
-.datepicker__day:hover:not(.datepicker__day--disabled):not(.datepicker__day--outside) .datepicker__day-content {
+.datepicker__day:hover:not(.datepicker__day--disabled):not(.datepicker__day--outside) .datepicker__day-content,
+.datepicker__day:focus-visible:not(.datepicker__day--disabled):not(.datepicker__day--outside) .datepicker__day-content {
   background-color: var(--color-green);
   color: var(--color-white);
-}
-
-.datepicker__day:focus-visible:not(.datepicker__day--outside) .datepicker__day-content {
-  box-shadow: inset 0 0 0 2px var(--color-green);
+  outline: none;
 }
 
 .datepicker__day--selected {
@@ -677,11 +677,6 @@ button {
   appearance: none;
   touch-action: manipulation;
   transition: var(--transition-base);
-}
-
-button:focus-visible {
-  outline: 2px solid var(--color-yellow);
-  outline-offset: 2px;
 }
 
 label {
@@ -1204,6 +1199,11 @@ Footer {
   color: var(--color-green);
   background-color: var(--color-white);
   border-radius: 2rem;
+}
+
+.close-btn:focus-visible {
+  outline: 2px solid var(--color-green);
+  outline-offset: -3px;
 }
 
 .promotion-banner button .svg-inline--fa {
@@ -1939,8 +1939,10 @@ form {
   text-wrap: nowrap;
 }
 
-.btn:hover {
-  border: 2px solid var(--color-green)
+.btn:hover,
+.btn:focus-visible {
+  border: 2px solid var(--color-green);
+  outline: none;
 }
 
 .btn-unavail {
@@ -2305,8 +2307,10 @@ form {
   color: green;
 }
 
-.btn-successful:hover {
+.btn-successful:hover,
+.btn-successful:focus-visible {
   border: 2px solid green;
+  outline: none;
 }
 
 .btn-error {
@@ -2314,8 +2318,10 @@ form {
   color: darkred;
 }
 
-.btn-error:hover {
+.btn-error:hover,
+.btn-error:focus-visible {
   border: 2px solid darkred;
+  outline: none;
 }
 
 .form-error {
@@ -2329,8 +2335,9 @@ form {
 
 .form-helper-text {
   color: var(--color-green);
-  font-size: var(--font-size-sm);
-  margin-top: 0.25rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  text-align: center;
 }
 
 .form-successful {
