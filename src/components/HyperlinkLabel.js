@@ -72,20 +72,23 @@ const HyperlinkLabel = ({ href, text, children, footer = false, ...props }) => {
         }
     }, [isCurrentPage, footer]);
 
-    return (
-        <Link to={`${href}`} 
-            ref={linkRef}
-            className='hyperlink-label' 
-            style={{ 
-                position: 'relative',
-                display: 'inline-block',
-                textDecoration: 'none'
-            }}
-            {...props}
-        >
+    const isExternal = href && (href.startsWith('http') || href.startsWith('//'));
+    const sharedProps = {
+        ref: linkRef,
+        className: 'hyperlink-label',
+        style: {
+            position: 'relative',
+            display: 'inline-block',
+            textDecoration: 'none'
+        },
+        ...props
+    };
+
+    const content = (
+        <>
             {children}
             {text}
-            <span 
+            <span
                 ref={underlineRef}
                 style={{
                     position: 'absolute',
@@ -96,10 +99,24 @@ const HyperlinkLabel = ({ href, text, children, footer = false, ...props }) => {
                     backgroundColor: 'var(--color-yellow)',
                     display: 'block',
                     borderRadius: '2.5px',
-                    transform: 'scaleX(0)', // Hide by default in CSS
-                    transformOrigin: 'left top' // Set transform origin in CSS
+                    transform: 'scaleX(0)',
+                    transformOrigin: 'left top'
                 }}
             />
+        </>
+    );
+
+    if (isExternal) {
+        return (
+            <a href={href} target="_blank" rel="noopener noreferrer" {...sharedProps}>
+                {content}
+            </a>
+        );
+    }
+
+    return (
+        <Link to={`${href}`} {...sharedProps}>
+            {content}
         </Link>
     );
 };
