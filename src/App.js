@@ -21,7 +21,6 @@ function App() {
         {/* Skip link for accessibility - controlled by React */}
         <a href="#main-content" className="skip-link">Skip to main content</a>
         <ScrollToTop />
-        <div className="App">
           <Routes>
             <Route index element={<MainPage />} />
             <Route path='/home' element={<MainPage />} />
@@ -35,7 +34,6 @@ function App() {
             <Route path='/cart/success' element={<CartSuccesfulPage />} />
             <Route path='*' element={<NoPage />} />
           </Routes>
-        </div>
       </CartProvider>
     </BrowserRouter>
   );

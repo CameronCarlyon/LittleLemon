@@ -147,9 +147,7 @@ function ContactUsPage() {
                         <div>
                             <p><b>Address</b></p>
                             <p>1358 Chestnut St. <br />Chicago<br />IL 60680<br />
-                            <a href='https://maps.google.com'>
-                                <HyperlinkLabel text='Get Directions' href=''/>
-                            </a>
+                                <HyperlinkLabel text='Get Directions' href='https://maps.google.com'/>
                             </p>
                         </div>
                         <div>
@@ -216,8 +214,10 @@ function ContactUsPage() {
                     </form>
                 </div>
             </div>
-            <Promotion />
-            <Footer />
+            <div className="footer-container">
+                <Promotion />
+                <Footer />
+            </div>
         </div>
     );
 }

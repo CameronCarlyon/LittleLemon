@@ -75,6 +75,13 @@
 }
 
 /* Base Elements */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -159,6 +166,10 @@ input:focus, textarea:focus {
   border: 2px solid var(--color-green);
 }
 
+input:hover {
+  border-color: 2px solid var(--color-green);
+}
+
 select {
   cursor: pointer;
 }
@@ -182,6 +193,7 @@ select {
   background-color: var(--color-white);
   border: var(--border-width) solid transparent;
   border-radius: 1rem;
+  min-height: 57px;
   overflow: hidden;
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
@@ -201,7 +213,8 @@ select {
   justify-content: space-between;
   gap: 0.5rem;
   width: 100%;
-  min-height: 3.3rem;
+  height: calc(57px - 4px);
+  min-height: calc(57px - 4px);
   padding: var(--spacing-sm);
   background-color: var(--color-white);
   color: var(--color-green);
@@ -314,6 +327,7 @@ select {
 
 .guest-count-control {
   display: flex;
+  justify-content: center;
   flex-direction: column;
   width: 100%;
   min-height: 3.3rem;
@@ -646,7 +660,8 @@ select {
 }
 
 .dropdown.btn-dropdown .dropdown__trigger {
-  height: 3.5rem;
+  height: calc(57px - 4px);
+  min-height: calc(57px - 4px);
   min-width: 0;
   max-width: 100%;
   text-align: center;
@@ -1028,6 +1043,11 @@ Footer {
   gap: 1rem;
 }
 
+.footer-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .footer-links {
   color: var(--color-white);
   list-style-type: none;
@@ -1122,7 +1142,6 @@ Footer {
   font-weight: 200;
   font-size: 1.1rem;
   gap: 1rem;
-  min-height: 60vh;
 }
 
 .main-content h1 {
@@ -1278,13 +1297,15 @@ Footer {
 }
 
 .no-page {
-  justify-content: space-evenly;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 5rem;
+  gap: 2rem;
   background-color: var(--color-green);
   color: white;
-  min-height: 85vh;
   padding: 2rem 25%;
+  flex: 1;
 }
 
 .flex-column {
@@ -1378,7 +1399,7 @@ Footer {
   background-color: var(--color-white);
   border-radius: 1rem;
   cursor: pointer;
-  height: 3.5rem;
+  height: 57px;
   transition: all 0.3s ease;
   justify-content: center;
 }
@@ -1397,9 +1418,9 @@ Footer {
 
 .filter-btn {
   --filter-icon-size: 1.7rem;
-  width: 3.5rem;
-  min-width: 3.5rem;
-  max-width: 3.5rem;
+  width: 57px;
+  min-width: 57px;
+  max-width: 57px;
   aspect-ratio: 1 / 1;
   padding: 0;
   flex-shrink: 0;
@@ -1985,10 +2006,6 @@ form {
   font-weight: var(--font-weight-bold);
 }
 
-.btn-dropdown:hover {
-  border: 2px solid var(--color-green);
-}
-
 .mobile-only {
   display: none;
 }
@@ -2167,6 +2184,8 @@ form {
   transition: all 0.2s ease;
   padding: 0.6rem 0.5rem;
   border-radius: 0.7rem;
+  height: 36px;
+  width: 36px;
 }
 
 .quantity-btn:hover:not(:disabled) {
