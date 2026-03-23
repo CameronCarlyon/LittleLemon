@@ -7,13 +7,10 @@ import { TextPlugin } from 'gsap/TextPlugin';
 
 import HeroButton from '../components/HeroButton.js';
 
-// Register the plugin
 gsap.registerPlugin(TextPlugin);
 
-/**
- * Array of witty lemon-themed 404 messages
- * Following DRY principles with centralized message management
- */
+// Array of 404 messages
+
 const NO_PAGE_MESSAGES = [
     "This page vanished quicker than lemonade on a hot day!",
     "When life gives you lemons, but not the page you were looking for...",
@@ -118,10 +115,9 @@ function NoPage() {
     }, []);
 
     return (
-        <div>
+        <div className="App">
             <Header />
-            <div className='flex-column no-page'>
-                <div className='no-page-message-container'>
+            <div className='no-page'>
                     <div style={{ display: 'inline-flex', alignItems: 'baseline' }}>
                         <h1 
                             ref={errorCodeRef} 
@@ -143,7 +139,6 @@ function NoPage() {
                     <h1 ref={messageRef} className='no-page-message'>
                         {randomNoPageMessage}
                     </h1>
-                </div>
                 <div ref={buttonsRef} style={{ display: 'flex', gap: '1rem' }}>
                     <Link to='/home'>
                         <HeroButton variant='primary'>Go Home</HeroButton>
@@ -153,7 +148,9 @@ function NoPage() {
                     </Link>
                 </div>
             </div>
-            <Footer />
+            <div className="footer-container">
+                <Footer />
+            </div>
         </div>
     );
 }

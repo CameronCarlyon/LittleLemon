@@ -10,10 +10,12 @@ function ShoppingCartPage() {
   const { cartItems } = useCart();
 
     return (
-        <div>
+        <div className='App'>
             <Header />
             {cartItems.length === 0 ? <CartEmpty /> : <Cart />}
-            <Footer />
+            <div className="footer-container">
+                <Footer />
+            </div>
         </div>
     )
 }

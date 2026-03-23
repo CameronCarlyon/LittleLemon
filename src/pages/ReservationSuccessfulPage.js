@@ -65,8 +65,10 @@ const ReservationSuccessfulPage = () => {
                 </p>
                 <p>First time visiting our restaurant? You can find out all you need to know <Link to={'/our-restaurant'}>here.</Link></p>
             </div>
-            <Promotion />
-            <Footer />
+            <div className="footer-container">
+                <Promotion />
+                <Footer />
+            </div>
         </div>
     );
 };

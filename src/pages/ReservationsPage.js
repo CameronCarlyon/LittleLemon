@@ -13,8 +13,10 @@ function ReservationsPage() {
       <div className="reservation-content" id="main-content">
         <ReservationForm />
       </div>
-      <Promotion />
-      <Footer />
+      <div className="footer-container">
+        <Promotion />
+        <Footer />
+      </div>
     </div>);
 }
 

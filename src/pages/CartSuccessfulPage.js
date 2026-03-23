@@ -106,7 +106,9 @@ const CartSuccessfulPage = () => {
                     <p>First time visiting our restaurant? You can find out all you need to know <Link to={'/our-restaurant'}>here.</Link></p>)}
                 </div>
             </div>
-            <Footer />
+            <div className="footer-container">
+                <Footer />
+            </div>
         </div>
     );
 };

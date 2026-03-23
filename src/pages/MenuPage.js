@@ -13,8 +13,10 @@ function MainPage() {
             <p>Explore our delicious Mediterranean menu, featuring a variety of dishes made with fresh ingredients and traditional recipes.</p>
         <Menu/>
       </div>
-      <Promotion />
-      <Footer />
+      <div className="footer-container">
+        <Promotion />
+        <Footer />
+      </div>
     </div>);
 }
 

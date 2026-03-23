@@ -96,8 +96,7 @@ const CartEmpty = () => {
     }, []);
 
     return (
-        <div className='flex-column no-page'>
-            <div className='no-page-message-container'>
+        <div className='no-page'>
                <div
                 ref={lottieContainerRef}
                 onMouseEnter={handleMouseEnter}
@@ -113,7 +112,6 @@ const CartEmpty = () => {
                 />
                 </div>
                 <p ref={messageRef} className='no-page-message'>{randomMessage}</p> 
-            </div>
             <div ref={buttonsRef}>
                 <Link to="/menu">
                     <HeroButton>Check Out The Menu</HeroButton>

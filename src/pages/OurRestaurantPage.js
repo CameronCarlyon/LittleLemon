@@ -328,8 +328,10 @@ function OurRestaurantPage() {
                     </div>
                 </article>
             </div>
-            <Promotion />
-            <Footer />
+            <div className="footer-container">
+                <Promotion />
+                <Footer />
+            </div>
         </div>
     );
 }

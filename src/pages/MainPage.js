@@ -7,15 +7,19 @@ import Footer from '../components/Footer.js';
 
 function MainPage() {
   return (
-    <div className="MainPage">
-        <Header />
+    <div className="App">
+        <div>
+            <Header />
         <Hero />
         <div className='main-content' id='main-content'>
             <h1>Order for delivery!</h1>
             <Menu/>
         </div>
-        <Promotion />
-        <Footer />
+        </div>
+        <div className="footer-container">
+            <Promotion />
+            <Footer />
+        </div>
     </div>);
 }
 

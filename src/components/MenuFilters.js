@@ -64,7 +64,6 @@ const MenuFilters = ({
 
             gsap.set(container, {
                 height: 0,
-                overflow: 'hidden'
             });
 
             gsap.set(filterElements, {

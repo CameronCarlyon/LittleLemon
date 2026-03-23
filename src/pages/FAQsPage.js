@@ -71,7 +71,7 @@ function FAQsPage() {
     }, []);
 
     return (
-        <div>
+        <div className="App">
             <Header />
                 <div className="main-content" id="main-content">
                     <section aria-label="Frequently Asked Questions" className='flex-column'>
@@ -86,8 +86,10 @@ function FAQsPage() {
                         <p ref={footerTextRef}>Still have questions? Feel free to <HyperlinkLabel text="reach out to us directly." href='/contact-us' /></p>
                     </section>
                 </div>
+                <div className="footer-container">
                 <Promotion />
-            <Footer />
+                    <Footer />
+                </div>
         </div>
     );
 }
