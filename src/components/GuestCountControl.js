@@ -83,18 +83,17 @@ const GuestCountControl = ({
 
     const pressButton = useCallback((element) => {
         if (!element || disabled) return;
-        gsap.to(element, {
-            scale: 0.85,
-            duration: 0.01
-        });
+        gsap.killTweensOf(element);
+        gsap.set(element, { scale: 0.85 });
     }, [disabled]);
 
     const releaseButton = useCallback((element) => {
         if (!element) return;
+        gsap.killTweensOf(element);
         gsap.to(element, {
             scale: 1,
-            duration: 0.15,
-            ease: 'back.out(1.2)'
+            duration: 0.25,
+            ease: 'back.out(1.5)'
         });
     }, []);
 

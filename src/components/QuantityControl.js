@@ -49,11 +49,8 @@ const QuantityControl = memo(({
 
   const createButtonPressAnimation = (buttonElement) => {
     if (!buttonElement) return;
-    
-    gsap.to(buttonElement, {
-      scale: 0.85,
-      duration: 0.01,
-    });
+    gsap.killTweensOf(buttonElement);
+    gsap.set(buttonElement, { scale: 0.85 });
   };
 
   /**
@@ -63,11 +60,11 @@ const QuantityControl = memo(({
    */
   const createButtonReleaseAnimation = (buttonElement) => {
     if (!buttonElement) return;
-    
+    gsap.killTweensOf(buttonElement);
     gsap.to(buttonElement, {
       scale: 1,
-      duration: 0.15,
-      ease: 'back.out(1.2)'
+      duration: 0.25,
+      ease: 'back.out(1.5)'
     });
   };
 

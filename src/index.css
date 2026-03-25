@@ -1825,7 +1825,7 @@ Footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 3.5rem;
+  height: 57px;
   padding: var(--checkbox-inset-y) 0.5rem var(--checkbox-inset-y) var(--checkbox-inset-left);
   gap: 1rem;
   border: 2px solid transparent;
@@ -2080,6 +2080,10 @@ form {
     text-align: center;
 }
 
+.custom-tip-input input:hover {
+    border: 2px solid var(--color-green);
+}
+
 .custom-tip-input input {
   border: none;
   outline: none;
@@ -2186,7 +2190,7 @@ form {
   background-color: transparent;
   color: var(--color-white);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
   padding: 0.6rem 0.5rem;
   border-radius: 0.7rem;
   height: 36px;
