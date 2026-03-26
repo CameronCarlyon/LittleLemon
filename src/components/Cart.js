@@ -419,42 +419,36 @@ const Cart = () => {
               <div className='cart-item-details-right'>
                   <p><b>${item.price.toFixed(2)}</b></p>
                   <div className='cart-quantity-control'>
-                  <FontAwesomeIcon 
-                  icon={faMinus}
-                  className='icon decrease'
-                  onClick={(e) => {
+                  <span className='cart-icon-btn decrease' onClick={(e) => {
                   e.stopPropagation();
                   if (item.quantity > 1) {
                     updateQuantity(item.name, item.quantity - 1);
                   } else {
                     removeFromCart(item.name);
                   }
-                  }}
-                  />
-                  <FontAwesomeIcon 
-                      icon={faPlus}
-                      className='icon increase'
-                      onClick={(e) => {
+                  }}>
+                    <FontAwesomeIcon icon={faMinus} className='icon' />
+                  </span>
+                  <span className='cart-icon-btn increase' onClick={(e) => {
                       e.stopPropagation();
                       updateQuantity(item.name, item.quantity + 1);
-                      }}
-                  />
-                  <FontAwesomeIcon 
-                      icon={faXmark} 
-                      className='icon remove'
-                      onClick={(e) => {
+                      }}>
+                    <FontAwesomeIcon icon={faPlus} className='icon' />
+                  </span>
+                  <span className='cart-icon-btn remove' onClick={(e) => {
                       e.stopPropagation();
                       removeFromCart(item.name);
                       }}
-                      aria-label={`Remove ${item.name} from cart`}
-                    />
+                      aria-label={`Remove ${item.name} from cart`}>
+                    <FontAwesomeIcon icon={faXmark} className='icon' />
+                  </span>
                   </div>
                   </div>
                   </div>
                   </li>
                 ))}
                 </ul>
-                <span></span>
+                <div className='order-summary-divider' aria-hidden='true'></div>
                 <div>
                 <p>Subtotal: ${pricing.subtotal.toFixed(2)}</p>
                 {pricing.tip > 0 && (
@@ -467,7 +461,7 @@ const Cart = () => {
                 <p>Sales Tax: ${pricing.salesTax.toFixed(2)}</p>
                 <p>Chicago Restaurant Tax: ${pricing.restaurantTax.toFixed(2)}</p>
                 </div>
-                <span></span>
+                <div className='order-summary-divider' aria-hidden='true'></div>
                 <p><b>Total: ${pricing.total.toFixed(2)}</b></p>
                 </div>
                 <label>Add a Tip?</label>
