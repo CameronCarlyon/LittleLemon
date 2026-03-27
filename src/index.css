@@ -727,8 +727,8 @@ Header {
 }
 
 .little-lemon-logo {
-  height: 6rem;
-  width: auto;
+  height: 4.8rem;
+  width: 4.8rem;
   display: block;
 }
 
@@ -741,54 +741,6 @@ Header {
 
 /* Safari-only fixes */
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-  _::-webkit-full-page-media, _:future, :root Header a {
-    padding: 0 !important;
-    margin: 0 !important;
-    flex-shrink: 0;
-    flex-grow: 0;
-  }
-  
-  _::-webkit-full-page-media, _:future, :root Header .little-lemon-logo {
-    height: 4.8rem !important;
-    width: 4.8rem !important;
-    max-width: 4.8rem !important;
-    min-width: 4.8rem !important;
-    object-fit: contain;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    z-index: 10 !important;
-  }
-  
-  _::-webkit-full-page-media, _:future, :root Header .little-lemon-logo svg {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  
-  /* Footer logo fixes for Safari */
-  _::-webkit-full-page-media, _:future, :root footer .little-lemon-logo {
-    height: 4.8rem !important;
-    width: 4.8rem !important;
-    max-width: 4.8rem !important;
-    min-width: 4.8rem !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    z-index: 10 !important;
-  }
-  
-  _::-webkit-full-page-media, _:future, :root footer .little-lemon-logo svg {
-    width: 100% !important;
-    height: 100% !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  
   _::-webkit-full-page-media, _:future, :root .filter-btn svg {
     width: var(--filter-icon-size) !important;
     max-width: var(--filter-icon-size) !important;
@@ -796,50 +748,10 @@ Header {
   }
 }
 
-/* Firefox-specific logo visibility */
-@-moz-document url-prefix() {
-  Header .little-lemon-logo,
-  footer .little-lemon-logo {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
-    z-index: 10 !important;
-    height: 4.8rem !important;
-    width: 4.8rem !important;
-    min-height: 4.8rem !important;
-    min-width: 4.8rem !important;
-  }
-  
-  Header .little-lemon-logo svg,
-  footer .little-lemon-logo svg {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 100% !important;
-    min-width: 100% !important;
-  }
-}
-
-/* Universal fallback for logo visibility across all browsers */
-.little-lemon-logo {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: relative;
-  z-index: 5;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
 .little-lemon-logo svg {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .burger-menu {
@@ -2444,7 +2356,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   .little-lemon-logo {
     height: 4.5rem;
-    max-width: 12rem;
+    width: 4.5rem;
   }
   
   .hero-container {
