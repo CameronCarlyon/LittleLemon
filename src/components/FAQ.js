@@ -169,7 +169,11 @@ const FAQ = () => {
                 <div
                     className='QA' 
                     key={index} 
+                    role="button"
+                    tabIndex={0}
                     onClick={() => handleFAQClick(index)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleFAQClick(index); } }}
+                    aria-expanded={visibleIndex === index}
                 >
                     <p style={{ 
                         fontWeight: 'bold',
