@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/Header.js';
 import Footer from '../components/Footer.js';
@@ -24,13 +24,13 @@ const CartSuccessfulPage = () => {
         });
     })();
     
-    const orderNumber = () => {
+    const orderNumber = useMemo(() => {
         const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         const randomLetters = letters.charAt(Math.floor(Math.random() * letters.length)) +
                             letters.charAt(Math.floor(Math.random() * letters.length));
         const randomNumbers = Math.floor(10000 + Math.random() * 90000);
         return randomLetters + randomNumbers;
-    };
+    }, []);
 
     return (
         <div>
@@ -57,7 +57,7 @@ const CartSuccessfulPage = () => {
                         </div>
                         <div>
                             <p>Order Number</p>
-                            <p><b>{orderNumber()}</b></p>
+                            <p><b>{orderNumber}</b></p>
                         </div>
                         <div>
                             <p>Name</p>

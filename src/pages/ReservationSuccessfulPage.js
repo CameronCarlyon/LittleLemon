@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import Header from '../components/Header';
@@ -8,13 +8,13 @@ import Footer from '../components/Footer';
 const ReservationSuccessfulPage = () => {
     const location = useLocation();
     const reservationData = location.state?.reservationData;
-    const bookingNumber = () => {
+    const bookingNumber = useMemo(() => {
         const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         const randomLetters = letters.charAt(Math.floor(Math.random() * letters.length)) +
                               letters.charAt(Math.floor(Math.random() * letters.length));
-        const randomNumbers = Math.floor(10000 + Math.random() * 90000); // Generates a 5-digit number
+        const randomNumbers = Math.floor(10000 + Math.random() * 90000);
         return randomLetters + randomNumbers;
-    };
+    }, []);
 
     return (
         <div>
@@ -56,7 +56,7 @@ const ReservationSuccessfulPage = () => {
                     </div>
                     <div>
                         <p>Booking Number</p>
-                        <p><b>{bookingNumber()}</b></p>
+                        <p><b>{bookingNumber}</b></p>
                     </div>
                 </div>
                 <p>We look forward to welcoming you!</p>
