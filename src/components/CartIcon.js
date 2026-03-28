@@ -119,7 +119,7 @@ const CartIcon = ({ count = 0 }) => {
     className="cart-count" 
     style={{ display: 'flex' }}
     data-count={count}
-    aria-hidden="true"
+    aria-live="polite"
   >
     {count}
   </span>
