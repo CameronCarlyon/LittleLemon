@@ -252,7 +252,7 @@ const Header = () => {
       if (cleanupCart) cleanupCart();
       if (cleanupHamburger) cleanupHamburger();
     };
-  });
+  }, []);
 
   return (
     <header>

@@ -59,7 +59,6 @@ const LittleLemonLogo = ({ secondary = false }) => {
     <Link 
       to='/home' 
       ref={logoContainer} 
-      alt="Little Lemon Logo" 
       aria-label="Navigate to Home Page"
     >
       <Lottie
