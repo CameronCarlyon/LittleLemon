@@ -11,6 +11,7 @@ const MenuFilters = ({
     onExitComplete,
 }) => {
     const filtersRef = useRef(null);
+    const filterCategoriesRef = useRef(null);
     const animationItemStyle = {
         opacity: 0,
         transform: 'scale(0)',
@@ -135,12 +136,28 @@ const MenuFilters = ({
         return () => tl.kill();
     }, [isClosing, onExitComplete]);
 
+    useEffect(() => {
+        const container = filterCategoriesRef.current;
+        if (!container) return;
+
+        const handleWheel = (e) => {
+            if (!e.deltaY || e.deltaX) return;
+
+            e.preventDefault();
+            const px = e.deltaMode === 1 ? e.deltaY * 50 : e.deltaY;
+            container.scrollBy({ left: px, behavior: 'instant' });
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
+    }, []);
+
     return (
         <div ref={filtersRef} className="filter-container">
             <div className='filter-controls'>
             <div className='filter-by-container'>
                 <label data-filter-animation-item style={labelAnimationStyle}>Filter by:</label>
-                <div className='menu-categories'>
+                <div className='menu-categories' ref={filterCategoriesRef}>
                     {dietaryFilters.map((filter) => (
                         <button
                             key={filter.key}
