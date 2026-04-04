@@ -21,6 +21,7 @@ function OurRestaurantPage() {
     const [isOpen, setIsOpen] = React.useState(false);
     const [visibleSections, setVisibleSections] = React.useState(new Set());
     const contentRef = useRef(null);
+    const openingTimesRef = useRef(null);
     const timelineRef = useRef(null);
 
     // Animate the read more/less functionality
@@ -182,6 +183,22 @@ function OurRestaurantPage() {
         };
     }, [setVisibleSections]);
 
+    useEffect(() => {
+        const container = openingTimesRef.current;
+        if (!container) return;
+
+        const handleWheel = (e) => {
+            if (!e.deltaY || e.deltaX) return;
+
+            e.preventDefault();
+            const px = e.deltaMode === 1 ? e.deltaY * 50 : e.deltaY;
+            container.scrollBy({ left: px, behavior: 'instant' });
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
+    }, []);
+
     return (
         <div className="App">
             <Header />
@@ -244,7 +261,7 @@ function OurRestaurantPage() {
                                 <HyperlinkLabel text='Get Directions' href=''/>
                             </p>
                         </div>
-                        <div className='icon-info-container'>
+                        <div className='icon-info-container' ref={openingTimesRef}>
                             <FontAwesomeIcon icon={faClock} />
                             <p className='opening-time'><b>Monday:</b> 10:30 AM - 11:00 PM</p>
                             <p className='opening-time'><b>Tuesday:</b> 10:30 AM - 11:00 PM</p>
