@@ -53,6 +53,8 @@ const Header = () => {
   const refs = useAnimationRefs();
   const mobileNavRef = refs.mobileNav;
   const animationRef = refs.animation;
+  const cartIconRef = refs.cartIcon;
+  const hamburgerMenuRef = refs.hamburgerMenu;
   const paddingAnimationFrameRef = useRef(null);
   
   // Memoized cart count calculation
@@ -214,8 +216,8 @@ const Header = () => {
 
   // GSAP hover animations for cart and hamburger icons
   useEffect(() => {
-    const cartIcon = refs.cartIcon.current;
-    const hamburgerMenu = refs.hamburgerMenu.current;
+    const cartIcon = cartIconRef.current;
+    const hamburgerMenu = hamburgerMenuRef.current;
 
     const setupHoverAnimation = (element) => {
       if (!element) return;
@@ -252,7 +254,7 @@ const Header = () => {
       if (cleanupCart) cleanupCart();
       if (cleanupHamburger) cleanupHamburger();
     };
-  }, []);
+  }, [cartIconRef, hamburgerMenuRef]);
 
   return (
     <header>
